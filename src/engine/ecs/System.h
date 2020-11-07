@@ -5,6 +5,6 @@ class ECSManager;
 class System
 {
 public:
-	virtual void onStart(std::shared_ptr<ECSManager> manager) = 0;
-	virtual void onUpdate(std::shared_ptr<ECSManager> manager) = 0;
+	virtual void onStart(ECSManager& manager) = 0;
+	virtual void onUpdate(ECSManager& manager, float dt) = 0;
 };

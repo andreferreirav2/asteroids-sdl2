@@ -8,7 +8,7 @@ public:
 	virtual ~Component() = default;
 };
 
-typedef std::string ComponentType;
+typedef size_t ComponentType;
 
 template <class T>
-ComponentType GetComponentType() { return typeid(T).name(); }
+ComponentType GetComponentType() { return typeid(T).hash_code(); }

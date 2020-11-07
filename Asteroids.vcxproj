@@ -142,7 +142,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\engine\ecs\ECSManager.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\SDLApp.cpp" />
   </ItemGroup>

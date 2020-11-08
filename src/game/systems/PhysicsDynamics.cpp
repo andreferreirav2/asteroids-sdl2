@@ -2,8 +2,10 @@
 #include "../components/RigidBody.h"
 #include "../components/Transform.h"
 #include <algorithm>
+#include <math.h>
 
-float const EPSILON = 0.00001f;
+#define PI 3.14159265f
+#define EPSILON 0.00001f
 
 void PhysicsDynamics::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, float dt)
 {
@@ -22,11 +24,11 @@ void PhysicsDynamics::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inpu
 				rb->velocity.y += dragMultiplier * -rb->velocity.y / velMagnitude;
 			}
 
-			if (rb->velocity.x < EPSILON)
+			if (std::abs(rb->velocity.x) < EPSILON)
 			{
 				rb->velocity.x = 0.0f;
 			}
-			if (rb->velocity.y < EPSILON)
+			if (std::abs(rb->velocity.y) < EPSILON)
 			{
 				rb->velocity.y = 0.0f;
 			}

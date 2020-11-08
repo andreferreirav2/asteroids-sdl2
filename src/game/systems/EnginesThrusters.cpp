@@ -14,6 +14,7 @@ void EnginesThrusters::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inp
 		if (engine && transform && rb)
 		{
 			float engForwardSpeed = engine->thrustSpeed * engine->thrustValue * dt / rb->mass;
+			transform->rotation += engine->turnSpeed * engine->turnValue;
 			rb->velocity.x += engForwardSpeed * cos(transform->rotation);
 			rb->velocity.y += engForwardSpeed * sin(transform->rotation);
 		}

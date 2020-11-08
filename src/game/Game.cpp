@@ -99,8 +99,9 @@ int main(int argc, char* args[])
 		sdlRenderer.onUpdate(manager, inputs, 0.01f);
 
 		cout <<
-			"(" << manager.getComponentOfType<Transform>(ship)->position.x << ", " << manager.getComponentOfType<Transform>(ship)->position.y << ")"
-			"(" << manager.getComponentOfType<RigidBody>(ship)->velocity.x << ", " << manager.getComponentOfType<RigidBody>(ship)->velocity.y << ")" << endl;
+			"(" << manager.getComponentOfType<Transform>(ship)->position.x << ", " << manager.getComponentOfType<Transform>(ship)->position.y << ")  " <<
+			"(" << manager.getComponentOfType<RigidBody>(ship)->velocity.x << ", " << manager.getComponentOfType<RigidBody>(ship)->velocity.y << ")  " <<
+			manager.getComponentOfType<Transform>(ship)->rotation << "rad" << endl;
 	}
 	return 0;
 }

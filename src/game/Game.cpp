@@ -77,7 +77,7 @@ int main(int argc, char* args[])
 
 	Entity ship = manager.createEntity();
 	manager.addComponent(ship, make_shared<Transform>());
-	manager.addComponent(ship, make_shared<RigidBody>());
+	manager.addComponent(ship, make_shared<RigidBody>(1.0f, 0.2f));
 	manager.addComponent(ship, make_shared<Engine>(2.0f, 2.0f));
 	manager.addComponent(ship, make_shared<ShipKeyboardControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE));
 
@@ -93,10 +93,10 @@ int main(int argc, char* args[])
 		{
 			break;
 		}
-		shipKeyboardController.onUpdate(manager, inputs, 0.001f); // pass inputs to engine / weapons
-		enginesThrusters.onUpdate(manager, inputs, 0.001f); // move all engines
-		physicsDynamics.onUpdate(manager, inputs, 0.001f); // apply velocity to position
-		sdlRenderer.onUpdate(manager, inputs, 0.001f);
+		shipKeyboardController.onUpdate(manager, inputs, 0.01f); // pass inputs to engine / weapons
+		enginesThrusters.onUpdate(manager, inputs, 0.01f); // move all engines
+		physicsDynamics.onUpdate(manager, inputs, 0.01f); // apply velocity to position
+		sdlRenderer.onUpdate(manager, inputs, 0.01f);
 
 		cout <<
 			"(" << manager.getComponentOfType<Transform>(ship)->position.x << ", " << manager.getComponentOfType<Transform>(ship)->position.y << ")"

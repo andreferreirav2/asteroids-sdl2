@@ -4,9 +4,7 @@
 
 struct Transform : public Component
 {
-	Transform() : position({ 0.0f, 0.0f }), rotation(0.0f), scale({ 1.0f, 1.0f }) {}
-	Transform(float x, float y) : position({ x, y }), rotation(0.0f), scale({ 1.0f, 1.0f }) {}
-	Transform(float x, float y, float r, float sx, float sy) : position({ x, y }), rotation(r), scale({ sx, sy }) {}
+	Transform(float x = 0.0f, float y = 0.0f, float r = 0.0f, float sx = 1.0f, float sy = 1.0f) : position({ x, y }), rotation(r), scale({ sx, sy }) {}
 
 	vec2 position;
 	float rotation;

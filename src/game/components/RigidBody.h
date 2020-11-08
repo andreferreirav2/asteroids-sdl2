@@ -4,9 +4,9 @@
 
 struct RigidBody : public Component
 {
-	RigidBody() : mass(1.0f), velocity({ 0.0f, 0.0f }) {}
-	RigidBody(float mass, float vx, float vy) : mass(mass), velocity({ vx, vy }) {}
+	RigidBody(float mass = 1.0f, float drag = 0.0f, float vx = 0.0f, float vy = 0.0f) : mass(mass), drag(drag), velocity({ vx, vy }) {}
 
 	float mass;
+	float drag;
 	vec2 velocity;
 };

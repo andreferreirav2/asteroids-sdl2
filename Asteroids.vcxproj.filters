@@ -7,18 +7,61 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\SDLApp.cpp">
+    <ClCompile Include="src\game\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game.cpp">
+    <ClCompile Include="src\game\systems\PhysicsDynamics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\systems\SDLRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\sdl\SDLApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\input\Inputs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\systems\ShipKeyboardController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\systems\EnginesThrusters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\SDLApp.h" />
-    <ClInclude Include="src\engine\ecs\Component.h" />
-    <ClInclude Include="src\engine\ecs\System.h" />
-    <ClInclude Include="src\engine\ecs\ECSManager.h" />
-    <ClInclude Include="src\engine\ecs\Entity.h" />
+    <ClInclude Include="src\engine\ecs\Component.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\ecs\ECSManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\ecs\Entity.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\systems\PhysicsDynamics.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\components\RigidBody.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\ecs\System.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\components\Transform.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\utils\Utils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\systems\SDLRenderer.h" />
+    <ClInclude Include="src\engine\sdl\SDLApp.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\components\Engine.h" />
+    <ClInclude Include="src\engine\input\Inputs.h" />
+    <ClInclude Include="src\game\components\ShipKeyboardControls.h" />
+    <ClInclude Include="src\game\systems\ShipKeyboardController.h" />
+    <ClInclude Include="src\game\systems\EnginesThrusters.h" />
   </ItemGroup>
 </Project>

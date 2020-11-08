@@ -1,14 +1,18 @@
 #include "SDLApp.h"
+#include "../input/Inputs.h"
 #include <SDL_image.h>
 #include <iostream>
 #include <string>
 #include <memory>
+#include <set>
 
 using std::cerr;
+using std::set;
 using std::endl;
 using std::string;
 using std::shared_ptr;
 using std::make_shared;
+
 
 SDLApp::SDLApp() :
 	m_screenWidth(640),
@@ -52,62 +56,61 @@ bool SDLApp::init()
 	return true;
 }
 
-void SDLApp::run()
+std::shared_ptr<Inputs> SDLApp::parseInputs()
 {
-	bool quit = false;
 	SDL_Event e;
-
-	while (!quit)
+	set<Key> keys = {};
+	while (SDL_PollEvent(&e) != 0)
 	{
-		while (SDL_PollEvent(&e) != 0)
+		switch (e.type)
 		{
-			switch (e.type)
+		case SDL_QUIT:
+			keys.insert(Key::QUIT);
+			break;
+		case SDL_KEYDOWN:
+			switch (e.key.keysym.sym)
 			{
-			case SDL_QUIT:
-				quit = true;
+			case SDLK_UP:
+				keys.insert(Key::KEY_UP);
 				break;
-			case SDL_KEYDOWN:
-				switch (e.key.keysym.sym)
-				{
-				case SDLK_UP:
-					cerr << "UP" << endl;
-					break;
-				case SDLK_DOWN:
-					cerr << "DOWN" << endl;
-					break;
-				case SDLK_LEFT:
-					cerr << "LEFT" << endl;
-					break;
-				case SDLK_RIGHT:
-					cerr << "RIGHT" << endl;
-					break;
-				case SDLK_SPACE:
-					cerr << "SPACE" << endl;
-					break;
-				default:
-					cerr << "other? " << e.key.keysym.sym << endl;
-					break;
-				}
+			case SDLK_DOWN:
+				keys.insert(Key::KEY_DOWN);
+				break;
+			case SDLK_LEFT:
+				keys.insert(Key::KEY_LEFT);
+				break;
+			case SDLK_RIGHT:
+				keys.insert(Key::KEY_RIGHT);
+				break;
+			case SDLK_SPACE:
+				keys.insert(Key::KEY_SPACE);
 				break;
 			default:
+				cerr << "other? " << e.key.keysym.sym << endl;
 				break;
 			}
+			break;
+		default:
+			break;
 		}
-
-		draw();
 	}
-
-	close();
+	m_inputs->update(keys);
+	return m_inputs;
 }
 
-void SDLApp::draw()
+void SDLApp::fillScreen(Uint8 r, Uint8 g, Uint8 b)
 {
 	m_screenSurface = SDL_GetWindowSurface(m_window);
 	SDL_FillRect(m_screenSurface, nullptr, SDL_MapRGB(m_screenSurface->format, 0xFF, 0xFF, 0xFF));
+}
 
-	auto bmpPic = loadBMP("assets/sprites/ship.bmp");
-	SDL_BlitSurface(bmpPic.get(), NULL, m_screenSurface, NULL);
+void SDLApp::drawSurface(std::shared_ptr<SDL_Surface> surface)
+{
+	SDL_BlitSurface(surface.get(), NULL, m_screenSurface, NULL);
+}
 
+void SDLApp::flush()
+{
 	SDL_UpdateWindowSurface(m_window);
 }
 

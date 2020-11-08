@@ -32,7 +32,7 @@ public:
 			return;
 		}
 
-		ComponentType componentType = typeid(*component).hash_code();
+		ComponentType componentType = ComponentType(typeid(*component).name());
 		auto it = m_entityToComponentTypeToComponent.find(entity);
 		if (it != m_entityToComponentTypeToComponent.end())  // if entity already has components
 		{
@@ -57,7 +57,7 @@ public:
 	template <typename T>
 	void removeComponentOfType(Entity entity)
 	{
-		ComponentType componentType = typeid(T).hash_code();
+		ComponentType componentType = GetComponentType<T>();
 
 		auto it = m_entityToComponentTypeToComponent.find(entity);
 		if (it != m_entityToComponentTypeToComponent.end())
@@ -75,7 +75,7 @@ public:
 	template <typename T>
 	std::shared_ptr<T> getComponentOfType(Entity entity)
 	{
-		ComponentType componentType = typeid(T).hash_code();
+		ComponentType componentType = GetComponentType<T>();
 		auto it = m_entityToComponentTypeToComponent.find(entity);
 		if (it != m_entityToComponentTypeToComponent.end())
 		{
@@ -91,7 +91,7 @@ public:
 	template <typename T>
 	std::vector<Entity> getAllEntitiesWithComponentType()
 	{
-		ComponentType componentType = typeid(T).hash_code();
+		ComponentType componentType = GetComponentType<T>();
 		std::vector<Entity> entities = {};
 
 		for (auto const& entityToComponent : m_componentTypeToEntityToComponent[componentType])
@@ -105,7 +105,7 @@ public:
 	template <typename T>
 	std::vector<std::shared_ptr<T>> getAllComponentsOfType()
 	{
-		ComponentType componentType = typeid(T).hash_code();
+		ComponentType componentType = GetComponentType<T>();
 		std::vector<std::shared_ptr<T>> components = {};
 
 		for (auto const& entityToComponent : m_componentTypeToEntityToComponent[componentType])

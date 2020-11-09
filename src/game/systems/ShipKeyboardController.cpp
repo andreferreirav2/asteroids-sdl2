@@ -6,6 +6,11 @@
 
 #include <iostream>
 
+
+void ShipKeyboardController::onStart(ECSManager& manager)
+{
+}
+
 void ShipKeyboardController::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, float dt)
 {
 	for (Entity e : manager.getAllEntitiesWithComponentType<ShipKeyboardControls>())

@@ -7,6 +7,11 @@
 #define PI 3.14159265f
 #define EPSILON 0.00001f
 
+
+void PhysicsDynamics::onStart(ECSManager& manager)
+{
+}
+
 void PhysicsDynamics::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, float dt)
 {
 	for (Entity e : manager.getAllEntitiesWithComponentType<RigidBody>())

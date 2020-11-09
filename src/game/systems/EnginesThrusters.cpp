@@ -4,6 +4,11 @@
 #include "../components/RigidBody.h"
 #include <cmath>
 
+
+void EnginesThrusters::onStart(ECSManager& manager)
+{
+}
+
 void EnginesThrusters::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, float dt)
 {
 	for (Entity e : manager.getAllEntitiesWithComponentType<Engine>())

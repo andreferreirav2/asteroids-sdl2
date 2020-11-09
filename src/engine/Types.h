@@ -27,6 +27,12 @@ struct uint3
 	unsigned int x, y, z;
 };
 
+struct rect
+{
+	int x, y;
+	unsigned int w, h;
+};
+
 struct colorR8G8B8
 {
 	uint8_t r, g, b;

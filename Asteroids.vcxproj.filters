@@ -28,6 +28,15 @@
     <ClCompile Include="src\game\systems\EnginesThrusters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\engine\sdl\SDLAppRendering.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\sdl\SDLAppInputs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\systems\BoundariesFlipper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\engine\ecs\Component.h">
@@ -61,5 +70,10 @@
     <ClInclude Include="src\game\systems\ShipKeyboardController.h" />
     <ClInclude Include="src\game\systems\EnginesThrusters.h" />
     <ClInclude Include="src\engine\Types.h" />
+    <ClInclude Include="src\game\components\SpriteSDL.h" />
+    <ClInclude Include="src\engine\sdl\SDLResourceDeleters.h" />
+    <ClInclude Include="src\engine\sdl\LoadedTexture.h" />
+    <ClInclude Include="src\game\components\Boundless.h" />
+    <ClInclude Include="src\game\systems\BoundariesFlipper.h" />
   </ItemGroup>
 </Project>

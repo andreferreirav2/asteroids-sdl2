@@ -151,6 +151,7 @@
     <ClCompile Include="src\engine\sdl\SDLApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\engine\Types.h" />
     <ClInclude Include="src\game\systems\EnginesThrusters.h" />
     <ClInclude Include="src\game\components\Engine.h" />
     <ClInclude Include="src\game\components\ShipKeyboardControls.h" />
@@ -165,7 +166,6 @@
     <ClInclude Include="src\engine\ecs\Entity.h" />
     <ClInclude Include="src\engine\ecs\System.h" />
     <ClInclude Include="src\engine\sdl\SDLApp.h" />
-    <ClInclude Include="src\game\utils\Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

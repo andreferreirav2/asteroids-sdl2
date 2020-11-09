@@ -17,7 +17,6 @@ void ShipKeyboardController::onUpdate(ECSManager& manager, std::shared_ptr<Input
 			if (inputs->isPressed(shipControls->accelerate))
 			{
 				engine->thrustValue = 1.0f;
-				std::cout << "engine GO!" << std::endl;
 			}
 			else
 			{

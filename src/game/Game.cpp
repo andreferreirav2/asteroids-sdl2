@@ -13,6 +13,11 @@
 #include <iostream>
 #include <typeinfo>
 #include <assert.h>
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
 
 using namespace std;
 
@@ -72,7 +77,6 @@ int main(int argc, char* args[])
 		return 1;
 	}
 
-
 	ECSManager manager;
 
 	Entity ship = manager.createEntity();
@@ -88,20 +92,31 @@ int main(int argc, char* args[])
 
 	while (true)
 	{
+		auto dt = 0.01f; // TODO: calculate dt
+
 		auto inputs = app.parseInputs(); // parse inputs from SDL
 		if (inputs->isPressed(Key::QUIT))
 		{
 			break;
 		}
-		shipKeyboardController.onUpdate(manager, inputs, 0.01f); // pass inputs to engine / weapons
-		enginesThrusters.onUpdate(manager, inputs, 0.01f); // move all engines
-		physicsDynamics.onUpdate(manager, inputs, 0.01f); // apply velocity to position
-		sdlRenderer.onUpdate(manager, inputs, 0.01f);
 
+		if (inputs->isPressed(Key::KEY_UP) && inputs->isPressed(Key::KEY_RIGHT))
+		{
+			break;
+		}
+
+		shipKeyboardController.onUpdate(manager, inputs, dt); // pass inputs to engine / weapons
+		enginesThrusters.onUpdate(manager, inputs, dt); // move all engines
+		physicsDynamics.onUpdate(manager, inputs, dt); // apply velocity to position
+		sdlRenderer.onUpdate(manager, inputs, dt);
+
+		/*
 		cout <<
 			"(" << manager.getComponentOfType<Transform>(ship)->position.x << ", " << manager.getComponentOfType<Transform>(ship)->position.y << ")  " <<
 			"(" << manager.getComponentOfType<RigidBody>(ship)->velocity.x << ", " << manager.getComponentOfType<RigidBody>(ship)->velocity.y << ")  " <<
 			manager.getComponentOfType<Transform>(ship)->rotation << "rad" << endl;
+			*/
+		Sleep(1);
 	}
 	return 0;
 }

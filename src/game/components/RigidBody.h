@@ -1,6 +1,6 @@
 #pragma once
 #include "../../engine/ecs/Component.h"
-#include "../utils/Utils.h"
+#include "../../engine/Types.h"
 
 struct RigidBody : public Component
 {
@@ -8,5 +8,5 @@ struct RigidBody : public Component
 
 	float mass;
 	float drag;
-	vec2 velocity;
+	float2 velocity;
 };

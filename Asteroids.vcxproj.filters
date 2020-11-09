@@ -51,9 +51,6 @@
     <ClInclude Include="src\game\components\Transform.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\game\utils\Utils.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\game\systems\SDLRenderer.h" />
     <ClInclude Include="src\engine\sdl\SDLApp.h">
       <Filter>Source Files</Filter>
@@ -63,5 +60,6 @@
     <ClInclude Include="src\game\components\ShipKeyboardControls.h" />
     <ClInclude Include="src\game\systems\ShipKeyboardController.h" />
     <ClInclude Include="src\game\systems\EnginesThrusters.h" />
+    <ClInclude Include="src\engine\Types.h" />
   </ItemGroup>
 </Project>

@@ -23,7 +23,7 @@ void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, 
 {
 	m_sdlApp.clear({ 0xff, 0xff, 0xff, 0xff });
 
-	auto shipTexture = m_sdlApp.getTexture("assets/sprites/ship.bmp");
+	auto shipTexture = m_sdlApp.getTexture("assets/sprites/sky.jpeg");
 	m_sdlApp.drawTextureFullscreen(shipTexture->texture);
 
 	m_sdlApp.drawRect(
@@ -56,11 +56,26 @@ void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, 
 		auto transform = manager.getComponentOfType<Transform>(e);
 		if (sprite)
 		{
+			SDL_RendererFlip flipType;
+			if (sprite->flipVertical)
+			{
+				flipType = SDL_FLIP_VERTICAL;
+			}
+			else if (sprite->flipHorizontal)
+			{
+				flipType = SDL_FLIP_HORIZONTAL;
+			}
+			else
+			{
+				flipType = SDL_FLIP_NONE;
+			}
 			m_sdlApp.drawTexture(
 				sprite->loadedTexture->texture,
 				sprite->cliping,
 				{ static_cast<int>(transform->position.x - sprite->size.x / 2), static_cast<int>(transform->position.y - sprite->size.y / 2),
-				  sprite->size.x, sprite->size.y });
+				  sprite->size.x, sprite->size.y },
+				-transform->rotation - sprite->rotationAngle,
+				flipType);
 		}
 		else
 		{

@@ -82,25 +82,18 @@ int main(int argc, char* args[])
 	}
 
 	// Pre load assets
-	app.loadTexture(string("assets/sprites/ship.bmp"), true, colorR8G8B8({ 0xff, 0xff, 0xff }));
+	app.loadTexture(string("assets/sprites/ships.png"));
+	app.loadTexture(string("assets/sprites/sky.jpeg"));
 
 	ECSManager manager;
 
 	Entity ship = manager.createEntity();
 	manager.addComponent(ship, make_shared<Transform>());
 	manager.addComponent(ship, make_shared<RigidBody>(1.0f, 0.1f));
-	manager.addComponent(ship, make_shared<SpriteSDL>(string("assets/sprites/ship.bmp"), uint2({ 24, 24 }), rect({ 80, 80, 80, 80 })));
-	manager.addComponent(ship, make_shared<Engine>(20.0f, 0.1f));
+	manager.addComponent(ship, make_shared<SpriteSDL>(string("assets/sprites/ships.png"), -90.0f, false, false, uint2({ 24, 32 }), rect({ 20, 368, 396, 510 })));
+	manager.addComponent(ship, make_shared<Engine>(20.0f, 10.0f));
 	manager.addComponent(ship, make_shared<ShipKeyboardControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE));
 	manager.addComponent(ship, make_shared<Boundless>());
-
-	Entity ship2 = manager.createEntity();
-	manager.addComponent(ship2, make_shared<Transform>(200.0f, 200.0f));
-	manager.addComponent(ship2, make_shared<RigidBody>(1.0f, 0.1f));
-	manager.addComponent(ship2, make_shared<SpriteSDL>(string("assets/sprites/ship.bmp"), uint2({ 24, 24 }), rect({ 0, 80, 80, 80 })));
-	manager.addComponent(ship2, make_shared<Engine>(20.0f, 0.1f));
-	manager.addComponent(ship2, make_shared<ShipKeyboardControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE));
-	manager.addComponent(ship2, make_shared<Boundless>());
 
 	ShipKeyboardController shipKeyboardController = ShipKeyboardController();
 	EnginesThrusters enginesThrusters = EnginesThrusters();
@@ -124,22 +117,11 @@ int main(int argc, char* args[])
 			break;
 		}
 
-		if (inputs->isPressed(Key::KEY_UP) && inputs->isPressed(Key::KEY_RIGHT))
-		{
-			break;
-		}
-
 		shipKeyboardController.onUpdate(manager, inputs, dt); // pass inputs to engine / weapons
 		enginesThrusters.onUpdate(manager, inputs, dt); // move all engines
 		physicsDynamics.onUpdate(manager, inputs, dt); // apply velocity to position
 		boundariesFlipper.onUpdate(manager, inputs, dt); // apply boundaries or 
 		sdlRenderer.onUpdate(manager, inputs, dt);
-
-
-		cout <<
-			"(" << manager.getComponentOfType<Transform>(ship)->position.x << ", " << manager.getComponentOfType<Transform>(ship)->position.y << ")  " <<
-			"(" << manager.getComponentOfType<RigidBody>(ship)->velocity.x << ", " << manager.getComponentOfType<RigidBody>(ship)->velocity.y << ")  " <<
-			manager.getComponentOfType<Transform>(ship)->rotation << "rad" << endl;
 
 		Sleep(1);
 	}

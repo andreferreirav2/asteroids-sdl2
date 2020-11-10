@@ -23,7 +23,7 @@ public:
 
 	void clear(colorR8G8B8A8 const& color);
 	void drawTextureFullscreen(std::shared_ptr<SDL_Texture> const& texture);
-	void drawTexture(std::shared_ptr<SDL_Texture> const& texture, rect const& clip, rect const& coord);
+	void drawTexture(std::shared_ptr<SDL_Texture> const& texture, rect const& clip, rect const& coord, float angle = 0.0f, SDL_RendererFlip flipType = SDL_FLIP_NONE);
 	void drawDot(uint2 const& pos, colorR8G8B8A8 const& color);
 	void drawLine(uint2 const& start, uint2 const& end, colorR8G8B8A8 const& color);
 	void drawRect(rect const& coord, colorR8G8B8A8 const& color, bool const& filled);

@@ -30,7 +30,7 @@ void SDLApp::drawTextureFullscreen(std::shared_ptr<SDL_Texture> const& texture)
 	SDL_RenderCopy(m_renderer.get(), texture.get(), NULL, NULL);
 }
 
-void SDLApp::drawTexture(std::shared_ptr<SDL_Texture> const& texture, rect const& clip, rect const& coord)
+void SDLApp::drawTexture(std::shared_ptr<SDL_Texture> const& texture, rect const& clip, rect const& coord, float angle, SDL_RendererFlip flipType)
 {
 	SDL_Rect* pClp = NULL;
 	SDL_Rect clp = { clip.x, clip.y, clip.w, clip.h };
@@ -41,7 +41,7 @@ void SDLApp::drawTexture(std::shared_ptr<SDL_Texture> const& texture, rect const
 		pClp = &clp;
 	}
 
-	SDL_RenderCopy(m_renderer.get(), texture.get(), pClp, &dst);
+	SDL_RenderCopyEx(m_renderer.get(), texture.get(), pClp, &dst, angle, NULL, flipType);
 }
 
 void SDLApp::drawDot(uint2 const& pos, colorR8G8B8A8 const& color)

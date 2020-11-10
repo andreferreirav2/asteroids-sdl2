@@ -30,11 +30,11 @@ void ShipKeyboardController::onUpdate(ECSManager& manager, std::shared_ptr<Input
 
 			if (inputs->isPressed(shipControls->turnLeft))
 			{
-				engine->turnValue = -1.0f;
+				engine->turnValue = 1.0f;
 			}
 			else if (inputs->isPressed(shipControls->turnRight))
 			{
-				engine->turnValue = 1.0f;
+				engine->turnValue = -1.0f;
 			}
 			else
 			{

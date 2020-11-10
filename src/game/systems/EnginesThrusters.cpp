@@ -4,6 +4,8 @@
 #include "../components/RigidBody.h"
 #include <cmath>
 
+#define RAD_2_DEG 57.2958f
+#define DEG_2_RAG 0.0174533f
 
 void EnginesThrusters::onStart(ECSManager& manager)
 {
@@ -20,8 +22,8 @@ void EnginesThrusters::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inp
 		{
 			float engForwardSpeed = engine->thrustSpeed * engine->thrustValue * dt / rb->mass;
 			transform->rotation += engine->turnSpeed * engine->turnValue;
-			rb->velocity.x += engForwardSpeed * cos(transform->rotation);
-			rb->velocity.y += engForwardSpeed * sin(transform->rotation);
+			rb->velocity.x += engForwardSpeed * cos(transform->rotation * DEG_2_RAG);
+			rb->velocity.y -= engForwardSpeed * sin(transform->rotation * DEG_2_RAG);
 		}
 	}
 }

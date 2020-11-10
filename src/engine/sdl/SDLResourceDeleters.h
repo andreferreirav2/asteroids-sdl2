@@ -9,6 +9,14 @@ struct SDLWindowDeleter
 	}
 };
 
+struct SDLGameControllerDeleter
+{
+	void operator()(SDL_GameController* controller)
+	{
+		SDL_GameControllerClose(controller);
+	}
+};
+
 struct SDLRendererDeleter
 {
 	void operator()(SDL_Renderer* renderer)
@@ -16,6 +24,7 @@ struct SDLRendererDeleter
 		SDL_DestroyRenderer(renderer);
 	}
 };
+
 struct SDLTextureDeleter
 {
 	void operator()(SDL_Texture* texture)

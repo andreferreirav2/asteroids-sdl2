@@ -2,9 +2,9 @@
 #include "../../engine/ecs/Component.h"
 #include "../../engine/input/Inputs.h"
 
-struct ShipKeyboardControls : public Component
+struct ShipManualControls : public Component
 {
-	ShipKeyboardControls(Key accelerate, Key turnLeft, Key turnRight, Key shoot) :
+	ShipManualControls(Key accelerate, Key turnLeft, Key turnRight, Key shoot) :
 		accelerate(accelerate),
 		turnLeft(turnLeft),
 		turnRight(turnRight),

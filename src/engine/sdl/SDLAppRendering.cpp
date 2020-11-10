@@ -33,8 +33,8 @@ void SDLApp::drawTextureFullscreen(std::shared_ptr<SDL_Texture> const& texture)
 void SDLApp::drawTexture(std::shared_ptr<SDL_Texture> const& texture, rect const& clip, rect const& coord, float angle, SDL_RendererFlip flipType)
 {
 	SDL_Rect* pClp = NULL;
-	SDL_Rect clp = { clip.x, clip.y, clip.w, clip.h };
-	SDL_Rect dst = { coord.x, coord.y, coord.w, coord.h };
+	SDL_Rect clp = { clip.x, clip.y, static_cast<int>(clip.w), static_cast<int>(clip.h) };
+	SDL_Rect dst = { coord.x, coord.y, static_cast<int>(coord.w), static_cast<int>(coord.h) };
 
 	if (clip.w != 0 && clip.h != 0)
 	{

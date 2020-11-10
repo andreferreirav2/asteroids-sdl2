@@ -6,11 +6,12 @@
 #include "components/RigidBody.h"
 #include "components/Engine.h"
 #include "components/SpriteSDL.h"
-#include "components/ShipKeyboardControls.h"
+#include "components/ShipManualControls.h"
 #include "components/Boundless.h"
 #include "systems/PhysicsDynamics.h"
 #include "systems/SDLRenderer.h"
 #include "systems/ShipKeyboardController.h"
+#include "systems/ShipGameController.h"
 #include "systems/EnginesThrusters.h"
 #include "systems/BoundariesFlipper.h"
 #include <stdio.h>
@@ -92,16 +93,18 @@ int main(int argc, char* args[])
 	manager.addComponent(ship, make_shared<RigidBody>(1.0f, 0.07f));
 	manager.addComponent(ship, make_shared<SpriteSDL>(string("assets/sprites/ships.png"), -90.0f, false, false, uint2({ 24, 32 }), rect({ 20, 368, 396, 510 })));
 	manager.addComponent(ship, make_shared<Engine>(1.0f, 0.3f));
-	manager.addComponent(ship, make_shared<ShipKeyboardControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE));
+	manager.addComponent(ship, make_shared<ShipManualControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE));
 	manager.addComponent(ship, make_shared<Boundless>());
 
 	ShipKeyboardController shipKeyboardController = ShipKeyboardController();
+	ShipGameController shipGameController = ShipGameController();
 	EnginesThrusters enginesThrusters = EnginesThrusters();
 	PhysicsDynamics physicsDynamics = PhysicsDynamics();
 	BoundariesFlipper boundariesFlipper = BoundariesFlipper({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT });
 	SDLRenderer sdlRenderer = SDLRenderer(app);
 
 	shipKeyboardController.onStart(manager);
+	shipGameController.onStart(manager);
 	enginesThrusters.onStart(manager);
 	physicsDynamics.onStart(manager);
 	boundariesFlipper.onStart(manager);
@@ -118,6 +121,7 @@ int main(int argc, char* args[])
 		}
 
 		shipKeyboardController.onUpdate(manager, inputs, dt); // pass inputs to engine / weapons
+		shipGameController.onUpdate(manager, inputs, dt); // pass inputs to engine / weapons from controller
 		enginesThrusters.onUpdate(manager, inputs, dt); // move all engines
 		physicsDynamics.onUpdate(manager, inputs, dt); // apply velocity to position
 		boundariesFlipper.onUpdate(manager, inputs, dt); // apply boundaries or 

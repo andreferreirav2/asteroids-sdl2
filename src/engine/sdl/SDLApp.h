@@ -37,6 +37,7 @@ private:
 	unsigned int m_screenHeight;
 	std::shared_ptr<SDL_Window> m_window = nullptr;
 	std::shared_ptr<SDL_Renderer> m_renderer = nullptr;
+	std::shared_ptr<SDL_GameController> m_controller = nullptr;
 	std::shared_ptr<Inputs> m_inputs = std::make_shared<Inputs>();
 	std::map<std::string, std::shared_ptr<LoadedTexture>> m_textureCache = {};
 };

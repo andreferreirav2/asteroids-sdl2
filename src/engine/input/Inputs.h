@@ -1,5 +1,6 @@
 #pragma once
 #include <set>
+#include "../Types.h"
 
 enum class Key
 {
@@ -18,11 +19,14 @@ class Inputs
 {
 public:
 	void update(std::set<Key> newKeys);
+	void setControllerAxis(float2 leftAxis, float2 rightAxis);
 	bool isPressed(Key k);
 	bool isJustPressed(Key k);
 	bool isJustReleased(Key k);
 
-private:
 	std::set<Key> keys;
 	std::set<Key> previousFrameKeys;
+	bool controllerEnabled;
+	float2 leftAxis;
+	float2 rightAxis;
 };

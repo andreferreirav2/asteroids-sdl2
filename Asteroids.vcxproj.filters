@@ -37,6 +37,9 @@
     <ClCompile Include="src\game\systems\BoundariesFlipper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\systems\ShipGameController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\engine\ecs\Component.h">
@@ -66,7 +69,6 @@
     </ClInclude>
     <ClInclude Include="src\game\components\Engine.h" />
     <ClInclude Include="src\engine\input\Inputs.h" />
-    <ClInclude Include="src\game\components\ShipKeyboardControls.h" />
     <ClInclude Include="src\game\systems\ShipKeyboardController.h" />
     <ClInclude Include="src\game\systems\EnginesThrusters.h" />
     <ClInclude Include="src\engine\Types.h" />
@@ -75,5 +77,7 @@
     <ClInclude Include="src\engine\sdl\LoadedTexture.h" />
     <ClInclude Include="src\game\components\Boundless.h" />
     <ClInclude Include="src\game\systems\BoundariesFlipper.h" />
+    <ClInclude Include="src\game\components\ShipManualControls.h" />
+    <ClInclude Include="src\game\systems\ShipGameController.h" />
   </ItemGroup>
 </Project>

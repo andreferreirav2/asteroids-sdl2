@@ -89,9 +89,9 @@ int main(int argc, char* args[])
 
 	Entity ship = manager.createEntity();
 	manager.addComponent(ship, make_shared<Transform>());
-	manager.addComponent(ship, make_shared<RigidBody>(1.0f, 0.1f));
+	manager.addComponent(ship, make_shared<RigidBody>(1.0f, 0.07f));
 	manager.addComponent(ship, make_shared<SpriteSDL>(string("assets/sprites/ships.png"), -90.0f, false, false, uint2({ 24, 32 }), rect({ 20, 368, 396, 510 })));
-	manager.addComponent(ship, make_shared<Engine>(20.0f, 10.0f));
+	manager.addComponent(ship, make_shared<Engine>(1.0f, 0.3f));
 	manager.addComponent(ship, make_shared<ShipKeyboardControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE));
 	manager.addComponent(ship, make_shared<Boundless>());
 

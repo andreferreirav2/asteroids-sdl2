@@ -7,11 +7,6 @@
 #define PI 3.14159265f
 #define EPSILON 0.00001f
 
-
-void PhysicsDynamics::onStart(ECSManager& manager)
-{
-}
-
 void PhysicsDynamics::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, float dt)
 {
 	for (Entity e : manager.getAllEntitiesWithComponentType<RigidBody>())
@@ -21,7 +16,7 @@ void PhysicsDynamics::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inpu
 
 		if (rb && transform)
 		{
-			float velMagnitude = sqrt(pow(rb->velocity.x, 2) + pow(rb->velocity.y, 2));
+			float velMagnitude = sqrt(pow(rb->velocity.x, 2) + pow(rb->velocity.y, 2)) * dt;
 			float dragMultiplier = std::max(static_cast<float>(velMagnitude * pow(rb->drag, 2.0f)), 0.0f);
 			if (velMagnitude != 0.0f)
 			{

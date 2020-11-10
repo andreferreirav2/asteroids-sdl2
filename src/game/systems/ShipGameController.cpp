@@ -9,10 +9,6 @@
 
 #define JOYSTICK_MARGIN 0.3f 
 
-void ShipGameController::onStart(ECSManager& manager)
-{
-}
-
 void ShipGameController::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, float dt)
 {
 	if (inputs->controllerEnabled)

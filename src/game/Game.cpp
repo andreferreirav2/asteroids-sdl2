@@ -96,7 +96,7 @@ int main(int argc, char* args[])
 	manager.addComponent(ship, make_shared<Transform>());
 	manager.addComponent(ship, make_shared<RigidBody>(1.0f, 0.07f));
 	manager.addComponent(ship, make_shared<SpriteSDL>(string("assets/sprites/ships.png"), -90.0f, false, false, uint2({ 24, 32 }), rect({ 20, 368, 396, 510 })));
-	manager.addComponent(ship, make_shared<Engine>(1.0f, 0.3f));
+	manager.addComponent(ship, make_shared<Engine>(500.0f, 150.0f));
 	manager.addComponent(ship, make_shared<ShipManualControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE));
 	manager.addComponent(ship, make_shared<Boundless>());
 	manager.addComponent(ship, make_shared<Weapon>(0.3f));
@@ -118,9 +118,14 @@ int main(int argc, char* args[])
 	sdlRenderer.onStart(manager);
 	soundFxPlayer.onStart(manager);
 
+	Uint32 const startTime = SDL_GetTicks();
+	Uint32 lastTick = startTime;
 	while (true)
 	{
-		auto dt = 0.1f; // TODO: calculate dt
+		// TODO: Move to GameTimer class?
+		Uint32 currentTicks = SDL_GetTicks();
+		auto dt = static_cast<float>(currentTicks - lastTick) / 1000.0f;
+		lastTick = currentTicks;
 
 		auto inputs = app.parseInputs(); // parse inputs from SDL
 		if (inputs->isPressed(Key::QUIT))
@@ -133,8 +138,8 @@ int main(int argc, char* args[])
 		enginesThrusters.onUpdate(manager, inputs, dt); // move all engines
 		physicsDynamics.onUpdate(manager, inputs, dt); // apply velocity to position
 		boundariesFlipper.onUpdate(manager, inputs, dt); // apply boundaries or 
-		sdlRenderer.onUpdate(manager, inputs, dt);
 		soundFxPlayer.onUpdate(manager, inputs, dt);
+		sdlRenderer.onUpdate(manager, inputs, dt);
 
 		Sleep(1);
 	}

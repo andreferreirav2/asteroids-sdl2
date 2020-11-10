@@ -41,32 +41,24 @@ std::shared_ptr<Inputs> SDLApp::parseInputs()
 	// Parse controller inputs
 	if (m_controller != nullptr)
 	{
-		float leftX = SDL_GameControllerGetAxis(m_controller.get(), SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX) / 32768.0f;
-		float leftY = SDL_GameControllerGetAxis(m_controller.get(), SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY) / 32768.0f;
-
-		if (abs(leftX) < 0.01f)
-		{
-			leftX = 0.0f;
-		}
-		if (abs(leftY) < 0.01f)
-		{
-			leftY = 0.0f;
-		}
-
-		float rightX = SDL_GameControllerGetAxis(m_controller.get(), SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX) / 32768.0f;
-		float rightY = SDL_GameControllerGetAxis(m_controller.get(), SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY) / 32768.0f;
-
-		if (abs(rightX) < 0.01f)
-		{
-			rightX = 0.0f;
-		}
-		if (abs(rightY) < 0.01f)
-		{
-			rightY = 0.0f;
-		}
-
-		m_inputs->setControllerAxis(float2({ leftX, leftY }), float2({ rightX, rightY }));
+		m_inputs->setControllerAxis(
+			float2({
+				SDL_GameControllerGetAxis(m_controller.get(), SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX) / 32768.0f,
+				SDL_GameControllerGetAxis(m_controller.get(), SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY) / 32768.0f }
+				),
+			float2({
+				SDL_GameControllerGetAxis(m_controller.get(), SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX) / 32768.0f,
+				SDL_GameControllerGetAxis(m_controller.get(), SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY) / 32768.0f }));
 	}
 
 	return m_inputs;
+}
+
+
+void SDLApp::hapticRumble(float strength, unsigned int duration)
+{
+	if (SDL_HapticRumblePlay(m_haptic.get(), strength, duration) != 0)
+	{
+		std::cerr << "Warning: Unable to play rumble! SDL Error: " << SDL_GetError() << std::endl;
+	};
 }

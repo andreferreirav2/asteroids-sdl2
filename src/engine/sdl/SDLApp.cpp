@@ -23,7 +23,7 @@ SDLApp::SDLApp(unsigned int m_screenWidth, unsigned int m_screenHeight) :
 
 bool SDLApp::init()
 {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC) < 0)
 	{
 		cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << endl;
 		return false;
@@ -67,6 +67,23 @@ bool SDLApp::init()
 		if (m_controller == nullptr)
 		{
 			cerr << "Warning: Unable to open game controller! SDL Error: " << SDL_GetError() << endl;
+		}
+		else
+		{
+			//Get controller haptic device
+			m_haptic = shared_ptr<SDL_Haptic>(SDL_HapticOpenFromJoystick(SDL_GameControllerGetJoystick(m_controller.get())), SDLHapticDeleter());
+			if (m_haptic == NULL)
+			{
+				cerr << "Warning: Controller does not support haptics! SDL Error: " << SDL_GetError() << endl;
+			}
+			else
+			{
+				//Get initialize rumble
+				if (SDL_HapticRumbleInit(m_haptic.get()) < 0)
+				{
+					cerr << "Warning: Unable to initialize rumble! SDL Error: " << SDL_GetError() << endl;
+				}
+			}
 		}
 	}
 

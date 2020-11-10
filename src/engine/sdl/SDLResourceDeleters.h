@@ -17,6 +17,14 @@ struct SDLGameControllerDeleter
 	}
 };
 
+struct SDLHapticDeleter
+{
+	void operator()(SDL_Haptic* haptic)
+	{
+		SDL_HapticClose(haptic);
+	}
+};
+
 struct SDLRendererDeleter
 {
 	void operator()(SDL_Renderer* renderer)

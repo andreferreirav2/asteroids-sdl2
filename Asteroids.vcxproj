@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_image-2.0.5\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2-2.0.12\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_image-2.0.5\lib\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2-2.0.12\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_image-2.0.5\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_mixer-2.0.4\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2-2.0.12\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_mixer-2.0.4\lib\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_image-2.0.5\lib\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2-2.0.12\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -122,7 +122,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,6 +142,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\engine\sdl\SDLAppMixer.cpp" />
+    <ClCompile Include="src\game\systems\SoundFxPlayer.cpp" />
     <ClCompile Include="src\game\systems\ShipGameController.cpp" />
     <ClCompile Include="src\game\systems\BoundariesFlipper.cpp" />
     <ClCompile Include="src\engine\sdl\SDLAppInputs.cpp" />
@@ -155,7 +157,10 @@
     <ClCompile Include="src\engine\sdl\SDLApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\game\components\SoundFXSDL.h" />
     <ClInclude Include="src\game\components\Boundless.h" />
+    <ClInclude Include="src\game\components\Weapon.h" />
+    <ClInclude Include="src\game\systems\SoundFxPlayer.h" />
     <ClInclude Include="src\game\systems\ShipGameController.h" />
     <ClInclude Include="src\game\systems\BoundariesFlipper.h" />
     <ClInclude Include="src\engine\sdl\LoadedTexture.h" />

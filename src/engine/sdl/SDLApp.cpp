@@ -1,6 +1,7 @@
 #include "SDLApp.h"
 #include "SDLResourceDeleters.h"
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 #include <iostream>
 #include <memory>
 
@@ -95,11 +96,19 @@ bool SDLApp::init()
 		return false;
 	}
 
+	//Initialize SDL_mixer
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	{
+		cerr << "SDL_mixer could not initialize! SDL_mixer Error: " << IMG_GetError() << endl;
+		return false;
+	}
+
 	return true;
 }
 
 void SDLApp::close()
 {
+	Mix_Quit();
 	IMG_Quit();
 	SDL_Quit();
 }

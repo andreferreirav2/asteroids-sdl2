@@ -6,12 +6,15 @@
 #include "components/RigidBody.h"
 #include "components/Engine.h"
 #include "components/SpriteSDL.h"
+#include "components/SoundFXSDL.h"
 #include "components/ShipManualControls.h"
 #include "components/Boundless.h"
+#include "components/Weapon.h"
 #include "systems/PhysicsDynamics.h"
 #include "systems/SDLRenderer.h"
 #include "systems/ShipKeyboardController.h"
 #include "systems/ShipGameController.h"
+#include "systems/SoundFxPlayer.h"
 #include "systems/EnginesThrusters.h"
 #include "systems/BoundariesFlipper.h"
 #include <stdio.h>
@@ -85,6 +88,7 @@ int main(int argc, char* args[])
 	// Pre load assets
 	app.loadTexture(string("assets/sprites/ships.png"));
 	app.loadTexture(string("assets/sprites/sky.jpeg"));
+	app.getMusic(string("assets/audio/shoot.wav"));
 
 	ECSManager manager;
 
@@ -95,6 +99,8 @@ int main(int argc, char* args[])
 	manager.addComponent(ship, make_shared<Engine>(1.0f, 0.3f));
 	manager.addComponent(ship, make_shared<ShipManualControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE));
 	manager.addComponent(ship, make_shared<Boundless>());
+	manager.addComponent(ship, make_shared<Weapon>(0.3f));
+	manager.addComponent(ship, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
 
 	ShipKeyboardController shipKeyboardController = ShipKeyboardController();
 	ShipGameController shipGameController = ShipGameController();
@@ -102,6 +108,7 @@ int main(int argc, char* args[])
 	PhysicsDynamics physicsDynamics = PhysicsDynamics();
 	BoundariesFlipper boundariesFlipper = BoundariesFlipper({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT });
 	SDLRenderer sdlRenderer = SDLRenderer(app);
+	SoundFxPlayer soundFxPlayer = SoundFxPlayer(app);
 
 	shipKeyboardController.onStart(manager);
 	shipGameController.onStart(manager);
@@ -109,6 +116,7 @@ int main(int argc, char* args[])
 	physicsDynamics.onStart(manager);
 	boundariesFlipper.onStart(manager);
 	sdlRenderer.onStart(manager);
+	soundFxPlayer.onStart(manager);
 
 	while (true)
 	{
@@ -126,6 +134,7 @@ int main(int argc, char* args[])
 		physicsDynamics.onUpdate(manager, inputs, dt); // apply velocity to position
 		boundariesFlipper.onUpdate(manager, inputs, dt); // apply boundaries or 
 		sdlRenderer.onUpdate(manager, inputs, dt);
+		soundFxPlayer.onUpdate(manager, inputs, dt);
 
 		Sleep(1);
 	}

@@ -3,6 +3,7 @@
 #include "../Types.h"
 #include "LoadedTexture.h"
 #include <SDL.h>
+#include <SDL_mixer.h>
 #include <memory>
 #include <string>
 #include <set>
@@ -22,6 +23,12 @@ public:
 	std::shared_ptr<LoadedTexture> getTexture(std::string const& imagePath);
 
 	void hapticRumble(float strength, unsigned int duration);
+
+	std::shared_ptr<Mix_Music> getMusic(std::string const& path);
+	std::shared_ptr<Mix_Chunk> getSoundFX(std::string const& path);
+	void playMusic(std::shared_ptr<Mix_Music> music);
+	void playSoundFX(std::shared_ptr<Mix_Chunk> soundFX);
+
 
 	void clear(colorR8G8B8A8 const& color);
 	void drawTextureFullscreen(std::shared_ptr<SDL_Texture> const& texture);
@@ -43,4 +50,7 @@ private:
 	std::shared_ptr<SDL_Haptic> m_haptic = nullptr;
 	std::shared_ptr<Inputs> m_inputs = std::make_shared<Inputs>();
 	std::map<std::string, std::shared_ptr<LoadedTexture>> m_textureCache = {};
+	std::map<std::string, std::shared_ptr<Mix_Chunk>> m_soundFXCache = {};
+	std::map<std::string, std::shared_ptr<Mix_Music>> m_musicCache = {};
+
 };

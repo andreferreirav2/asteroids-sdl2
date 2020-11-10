@@ -2,6 +2,7 @@
 #include "../components/RigidBody.h"
 #include "../components/Transform.h"
 #include "../components/Engine.h"
+#include "../components/Weapon.h"
 #include "../components/ShipManualControls.h"
 
 #include <iostream>
@@ -17,6 +18,7 @@ void ShipKeyboardController::onUpdate(ECSManager& manager, std::shared_ptr<Input
 	{
 		auto shipControls = manager.getComponentOfType<ShipManualControls>(e);
 		auto engine = manager.getComponentOfType<Engine>(e);
+		auto weapon = manager.getComponentOfType<Weapon>(e);
 		if (shipControls && engine)
 		{
 			if (inputs->isPressed(shipControls->accelerate))
@@ -42,13 +44,14 @@ void ShipKeyboardController::onUpdate(ECSManager& manager, std::shared_ptr<Input
 			}
 		}
 
-		/*
-		auto primaryWeapon = manager.getComponentOfType<PrimaryWeapon>(e);
-		if (primaryWeapon)
+		if (shipControls && weapon)
 		{
-			primaryWeapon->shooting = inputs->isPressed(shipControls->shoot);
+			// TODO mix with weapon system to update time bewteen shots
+			weapon->shooting = inputs->isPressed(shipControls->shoot);
 		}
 
+
+		/*
 		auto secondaryWeapon = manager.getComponentOfType<SecondaryWeapon>(e);
 		if (secondaryWeapon)
 		{

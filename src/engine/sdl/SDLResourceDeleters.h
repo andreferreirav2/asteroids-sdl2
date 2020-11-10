@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL.h>
+#include <SDL_mixer.h>
 
 struct SDLWindowDeleter
 {
@@ -22,6 +23,22 @@ struct SDLHapticDeleter
 	void operator()(SDL_Haptic* haptic)
 	{
 		SDL_HapticClose(haptic);
+	}
+};
+
+struct MixMusicDeleter
+{
+	void operator()(Mix_Music* music)
+	{
+		Mix_FreeMusic(music);
+	}
+};
+
+struct MixChunkDeleter
+{
+	void operator()(Mix_Chunk* chunk)
+	{
+		Mix_FreeChunk(chunk);
 	}
 };
 

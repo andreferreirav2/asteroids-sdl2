@@ -40,6 +40,12 @@
     <ClCompile Include="src\game\systems\ShipGameController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\engine\sdl\SDLAppMixer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\systems\SoundFxPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\engine\ecs\Component.h">
@@ -79,5 +85,8 @@
     <ClInclude Include="src\game\systems\BoundariesFlipper.h" />
     <ClInclude Include="src\game\components\ShipManualControls.h" />
     <ClInclude Include="src\game\systems\ShipGameController.h" />
+    <ClInclude Include="src\game\components\SoundFXSDL.h" />
+    <ClInclude Include="src\game\systems\SoundFxPlayer.h" />
+    <ClInclude Include="src\game\components\Weapon.h" />
   </ItemGroup>
 </Project>

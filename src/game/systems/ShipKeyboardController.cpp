@@ -41,8 +41,7 @@ void ShipKeyboardController::onUpdate(ECSManager& manager, std::shared_ptr<Input
 
 		if (shipControls && weapon)
 		{
-			// TODO mix with weapon system to update time bewteen shots
-			weapon->shooting = inputs->isPressed(shipControls->shoot);
+			weapon->setTrigger(inputs->isPressed(shipControls->shoot));
 		}
 
 

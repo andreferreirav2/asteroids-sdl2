@@ -7,15 +7,20 @@ SDLRenderer::SDLRenderer(SDLApp& sdlApp) :
 {
 }
 
+void SDLRenderer::setTexture(std::shared_ptr<SpriteSDL> sprite)
+{
+	sprite->loadedTexture = m_sdlApp.getTexture(sprite->path); // Reuse same texture for all sprites, by path
+	if (sprite->size.x == 0 && sprite->size.y == 0)
+	{
+		sprite->size = sprite->loadedTexture->dimentions;
+	}
+}
+
 void SDLRenderer::onStart(ECSManager& manager)
 {
 	for (auto& sprite : manager.getAllComponentsOfType<SpriteSDL>())
 	{
-		sprite->loadedTexture = m_sdlApp.getTexture(sprite->path); // Reuse same texture for all sprites, by path
-		if (sprite->size.x == 0 && sprite->size.y == 0)
-		{
-			sprite->size = sprite->loadedTexture->dimentions;
-		}
+		setTexture(sprite);
 	}
 }
 
@@ -71,6 +76,12 @@ void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 			{
 				flipType = SDL_FLIP_NONE;
 			}
+
+			if (sprite->loadedTexture == nullptr) // If sprite is new and texture is not loaded yet
+			{
+				setTexture(sprite);
+			}
+
 			m_sdlApp.drawTexture(
 				sprite->loadedTexture->texture,
 				sprite->cliping,

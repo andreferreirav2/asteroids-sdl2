@@ -35,6 +35,7 @@ void PhysicsCollisions::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> in
 					float dist = sqrt(pow(transform1->position.x - transform2->position.x, 2) + pow(transform1->position.y - transform2->position.y, 2));
 					if (dist < collider1->radius + collider2->radius)
 					{
+						std::cerr << e1 << " is touching " << e2 << std::endl;
 						collider1->collidingEntities.insert(e2);
 						collider2->collidingEntities.insert(e1);
 					}

@@ -21,6 +21,7 @@
 #include "systems/BoundariesFlipper.h"
 #include "systems/TimePassing.h"
 #include "systems/PhysicsCollisions.h"
+#include "systems/WeaponFiring.h"
 #include <stdio.h>
 #include <iostream>
 #include <typeinfo>
@@ -35,6 +36,9 @@ using namespace std;
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
+
+#define RAD_2_DEG 57.2958f
+#define DEG_2_RAG 0.0174533f
 
 int PLAYER_COLLIDER_LAYER = 1 << 0;
 int PLAYER_WEAPON_COLLIDER_LAYER = 1 << 1;
@@ -120,7 +124,15 @@ int main(int argc, char* args[])
 	manager.addComponent(ship, make_shared<Engine>(300.0f, 150.f));
 	manager.addComponent(ship, make_shared<ShipManualControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE));
 	manager.addComponent(ship, make_shared<Boundless>());
-	manager.addComponent(ship, make_shared<Weapon>(0.3f));
+	manager.addComponent(ship, make_shared<Weapon>(0.3f, [&](shared_ptr<Transform> gun)
+		{
+			Entity shot = manager.createEntity();
+			auto shotRb = std::make_shared<RigidBody>(1.0f, 0.0f);
+			manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
+			manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 200 * cos(gun->rotation * DEG_2_RAG), -200 * sin(gun->rotation * DEG_2_RAG)));
+			manager.addComponent(shot, std::make_shared<SpriteSDL>(std::string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 3, 3 }), rect({ 0, 0, 64, 96 })));
+			manager.addComponent(shot, std::make_shared<CircleCollider>(2.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH));
+		}));
 	manager.addComponent(ship, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
 	manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH));
 
@@ -156,6 +168,7 @@ int main(int argc, char* args[])
 	ShipKeyboardController shipKeyboardController = ShipKeyboardController();
 	ShipGameController shipGameController = ShipGameController();
 	EnginesThrusters enginesThrusters = EnginesThrusters();
+	WeaponFiring weaponFiring = WeaponFiring();
 	PhysicsDynamics physicsDynamics = PhysicsDynamics();
 	PhysicsCollisions physicsCollisions = PhysicsCollisions();
 	BoundariesFlipper boundariesFlipper = BoundariesFlipper({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT });
@@ -166,6 +179,7 @@ int main(int argc, char* args[])
 	shipKeyboardController.onStart(manager);
 	shipGameController.onStart(manager);
 	enginesThrusters.onStart(manager);
+	weaponFiring.onStart(manager);
 	physicsDynamics.onStart(manager);
 	boundariesFlipper.onStart(manager);
 	physicsCollisions.onStart(manager);
@@ -184,6 +198,7 @@ int main(int argc, char* args[])
 		shipKeyboardController.onUpdate(manager, inputs); // pass inputs to engine / weapons
 		shipGameController.onUpdate(manager, inputs); // pass inputs to engine / weapons from controller
 		enginesThrusters.onUpdate(manager, inputs); // move all engines
+		weaponFiring.onUpdate(manager, inputs); // fire projectiles
 		physicsDynamics.onUpdate(manager, inputs); // apply velocity to position
 		boundariesFlipper.onUpdate(manager, inputs); // apply boundaries or 
 		physicsCollisions.onUpdate(manager, inputs); // check for collisions

@@ -1,10 +1,9 @@
 #include "TimePassing.h"
 #include "../components/Clock.h"
 #include <SDL.h>
+#include <iostream>
 
-#define FPS_EVERY_MS 1000.0f
-int const FPS_CAP = 60;
-int const SCREEN_TICKS_PER_FRAME = 1000 / FPS_CAP;
+#define CALC_FPS_EVERY_MS 1000.0f
 
 void TimePassing::onStart(ECSManager& manager)
 {
@@ -43,12 +42,14 @@ void TimePassing::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 	clock->currentTicks = currentTicks;
 
 	clock->fpsFrames++;
-	if (currentTicks - clock->fpsTimeSpent >= FPS_EVERY_MS)
+	if (currentTicks - clock->fpsTimeSpent >= CALC_FPS_EVERY_MS)
 	{
-		clock->fps = clock->fpsFrames * 1000 / FPS_EVERY_MS;
-		clock->mspf = FPS_EVERY_MS / clock->fps;
+		clock->fps = clock->fpsFrames * 1000 / CALC_FPS_EVERY_MS;
+		clock->mspf = CALC_FPS_EVERY_MS / clock->fps;
 
 		clock->fpsFrames = 0;
 		clock->fpsTimeSpent = currentTicks;
+
+		std::cerr << clock->fps << std::endl;
 	}
 }

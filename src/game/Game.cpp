@@ -111,7 +111,7 @@ int main(int argc, char* args[])
 	ECSManager manager;
 
 	Entity game = manager.createEntity();
-	manager.addComponent(game, make_shared<Clock>(1.0f, 60));
+	manager.addComponent(game, make_shared<Clock>(1.0f, 1000));
 
 	Entity ship = manager.createEntity();
 	manager.addComponent(ship, make_shared<Transform>(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 90.f));

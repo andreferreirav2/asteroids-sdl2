@@ -109,9 +109,13 @@ int main(int argc, char* args[])
 	}
 
 	// Pre load assets
-	app.loadTexture(string("assets/sprites/ships.png"));
-	app.loadTexture(string("assets/sprites/sky.jpeg"));
+	app.loadTexture(string("assets/sprites/atlas.png"));
 	app.getMusic(string("assets/audio/shoot.wav"));
+
+	auto shipSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 16, 24 }), rect({ 0, 0, 64, 96 }));
+	auto asteroidSmallSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0.0f, false, false, uint2({ 16, 16 }), rect({ 0, 96, 64, 64 }));
+	auto asteroidMediumSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0.0f, false, false, uint2({ 40, 40 }), rect({ 64, 0, 160, 160 }));
+	auto asteroidLargeSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0.0f, false, false, uint2({ 64, 64 }), rect({ 224, 0, 288, 288 }));
 
 	ECSManager manager;
 
@@ -121,49 +125,49 @@ int main(int argc, char* args[])
 	Entity ship = manager.createEntity();
 	manager.addComponent(ship, make_shared<Transform>(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 90.f));
 	manager.addComponent(ship, make_shared<RigidBody>(1.0f, 2.0f));
-	manager.addComponent(ship, make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 16, 24 }), rect({ 0, 0, 64, 96 })));
+	manager.addComponent(ship, shipSprite);
 	manager.addComponent(ship, make_shared<Engine>(300.0f, 150.f));
 	manager.addComponent(ship, make_shared<ShipManualControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE));
 	manager.addComponent(ship, make_shared<Boundless>());
+	manager.addComponent(ship, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
+	manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH));
 	manager.addComponent(ship, make_shared<Weapon>(0.3f, [&](shared_ptr<Transform> gun)
 		{
 			Entity shot = manager.createEntity();
 			auto shotRb = std::make_shared<RigidBody>(1.0f, 0.0f);
-			manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
+			manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation, 0.3f, 0.2f));
 			manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 200 * cos(gun->rotation * DEG_2_RAG), -200 * sin(gun->rotation * DEG_2_RAG)));
-			manager.addComponent(shot, std::make_shared<SpriteSDL>(std::string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 4, 4 }), rect({ 0, 0, 64, 96 })));
+			manager.addComponent(shot, shipSprite);
 			manager.addComponent(shot, std::make_shared<CircleCollider>(2.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH));
 			manager.addComponent(shot, make_shared<BoundariesKill>());
 
 		}));
-	manager.addComponent(ship, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
-	manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH));
 
 	// small ast
 	for (int i = 0; i < 10; i++)
 	{
 		Entity ast = manager.createEntity();
-		manager.addComponent(ast, make_shared<Transform>(0, 100 * i));
+		manager.addComponent(ast, make_shared<Transform>(0, 100 * i, i * 30.0f));
 		manager.addComponent(ast, make_shared<RigidBody>(1.0f, 0.0f, 10.0f, 0.0f));
-		manager.addComponent(ast, make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), i * 30.0f, false, false, uint2({ 16, 16 }), rect({ 0, 96, 64, 64 })));
+		manager.addComponent(ast, asteroidSmallSprite);
 	}
 
 	// medium ast
 	for (int i = 0; i < 10; i++)
 	{
 		Entity ast = manager.createEntity();
-		manager.addComponent(ast, make_shared<Transform>(0, 100 * i));
+		manager.addComponent(ast, make_shared<Transform>(0, 100 * i, i * 20.0f));
 		manager.addComponent(ast, make_shared<RigidBody>(1.0f, 0.0f, 10.0f, 0.0f));
-		manager.addComponent(ast, make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), i * 30.0f, false, false, uint2({ 40, 40 }), rect({ 64, 0, 160, 160 })));
+		manager.addComponent(ast, asteroidMediumSprite);
 	}
 
 	// big ast
 	for (int i = 0; i < 10; i++)
 	{
 		Entity ast = manager.createEntity();
-		manager.addComponent(ast, make_shared<Transform>(0, 100 * i));
+		manager.addComponent(ast, make_shared<Transform>(0, 100 * i, i * 10.0f));
 		manager.addComponent(ast, make_shared<RigidBody>(1.0f, 0.0f, 10.0f, 0.0f));
-		manager.addComponent(ast, make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), i * 30.0f, false, false, uint2({ 64, 64 }), rect({ 224, 0, 288, 288 })));
+		manager.addComponent(ast, asteroidLargeSprite);
 		manager.addComponent(ast, make_shared<CircleCollider>(32.0f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH));
 	}
 

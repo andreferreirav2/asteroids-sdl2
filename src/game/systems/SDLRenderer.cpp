@@ -82,11 +82,13 @@ void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 				setTexture(sprite);
 			}
 
+			unsigned int sizeX = sprite->size.x * transform->scale.x;
+			unsigned int sizeY = sprite->size.y * transform->scale.y;
 			m_sdlApp.drawTexture(
 				sprite->loadedTexture->texture,
 				sprite->cliping,
-				{ static_cast<int>(transform->position.x - sprite->size.x / 2), static_cast<int>(transform->position.y - sprite->size.y / 2),
-				  sprite->size.x, sprite->size.y },
+				{ static_cast<int>(transform->position.x - sizeX / 2), static_cast<int>(transform->position.y - sizeY / 2),
+				  sizeX, sizeY },
 				-transform->rotation - sprite->rotationAngle,
 				flipType);
 		}

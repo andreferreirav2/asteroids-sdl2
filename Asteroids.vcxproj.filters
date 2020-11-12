@@ -49,6 +49,9 @@
     <ClCompile Include="src\game\systems\TimePassing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\systems\PhysicsCollisions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\engine\ecs\Component.h">
@@ -93,5 +96,7 @@
     <ClInclude Include="src\game\components\Weapon.h" />
     <ClInclude Include="src\game\components\Clock.h" />
     <ClInclude Include="src\game\systems\TimePassing.h" />
+    <ClInclude Include="src\game\systems\PhysicsCollisions.h" />
+    <ClInclude Include="src\game\components\CircleCollider.h" />
   </ItemGroup>
 </Project>

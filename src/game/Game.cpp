@@ -11,6 +11,7 @@
 #include "components/Boundless.h"
 #include "components/Weapon.h"
 #include "components/Clock.h"
+#include "components/CircleCollider.h"
 #include "systems/PhysicsDynamics.h"
 #include "systems/SDLRenderer.h"
 #include "systems/ShipKeyboardController.h"
@@ -19,6 +20,7 @@
 #include "systems/EnginesThrusters.h"
 #include "systems/BoundariesFlipper.h"
 #include "systems/TimePassing.h"
+#include "systems/PhysicsCollisions.h"
 #include <stdio.h>
 #include <iostream>
 #include <typeinfo>
@@ -33,6 +35,18 @@ using namespace std;
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
+
+int PLAYER_COLLIDER_LAYER = 1 << 0;
+int PLAYER_WEAPON_COLLIDER_LAYER = 1 << 1;
+int ENEMY_COLLIDER_LAYER = 1 << 2;
+int ENEMY_WEAPON_COLLIDER_LAYER = 1 << 3;
+int ASTEROIDS_COLLIDER_LAYER = 1 << 4;
+
+int PLAYER_COLLIDES_WITH = ENEMY_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
+int PLAYER_WEAPON_COLLIDES_WITH = ENEMY_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
+int ENEMY_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;
+int ENEMY_WEAPON_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
+int ASTEROIDS_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER;
 
 
 void test_manager()
@@ -100,20 +114,50 @@ int main(int argc, char* args[])
 	manager.addComponent(game, make_shared<Clock>(1.0f, 60));
 
 	Entity ship = manager.createEntity();
-	manager.addComponent(ship, make_shared<Transform>());
+	manager.addComponent(ship, make_shared<Transform>(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 90.f));
 	manager.addComponent(ship, make_shared<RigidBody>(1.0f, 2.0f));
-	manager.addComponent(ship, make_shared<SpriteSDL>(string("assets/sprites/ships.png"), -90.0f, false, false, uint2({ 16, 22 }), rect({ 20, 368, 396, 510 })));
+	manager.addComponent(ship, make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 16, 24 }), rect({ 0, 0, 64, 96 })));
 	manager.addComponent(ship, make_shared<Engine>(300.0f, 150.f));
 	manager.addComponent(ship, make_shared<ShipManualControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE));
 	manager.addComponent(ship, make_shared<Boundless>());
 	manager.addComponent(ship, make_shared<Weapon>(0.3f));
 	manager.addComponent(ship, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
+	manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH));
+
+	// small ast
+	for (int i = 0; i < 10; i++)
+	{
+		Entity ast = manager.createEntity();
+		manager.addComponent(ast, make_shared<Transform>(0, 100 * i));
+		manager.addComponent(ast, make_shared<RigidBody>(1.0f, 0.0f, 10.0f, 0.0f));
+		manager.addComponent(ast, make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), i * 30.0f, false, false, uint2({ 16, 16 }), rect({ 0, 96, 64, 64 })));
+	}
+
+	// medium ast
+	for (int i = 0; i < 10; i++)
+	{
+		Entity ast = manager.createEntity();
+		manager.addComponent(ast, make_shared<Transform>(0, 100 * i));
+		manager.addComponent(ast, make_shared<RigidBody>(1.0f, 0.0f, 10.0f, 0.0f));
+		manager.addComponent(ast, make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), i * 30.0f, false, false, uint2({ 40, 40 }), rect({ 64, 0, 160, 160 })));
+	}
+
+	// big ast
+	for (int i = 0; i < 10; i++)
+	{
+		Entity ast = manager.createEntity();
+		manager.addComponent(ast, make_shared<Transform>(0, 100 * i));
+		manager.addComponent(ast, make_shared<RigidBody>(1.0f, 0.0f, 10.0f, 0.0f));
+		manager.addComponent(ast, make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), i * 30.0f, false, false, uint2({ 64, 64 }), rect({ 224, 0, 288, 288 })));
+		manager.addComponent(ast, make_shared<CircleCollider>(32.0f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH));
+	}
 
 	TimePassing timePassing = TimePassing();
 	ShipKeyboardController shipKeyboardController = ShipKeyboardController();
 	ShipGameController shipGameController = ShipGameController();
 	EnginesThrusters enginesThrusters = EnginesThrusters();
 	PhysicsDynamics physicsDynamics = PhysicsDynamics();
+	PhysicsCollisions physicsCollisions = PhysicsCollisions();
 	BoundariesFlipper boundariesFlipper = BoundariesFlipper({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT });
 	SDLRenderer sdlRenderer = SDLRenderer(app);
 	SoundFxPlayer soundFxPlayer = SoundFxPlayer(app);
@@ -124,6 +168,7 @@ int main(int argc, char* args[])
 	enginesThrusters.onStart(manager);
 	physicsDynamics.onStart(manager);
 	boundariesFlipper.onStart(manager);
+	physicsCollisions.onStart(manager);
 	sdlRenderer.onStart(manager);
 	soundFxPlayer.onStart(manager);
 
@@ -141,6 +186,7 @@ int main(int argc, char* args[])
 		enginesThrusters.onUpdate(manager, inputs); // move all engines
 		physicsDynamics.onUpdate(manager, inputs); // apply velocity to position
 		boundariesFlipper.onUpdate(manager, inputs); // apply boundaries or 
+		physicsCollisions.onUpdate(manager, inputs); // check for collisions
 		sdlRenderer.onUpdate(manager, inputs);
 		soundFxPlayer.onUpdate(manager, inputs);
 	}

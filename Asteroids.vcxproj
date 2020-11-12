@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\sdl\SDLAppMixer.cpp" />
+    <ClCompile Include="src\game\systems\PhysicsCollisions.cpp" />
     <ClCompile Include="src\game\systems\TimePassing.cpp" />
     <ClCompile Include="src\game\systems\SoundFxPlayer.cpp" />
     <ClCompile Include="src\game\systems\ShipGameController.cpp" />
@@ -158,10 +159,12 @@
     <ClCompile Include="src\engine\sdl\SDLApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\game\components\CircleCollider.h" />
     <ClInclude Include="src\game\components\Clock.h" />
     <ClInclude Include="src\game\components\SoundFXSDL.h" />
     <ClInclude Include="src\game\components\Boundless.h" />
     <ClInclude Include="src\game\components\Weapon.h" />
+    <ClInclude Include="src\game\systems\PhysicsCollisions.h" />
     <ClInclude Include="src\game\systems\TimePassing.h" />
     <ClInclude Include="src\game\systems\SoundFxPlayer.h" />
     <ClInclude Include="src\game\systems\ShipGameController.h" />

@@ -21,10 +21,11 @@ void SDLRenderer::onStart(ECSManager& manager)
 
 void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
-	m_sdlApp.clear({ 0xff, 0xff, 0xff, 0xff });
+	m_sdlApp.clear({ 0x00, 0x00, 0x00, 0xff });
 
-	auto shipTexture = m_sdlApp.getTexture("assets/sprites/sky.jpeg");
-	m_sdlApp.drawTextureFullscreen(shipTexture->texture);
+	/*
+	auto sky = m_sdlApp.getTexture("assets/sprites/sky.jpeg");
+	m_sdlApp.drawTextureFullscreen(sky->texture);
 
 	m_sdlApp.drawRect(
 		{ static_cast<int>(m_sdlApp.getScreenWidth() / 4), static_cast<int>(m_sdlApp.getScreenHeigth() / 4),
@@ -49,6 +50,7 @@ void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 			{ m_sdlApp.getScreenWidth() / 2, i },
 			{ 0xFF, 0xFF, 0x00, 0xFF });
 	}
+	*/
 
 	for (auto& e : manager.getAllEntitiesWithComponentType<Transform>())
 	{

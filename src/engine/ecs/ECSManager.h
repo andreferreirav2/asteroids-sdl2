@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include "Entity.h"
 #include "Component.h"
 #include "System.h"
@@ -32,7 +32,7 @@ public:
 			return;
 		}
 
-		ComponentType componentType = ComponentType(typeid(*component).name());
+		ComponentType componentType = ComponentType(typeid(*component).hash_code());
 		auto it = m_entityToComponentTypeToComponent.find(entity);
 		if (it != m_entityToComponentTypeToComponent.end())  // if entity already has components
 		{
@@ -57,7 +57,7 @@ public:
 	template <typename T>
 	void removeComponentOfType(Entity entity)
 	{
-		ComponentType componentType = GetComponentType<T>();
+		static ComponentType componentType = GetComponentType<T>();
 
 		auto it = m_entityToComponentTypeToComponent.find(entity);
 		if (it != m_entityToComponentTypeToComponent.end())
@@ -75,7 +75,7 @@ public:
 	template <typename T>
 	std::shared_ptr<T> getComponentOfType(Entity entity)
 	{
-		ComponentType componentType = GetComponentType<T>();
+		static ComponentType componentType = GetComponentType<T>();
 		auto it = m_entityToComponentTypeToComponent.find(entity);
 		if (it != m_entityToComponentTypeToComponent.end())
 		{
@@ -91,7 +91,7 @@ public:
 	template <typename T>
 	std::vector<Entity> getAllEntitiesWithComponentType()
 	{
-		ComponentType componentType = GetComponentType<T>();
+		static ComponentType componentType = GetComponentType<T>();
 		std::vector<Entity> entities = {};
 
 		for (auto const& entityToComponent : m_componentTypeToEntityToComponent[componentType])
@@ -105,7 +105,7 @@ public:
 	template <typename T>
 	std::vector<std::shared_ptr<T>> getAllComponentsOfType()
 	{
-		ComponentType componentType = GetComponentType<T>();
+		static ComponentType componentType = GetComponentType<T>();
 		std::vector<std::shared_ptr<T>> components = {};
 
 		for (auto const& entityToComponent : m_componentTypeToEntityToComponent[componentType])
@@ -127,7 +127,7 @@ private:
 		componentType: component
 		componentType: component
 	*/
-	std::map<Entity, std::map<ComponentType, std::shared_ptr<Component>>> m_entityToComponentTypeToComponent;
+	std::unordered_map<Entity, std::unordered_map<ComponentType, std::shared_ptr<Component>>> m_entityToComponentTypeToComponent;
 
 	/*
 	componentType:
@@ -137,6 +137,6 @@ private:
 		entity: component
 		entity: component
 	*/
-	std::map<ComponentType, std::map<Entity, std::shared_ptr<Component>>> m_componentTypeToEntityToComponent;
+	std::unordered_map<ComponentType, std::unordered_map<Entity, std::shared_ptr<Component>>> m_componentTypeToEntityToComponent;
 };
 

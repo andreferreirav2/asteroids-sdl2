@@ -113,6 +113,7 @@ int main(int argc, char* args[])
 	app.getMusic(string("assets/audio/shoot.wav"));
 
 	auto shipSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 16, 24 }), rect({ 0, 0, 64, 96 }));
+	auto shotSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 2, 3 }), rect({ 0, 160, 32, 48 }));
 	auto asteroidSmallSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0.0f, false, false, uint2({ 16, 16 }), rect({ 0, 96, 64, 64 }));
 	auto asteroidMediumSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0.0f, false, false, uint2({ 40, 40 }), rect({ 64, 0, 160, 160 }));
 	auto asteroidLargeSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0.0f, false, false, uint2({ 64, 64 }), rect({ 224, 0, 288, 288 }));
@@ -135,33 +136,35 @@ int main(int argc, char* args[])
 		{
 			Entity shot = manager.createEntity();
 			auto shotRb = std::make_shared<RigidBody>(1.0f, 0.0f);
-			manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation, 0.3f, 0.2f));
+			manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
 			manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 200 * cos(gun->rotation * DEG_2_RAG), -200 * sin(gun->rotation * DEG_2_RAG)));
-			manager.addComponent(shot, shipSprite);
-			manager.addComponent(shot, std::make_shared<CircleCollider>(2.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH));
+			manager.addComponent(shot, shotSprite);
+			manager.addComponent(shot, std::make_shared<CircleCollider>(4.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH));
 			manager.addComponent(shot, make_shared<BoundariesKill>());
 		}));
 
 	// small ast
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 20; i++)
 	{
 		Entity ast = manager.createEntity();
 		manager.addComponent(ast, make_shared<Transform>(0, 100 * i, i * 30.0f));
 		manager.addComponent(ast, make_shared<RigidBody>(1.0f, 0.0f, 10.0f, 0.0f));
 		manager.addComponent(ast, asteroidSmallSprite);
+		manager.addComponent(ast, make_shared<CircleCollider>(8.0f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH));
 	}
 
 	// medium ast
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 20; i++)
 	{
 		Entity ast = manager.createEntity();
 		manager.addComponent(ast, make_shared<Transform>(0, 100 * i, i * 20.0f));
 		manager.addComponent(ast, make_shared<RigidBody>(1.0f, 0.0f, 10.0f, 0.0f));
 		manager.addComponent(ast, asteroidMediumSprite);
+		manager.addComponent(ast, make_shared<CircleCollider>(20.0f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH));
 	}
 
 	// big ast
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 20; i++)
 	{
 		Entity ast = manager.createEntity();
 		manager.addComponent(ast, make_shared<Transform>(0, 100 * i, i * 10.0f));
@@ -192,7 +195,7 @@ int main(int argc, char* args[])
 	sdlRenderer.onStart(manager);
 	soundFxPlayer.onStart(manager);
 
-	while (true)
+	while (true && manager.getComponentOfType<Clock>(game)->currentTicks < 5000)
 	{
 		auto inputs = app.parseInputs(); // parse inputs from SDL
 		if (inputs->isPressed(Key::QUIT))

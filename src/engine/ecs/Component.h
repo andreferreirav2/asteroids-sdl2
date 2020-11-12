@@ -2,12 +2,14 @@
 #include <typeinfo>
 #include <string>
 
+
 struct Component
 {
 	virtual ~Component() = default;
 };
 
-typedef std::string ComponentType;
+
+typedef size_t ComponentType;
 
 template <class T>
-ComponentType GetComponentType() { return std::string(typeid(T).name()); }
+constexpr ComponentType GetComponentType() { return typeid(T).hash_code(); }

@@ -2,6 +2,18 @@
 #include "../components/Clock.h"
 #include <SDL.h>
 
+void TimePassing::onStart(ECSManager& manager)
+{
+	for (Entity e : manager.getAllEntitiesWithComponentType<Clock>())
+	{
+		auto clock = manager.getComponentOfType<Clock>(e);
+		if (clock)
+		{
+			clock->lastFrameTicks = SDL_GetTicks();
+		}
+	}
+}
+
 void TimePassing::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
 	for (Entity e : manager.getAllEntitiesWithComponentType<Clock>())

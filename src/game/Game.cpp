@@ -131,8 +131,6 @@ int main(int argc, char* args[])
 
 	while (true)
 	{
-		float dt = 0.1f;
-
 		auto inputs = app.parseInputs(); // parse inputs from SDL
 		if (inputs->isPressed(Key::QUIT))
 		{
@@ -147,8 +145,6 @@ int main(int argc, char* args[])
 		boundariesFlipper.onUpdate(manager, inputs); // apply boundaries or 
 		sdlRenderer.onUpdate(manager, inputs);
 		soundFxPlayer.onUpdate(manager, inputs);
-
-		Sleep(1);
 	}
 	return 0;
 }

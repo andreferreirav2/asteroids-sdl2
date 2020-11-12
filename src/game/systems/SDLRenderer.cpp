@@ -19,7 +19,7 @@ void SDLRenderer::onStart(ECSManager& manager)
 	}
 }
 
-void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, float dt)
+void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
 	m_sdlApp.clear({ 0xff, 0xff, 0xff, 0xff });
 

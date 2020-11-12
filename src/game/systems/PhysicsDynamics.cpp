@@ -4,12 +4,14 @@
 #include <algorithm>
 #include <math.h>
 #include "iostream"
+#include "../components/Clock.h"
 
 #define PI 3.14159265f
 #define EPSILON 0.001f
 
-void PhysicsDynamics::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, float dt)
+void PhysicsDynamics::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
+	float dt = manager.getAllComponentsOfType<Clock>()[0]->deltaTime; // What if there is no clock?
 	for (Entity e : manager.getAllEntitiesWithComponentType<RigidBody>())
 	{
 		auto rb = manager.getComponentOfType<RigidBody>(e);

@@ -1,7 +1,7 @@
 #pragma once
 #include "../../engine/ecs/ECSManager.h"
 
-class PhysicsDynamics : public System
+class TimePassing : public System
 {
 public:
 	// Inherited via System

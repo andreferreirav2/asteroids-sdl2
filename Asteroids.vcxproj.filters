@@ -46,6 +46,9 @@
     <ClCompile Include="src\game\systems\SoundFxPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\systems\TimePassing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\engine\ecs\Component.h">
@@ -88,5 +91,7 @@
     <ClInclude Include="src\game\components\SoundFXSDL.h" />
     <ClInclude Include="src\game\systems\SoundFxPlayer.h" />
     <ClInclude Include="src\game\components\Weapon.h" />
+    <ClInclude Include="src\game\components\Clock.h" />
+    <ClInclude Include="src\game\systems\TimePassing.h" />
   </ItemGroup>
 </Project>

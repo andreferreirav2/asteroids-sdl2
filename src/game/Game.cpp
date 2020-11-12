@@ -10,6 +10,7 @@
 #include "components/ShipManualControls.h"
 #include "components/Boundless.h"
 #include "components/Weapon.h"
+#include "components/Clock.h"
 #include "systems/PhysicsDynamics.h"
 #include "systems/SDLRenderer.h"
 #include "systems/ShipKeyboardController.h"
@@ -17,6 +18,7 @@
 #include "systems/SoundFxPlayer.h"
 #include "systems/EnginesThrusters.h"
 #include "systems/BoundariesFlipper.h"
+#include "systems/TimePassing.h"
 #include <stdio.h>
 #include <iostream>
 #include <typeinfo>
@@ -37,6 +39,10 @@ void test_manager()
 {
 	ECSManager manager;
 
+
+	Entity game = manager.createEntity();
+	manager.addComponent(game, make_shared<Clock>());
+
 	assert(manager.getAllComponentsOfType<Transform>().size() == 0);
 	assert(manager.getAllEntitiesWithComponentType<Transform>().size() == 0);
 	assert(manager.getAllComponentsOfType<RigidBody>().size() == 0);
@@ -51,7 +57,7 @@ void test_manager()
 
 	PhysicsDynamics physics = PhysicsDynamics();
 	cout << "(" << manager.getComponentOfType<Transform>(ship)->position.x << "," << manager.getComponentOfType<Transform>(ship)->position.y << ")" << endl;
-	physics.onUpdate(manager, nullptr, 1.0f);
+	physics.onUpdate(manager, nullptr);
 	cout << "(" << manager.getComponentOfType<Transform>(ship)->position.x << "," << manager.getComponentOfType<Transform>(ship)->position.y << ")" << endl;
 
 	assert(manager.getAllComponentsOfType<Transform>().size() == 2);
@@ -92,6 +98,9 @@ int main(int argc, char* args[])
 
 	ECSManager manager;
 
+	Entity game = manager.createEntity();
+	manager.addComponent(game, make_shared<Clock>());
+
 	Entity ship = manager.createEntity();
 	manager.addComponent(ship, make_shared<Transform>());
 	manager.addComponent(ship, make_shared<RigidBody>(1.0f, 2.0f));
@@ -102,6 +111,7 @@ int main(int argc, char* args[])
 	manager.addComponent(ship, make_shared<Weapon>(0.3f));
 	manager.addComponent(ship, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
 
+	TimePassing timePassing = TimePassing();
 	ShipKeyboardController shipKeyboardController = ShipKeyboardController();
 	ShipGameController shipGameController = ShipGameController();
 	EnginesThrusters enginesThrusters = EnginesThrusters();
@@ -110,6 +120,7 @@ int main(int argc, char* args[])
 	SDLRenderer sdlRenderer = SDLRenderer(app);
 	SoundFxPlayer soundFxPlayer = SoundFxPlayer(app);
 
+	timePassing.onStart(manager);
 	shipKeyboardController.onStart(manager);
 	shipGameController.onStart(manager);
 	enginesThrusters.onStart(manager);
@@ -118,14 +129,9 @@ int main(int argc, char* args[])
 	sdlRenderer.onStart(manager);
 	soundFxPlayer.onStart(manager);
 
-	Uint32 const startTime = SDL_GetTicks();
-	Uint32 lastTick = startTime;
 	while (true)
 	{
-		// TODO: Move to GameTimer class?
-		Uint32 currentTicks = SDL_GetTicks();
-		auto dt = static_cast<float>(currentTicks - lastTick) / 1000.0f;
-		lastTick = currentTicks;
+		float dt = 0.1f;
 
 		auto inputs = app.parseInputs(); // parse inputs from SDL
 		if (inputs->isPressed(Key::QUIT))
@@ -133,13 +139,14 @@ int main(int argc, char* args[])
 			break;
 		}
 
-		shipKeyboardController.onUpdate(manager, inputs, dt); // pass inputs to engine / weapons
-		shipGameController.onUpdate(manager, inputs, dt); // pass inputs to engine / weapons from controller
-		enginesThrusters.onUpdate(manager, inputs, dt); // move all engines
-		physicsDynamics.onUpdate(manager, inputs, dt); // apply velocity to position
-		boundariesFlipper.onUpdate(manager, inputs, dt); // apply boundaries or 
-		sdlRenderer.onUpdate(manager, inputs, dt);
-		soundFxPlayer.onUpdate(manager, inputs, dt);
+		timePassing.onUpdate(manager, inputs); // calculate passage of time
+		shipKeyboardController.onUpdate(manager, inputs); // pass inputs to engine / weapons
+		shipGameController.onUpdate(manager, inputs); // pass inputs to engine / weapons from controller
+		enginesThrusters.onUpdate(manager, inputs); // move all engines
+		physicsDynamics.onUpdate(manager, inputs); // apply velocity to position
+		boundariesFlipper.onUpdate(manager, inputs); // apply boundaries or 
+		sdlRenderer.onUpdate(manager, inputs);
+		soundFxPlayer.onUpdate(manager, inputs);
 
 		Sleep(1);
 	}

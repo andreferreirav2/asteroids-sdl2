@@ -3,12 +3,14 @@
 #include "../components/Transform.h"
 #include "../components/RigidBody.h"
 #include <cmath>
+#include "../components/Clock.h"
 
 #define RAD_2_DEG 57.2958f
 #define DEG_2_RAG 0.0174533f
 
-void EnginesThrusters::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, float dt)
+void EnginesThrusters::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
+	float dt = manager.getAllComponentsOfType<Clock>()[0]->deltaTime; // What if there is no clock?
 	for (Entity e : manager.getAllEntitiesWithComponentType<Engine>())
 	{
 		auto engine = manager.getComponentOfType<Engine>(e);

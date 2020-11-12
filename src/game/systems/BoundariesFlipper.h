@@ -8,7 +8,7 @@ public:
 	BoundariesFlipper(rect playArea);
 
 	// Inherited via System
-	virtual void onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, float dt) override;
+	virtual void onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs) override;
 private:
 	rect m_playArea;
 };

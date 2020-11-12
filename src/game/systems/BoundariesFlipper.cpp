@@ -6,7 +6,7 @@
 
 BoundariesFlipper::BoundariesFlipper(rect playArea) : m_playArea(playArea) {}
 
-void BoundariesFlipper::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, float dt)
+void BoundariesFlipper::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
 	for (Entity e : manager.getAllEntitiesWithComponentType<Boundless>())
 	{

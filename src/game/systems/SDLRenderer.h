@@ -10,7 +10,7 @@ public:
 
 	// Inherited via System
 	virtual void onStart(ECSManager& manager) override;
-	void onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, float dt) override;
+	void onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs) override;
 
 private:
 	SDLApp& m_sdlApp;

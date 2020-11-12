@@ -17,7 +17,7 @@ void SoundFxPlayer::onStart(ECSManager& manager)
 	}
 }
 
-void SoundFxPlayer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, float dt)
+void SoundFxPlayer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
 	for (Entity e : manager.getAllEntitiesWithComponentType<SoundFXSDL>())
 	{

@@ -148,7 +148,7 @@
     <ClCompile Include="src\game\systems\TimePassing.cpp" />
     <ClCompile Include="src\game\systems\SoundFxPlayer.cpp" />
     <ClCompile Include="src\game\systems\ShipGameController.cpp" />
-    <ClCompile Include="src\game\systems\BoundariesFlipper.cpp" />
+    <ClCompile Include="src\game\systems\BoundariesChecker.cpp" />
     <ClCompile Include="src\engine\sdl\SDLAppInputs.cpp" />
     <ClCompile Include="src\engine\sdl\SDLAppRendering.cpp" />
     <ClCompile Include="src\game\systems\EnginesThrusters.cpp" />
@@ -160,6 +160,7 @@
     <ClCompile Include="src\engine\sdl\SDLApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\game\components\BoundariesKill.h" />
     <ClInclude Include="src\game\components\CircleCollider.h" />
     <ClInclude Include="src\game\components\Clock.h" />
     <ClInclude Include="src\game\components\SoundFXSDL.h" />
@@ -170,7 +171,7 @@
     <ClInclude Include="src\game\systems\TimePassing.h" />
     <ClInclude Include="src\game\systems\SoundFxPlayer.h" />
     <ClInclude Include="src\game\systems\ShipGameController.h" />
-    <ClInclude Include="src\game\systems\BoundariesFlipper.h" />
+    <ClInclude Include="src\game\systems\BoundariesChecker.h" />
     <ClInclude Include="src\engine\sdl\LoadedTexture.h" />
     <ClInclude Include="src\engine\sdl\SDLResourceDeleters.h" />
     <ClInclude Include="src\engine\Types.h" />

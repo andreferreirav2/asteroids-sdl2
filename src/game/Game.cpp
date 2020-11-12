@@ -9,6 +9,7 @@
 #include "components/SoundFXSDL.h"
 #include "components/ShipManualControls.h"
 #include "components/Boundless.h"
+#include "components/BoundariesKill.h"
 #include "components/Weapon.h"
 #include "components/Clock.h"
 #include "components/CircleCollider.h"
@@ -18,7 +19,7 @@
 #include "systems/ShipGameController.h"
 #include "systems/SoundFxPlayer.h"
 #include "systems/EnginesThrusters.h"
-#include "systems/BoundariesFlipper.h"
+#include "systems/BoundariesChecker.h"
 #include "systems/TimePassing.h"
 #include "systems/PhysicsCollisions.h"
 #include "systems/WeaponFiring.h"
@@ -130,8 +131,10 @@ int main(int argc, char* args[])
 			auto shotRb = std::make_shared<RigidBody>(1.0f, 0.0f);
 			manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
 			manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 200 * cos(gun->rotation * DEG_2_RAG), -200 * sin(gun->rotation * DEG_2_RAG)));
-			manager.addComponent(shot, std::make_shared<SpriteSDL>(std::string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 3, 3 }), rect({ 0, 0, 64, 96 })));
+			manager.addComponent(shot, std::make_shared<SpriteSDL>(std::string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 4, 4 }), rect({ 0, 0, 64, 96 })));
 			manager.addComponent(shot, std::make_shared<CircleCollider>(2.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH));
+			manager.addComponent(shot, make_shared<BoundariesKill>());
+
 		}));
 	manager.addComponent(ship, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
 	manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH));
@@ -171,7 +174,7 @@ int main(int argc, char* args[])
 	WeaponFiring weaponFiring = WeaponFiring();
 	PhysicsDynamics physicsDynamics = PhysicsDynamics();
 	PhysicsCollisions physicsCollisions = PhysicsCollisions();
-	BoundariesFlipper boundariesFlipper = BoundariesFlipper({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT });
+	BoundariesChecker boundariesChecker = BoundariesChecker({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT });
 	SDLRenderer sdlRenderer = SDLRenderer(app);
 	SoundFxPlayer soundFxPlayer = SoundFxPlayer(app);
 
@@ -181,7 +184,7 @@ int main(int argc, char* args[])
 	enginesThrusters.onStart(manager);
 	weaponFiring.onStart(manager);
 	physicsDynamics.onStart(manager);
-	boundariesFlipper.onStart(manager);
+	boundariesChecker.onStart(manager);
 	physicsCollisions.onStart(manager);
 	sdlRenderer.onStart(manager);
 	soundFxPlayer.onStart(manager);
@@ -200,7 +203,7 @@ int main(int argc, char* args[])
 		enginesThrusters.onUpdate(manager, inputs); // move all engines
 		weaponFiring.onUpdate(manager, inputs); // fire projectiles
 		physicsDynamics.onUpdate(manager, inputs); // apply velocity to position
-		boundariesFlipper.onUpdate(manager, inputs); // apply boundaries or 
+		boundariesChecker.onUpdate(manager, inputs); // apply boundaries or 
 		physicsCollisions.onUpdate(manager, inputs); // check for collisions
 		sdlRenderer.onUpdate(manager, inputs);
 		soundFxPlayer.onUpdate(manager, inputs);

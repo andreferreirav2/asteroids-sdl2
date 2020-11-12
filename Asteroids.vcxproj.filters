@@ -34,9 +34,6 @@
     <ClCompile Include="src\engine\sdl\SDLAppInputs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\systems\BoundariesFlipper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\game\systems\ShipGameController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -53,6 +50,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\game\systems\WeaponFiring.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\systems\BoundariesChecker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -91,7 +91,6 @@
     <ClInclude Include="src\engine\sdl\SDLResourceDeleters.h" />
     <ClInclude Include="src\engine\sdl\LoadedTexture.h" />
     <ClInclude Include="src\game\components\Boundless.h" />
-    <ClInclude Include="src\game\systems\BoundariesFlipper.h" />
     <ClInclude Include="src\game\components\ShipManualControls.h" />
     <ClInclude Include="src\game\systems\ShipGameController.h" />
     <ClInclude Include="src\game\components\SoundFXSDL.h" />
@@ -102,5 +101,7 @@
     <ClInclude Include="src\game\systems\PhysicsCollisions.h" />
     <ClInclude Include="src\game\components\CircleCollider.h" />
     <ClInclude Include="src\game\systems\WeaponFiring.h" />
+    <ClInclude Include="src\game\systems\BoundariesChecker.h" />
+    <ClInclude Include="src\game\components\BoundariesKill.h" />
   </ItemGroup>
 </Project>

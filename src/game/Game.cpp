@@ -140,7 +140,6 @@ int main(int argc, char* args[])
 			manager.addComponent(shot, shipSprite);
 			manager.addComponent(shot, std::make_shared<CircleCollider>(2.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH));
 			manager.addComponent(shot, make_shared<BoundariesKill>());
-
 		}));
 
 	// small ast

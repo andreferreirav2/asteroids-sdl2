@@ -7,10 +7,12 @@
 void PhysicsCollisions::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
 	// Clear all colliders
+	/*
 	for (auto& collider : manager.getAllComponentsOfType<CircleCollider>())
 	{
 		collider->collidingEntities.clear();
 	}
+	*/
 
 	auto entities = manager.getAllEntitiesWithComponentType<CircleCollider>();
 	for (auto it1 = entities.begin(); it1 != entities.end(); ++it1)
@@ -36,8 +38,10 @@ void PhysicsCollisions::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> in
 					if (dist < collider1->radius + collider2->radius)
 					{
 						std::cerr << e1 << " is touching " << e2 << std::endl;
-						collider1->collidingEntities.insert(e2);
-						collider2->collidingEntities.insert(e1);
+						manager.destroyEntity(e1);
+						manager.destroyEntity(e2);
+						//collider1->collidingEntities.insert(e2);
+						//collider2->collidingEntities.insert(e1);
 					}
 				}
 			}

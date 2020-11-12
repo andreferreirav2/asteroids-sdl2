@@ -3,9 +3,10 @@
 #include "../components/Transform.h"
 #include <algorithm>
 #include <math.h>
+#include "iostream"
 
 #define PI 3.14159265f
-#define EPSILON 0.00001f
+#define EPSILON 0.001f
 
 void PhysicsDynamics::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs, float dt)
 {
@@ -16,12 +17,11 @@ void PhysicsDynamics::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inpu
 
 		if (rb && transform)
 		{
-			float velMagnitude = sqrt(pow(rb->velocity.x, 2) + pow(rb->velocity.y, 2)) * dt;
-			float dragMultiplier = std::max(static_cast<float>(velMagnitude * pow(rb->drag, 2.0f)), 0.0f);
+			float velMagnitude = sqrt(pow(rb->velocity.x, 2) + pow(rb->velocity.y, 2));
 			if (velMagnitude != 0.0f)
 			{
-				rb->velocity.x += dragMultiplier * -rb->velocity.x / velMagnitude;
-				rb->velocity.y += dragMultiplier * -rb->velocity.y / velMagnitude;
+				rb->velocity.x += rb->drag * dt * -rb->velocity.x;
+				rb->velocity.y += rb->drag * dt * -rb->velocity.y;
 			}
 
 			if (std::abs(rb->velocity.x) < EPSILON)
@@ -33,7 +33,6 @@ void PhysicsDynamics::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inpu
 				rb->velocity.y = 0.0f;
 			}
 
-			// rb->velocity.y += -9.81f * rb->mass * dt; // simulate gravity
 			transform->position.x += rb->velocity.x * dt;
 			transform->position.y += rb->velocity.y * dt;
 		}

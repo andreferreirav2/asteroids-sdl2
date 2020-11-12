@@ -56,9 +56,7 @@ void test_manager()
 
 
 	PhysicsDynamics physics = PhysicsDynamics();
-	cout << "(" << manager.getComponentOfType<Transform>(ship)->position.x << "," << manager.getComponentOfType<Transform>(ship)->position.y << ")" << endl;
 	physics.onUpdate(manager, nullptr);
-	cout << "(" << manager.getComponentOfType<Transform>(ship)->position.x << "," << manager.getComponentOfType<Transform>(ship)->position.y << ")" << endl;
 
 	assert(manager.getAllComponentsOfType<Transform>().size() == 2);
 	assert(manager.getAllEntitiesWithComponentType<Transform>().size() == 2);
@@ -99,7 +97,7 @@ int main(int argc, char* args[])
 	ECSManager manager;
 
 	Entity game = manager.createEntity();
-	manager.addComponent(game, make_shared<Clock>());
+	manager.addComponent(game, make_shared<Clock>(1.0f, 60));
 
 	Entity ship = manager.createEntity();
 	manager.addComponent(ship, make_shared<Transform>());

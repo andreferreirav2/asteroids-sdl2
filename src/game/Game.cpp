@@ -221,5 +221,6 @@ int main(int argc, char* args[])
 		++frames;
 	}
 	cerr << frames << endl;
+	//cin.ignore();
 	return 0;
 }

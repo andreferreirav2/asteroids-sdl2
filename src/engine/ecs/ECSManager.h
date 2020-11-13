@@ -83,21 +83,27 @@ public:
 	}
 
 	template <typename T, typename U>
-	std::set<std::tuple<Entity, std::shared_ptr<T>, std::shared_ptr<U>>> getAllEntitiesWithComponentTypes()
+	std::vector<std::tuple<Entity, std::shared_ptr<T>, std::shared_ptr<U>>>& getAllEntitiesWithComponentTypes()
 	{
 		static ComponentType componentTypeT = GetComponentType<T>();
-		static ComponentType componentTypeU = GetComponentType<T>();
+		static ComponentType componentTypeU = GetComponentType<U>();
 
 		auto entities = m_componentTypesToEntity[componentTypeT];
 		auto entitiesU = m_componentTypesToEntity[componentTypeU];
 		entities.insert(entitiesU.begin(), entitiesU.end());
 
-		std::set<std::tuple<Entity, std::shared_ptr<T>, std::shared_ptr<U>>> setTuples = {};
+		auto tuples = std::vector<std::tuple<Entity, std::shared_ptr<T>, std::shared_ptr<U>>>(entities.size());
+		int i = 0;
 		for (auto ent : entities)
 		{
-			setTuples.insert(std::make_tuple<Entity, std::shared_ptr<T>, std::shared_ptr<U>>(std::move(ent), getComponentOfType<T>(ent), getComponentOfType<U>(ent)));
+			EntityComponentTypeHash hashT = entityComponentHash(ent, componentTypeT);
+			EntityComponentTypeHash hashU = entityComponentHash(ent, componentTypeU);
+			tuples[i++] = std::make_tuple<Entity, std::shared_ptr<T>, std::shared_ptr<U>>(
+				std::move(ent),
+				std::static_pointer_cast<T>(m_entityComponentTypeHashToComponent[hashT]),
+				std::static_pointer_cast<U>(m_entityComponentTypeHashToComponent[hashU]));
 		}
-		return setTuples;
+		return tuples;
 	}
 
 	template <typename T>

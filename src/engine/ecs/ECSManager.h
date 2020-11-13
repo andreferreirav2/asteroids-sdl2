@@ -1,9 +1,11 @@
 #pragma once
-#include <vector>
+#include <set>
 #include <unordered_map>
 #include "Entity.h"
 #include "Component.h"
 #include "System.h"
+
+typedef unsigned __int32 EntityComponentTypeHash;
 
 class ECSManager
 {
@@ -16,12 +18,13 @@ public:
 
 	void destroyEntity(Entity entity)
 	{
-		m_entityToComponentTypeToComponent.erase(entity);
-
-		for (auto& compTypeToMapEntityComponent : m_componentTypeToEntityToComponent)
+		for (ComponentType ct : m_entityToComponentTypes[entity])
 		{
-			compTypeToMapEntityComponent.second.erase(entity);
+			m_componentTypesToEntity[ct].erase(entity);
+			m_entityComponentTypeHashToComponent.erase(entityComponentHash(entity, ct));
+
 		}
+		m_entityToComponentTypes.erase(entity);
 	}
 
 	//Component management
@@ -32,26 +35,11 @@ public:
 			return;
 		}
 
-		ComponentType componentType = ComponentType(typeid(*component).hash_code());
-		auto it = m_entityToComponentTypeToComponent.find(entity);
-		if (it != m_entityToComponentTypeToComponent.end())  // if entity already has components
-		{
-			it->second[componentType] = component;
-		}
-		else
-		{
-			m_entityToComponentTypeToComponent[entity] = { {componentType, component} };
-		}
+		ComponentType componentType = (ComponentType)(typeid(*component).hash_code());
 
-		auto it2 = m_componentTypeToEntityToComponent.find(componentType);
-		if (it2 != m_componentTypeToEntityToComponent.end())  // if componentType is already present in entities
-		{
-			it2->second[entity] = component;
-		}
-		else
-		{
-			m_componentTypeToEntityToComponent[componentType] = { {entity, component} };
-		}
+		m_entityComponentTypeHashToComponent[entityComponentHash(entity, componentType)] = component;
+		m_componentTypesToEntity[componentType].insert(entity);
+		m_entityToComponentTypes[entity].insert(componentType);
 	}
 
 	template <typename T>
@@ -59,58 +47,36 @@ public:
 	{
 		static ComponentType componentType = GetComponentType<T>();
 
-		auto it = m_entityToComponentTypeToComponent.find(entity);
-		if (it != m_entityToComponentTypeToComponent.end())
-		{
-			it->second.erase(componentType);
-		}
-
-		auto it2 = m_componentTypeToEntityToComponent.find(componentType);
-		if (it2 != m_componentTypeToEntityToComponent.end())
-		{
-			it2->second.erase(entity);
-		}
+		m_entityToComponentTypes.erase(componentType);
+		m_componentTypesToEntity[componentType].erase(entity);
+		m_entityComponentTypeHashToComponent.erase(entityComponentHash(entity, componentType));
 	}
 
 	template <typename T>
 	std::shared_ptr<T> getComponentOfType(Entity entity)
 	{
 		static ComponentType componentType = GetComponentType<T>();
-		auto it = m_entityToComponentTypeToComponent.find(entity);
-		if (it != m_entityToComponentTypeToComponent.end())
-		{
-			auto it2 = it->second.find(componentType);
-			if (it2 != it->second.end())
-			{
-				return std::static_pointer_cast<T>(it2->second);
-			}
-		}
-		return nullptr;
+		EntityComponentTypeHash hash = entityComponentHash(entity, componentType);
+		return std::static_pointer_cast<T>(m_entityComponentTypeHashToComponent[hash]);
 	}
 
 	template <typename T>
-	std::vector<Entity> getAllEntitiesWithComponentType()
+	std::set<Entity> getAllEntitiesWithComponentType()
 	{
 		static ComponentType componentType = GetComponentType<T>();
-		std::vector<Entity> entities = {};
-
-		for (auto const& entityToComponent : m_componentTypeToEntityToComponent[componentType])
-		{
-			entities.push_back(entityToComponent.first);
-		}
-
-		return entities;
+		return m_componentTypesToEntity[componentType];
 	}
 
 	template <typename T>
-	std::vector<std::shared_ptr<T>> getAllComponentsOfType()
+	std::set<std::shared_ptr<T>> getAllComponentsOfType()
 	{
 		static ComponentType componentType = GetComponentType<T>();
-		std::vector<std::shared_ptr<T>> components = {};
+		std::set<std::shared_ptr<T>> components = {};
 
-		for (auto const& entityToComponent : m_componentTypeToEntityToComponent[componentType])
+		for (auto entity : m_componentTypesToEntity[componentType])
 		{
-			components.push_back(std::static_pointer_cast<T>(entityToComponent.second));
+			EntityComponentTypeHash hash = entityComponentHash(entity, componentType);
+			components.insert(std::static_pointer_cast<T>(m_entityComponentTypeHashToComponent[hash]));
 		}
 
 		return components;
@@ -119,24 +85,17 @@ public:
 private:
 	Entity m_nextEntity = 0;
 
-	/*
-	entity:
-		componentType: component
-		componentType: component
-	entity:
-		componentType: component
-		componentType: component
-	*/
-	std::unordered_map<Entity, std::unordered_map<ComponentType, std::shared_ptr<Component>>> m_entityToComponentTypeToComponent;
+	EntityComponentTypeHash entityComponentHash(Entity e, ComponentType t)
+	{
+		return (e << 16) | t;
+	}
 
 	/*
-	componentType:
-		entity: component
-		entity: component
-	componentType:
-		entity: component
-		entity: component
+	entity&componentType: component
+	entity&componentType: component
 	*/
-	std::unordered_map<ComponentType, std::unordered_map<Entity, std::shared_ptr<Component>>> m_componentTypeToEntityToComponent;
+	std::unordered_map<Entity, std::set<ComponentType>> m_entityToComponentTypes;
+	std::unordered_map<ComponentType, std::set<Entity>> m_componentTypesToEntity;
+	std::unordered_map<EntityComponentTypeHash, std::shared_ptr<Component>> m_entityComponentTypeHashToComponent;
 };
 

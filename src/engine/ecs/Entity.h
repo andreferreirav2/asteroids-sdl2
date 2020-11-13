@@ -1,2 +1,2 @@
 #pragma once
-typedef size_t Entity;
+typedef unsigned __int16 Entity;

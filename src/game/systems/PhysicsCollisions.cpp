@@ -14,7 +14,8 @@ void PhysicsCollisions::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> in
 	}
 	*/
 
-	auto entities = manager.getAllEntitiesWithComponentType<CircleCollider>();
+	auto entitiesSet = manager.getAllEntitiesWithComponentType<CircleCollider>();
+	auto entities = std::vector<Entity>(entitiesSet.begin(), entitiesSet.end());
 	for (auto it1 = entities.begin(); it1 != entities.end(); ++it1)
 	{
 		Entity e1 = *it1;

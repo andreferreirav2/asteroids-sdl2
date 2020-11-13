@@ -9,7 +9,10 @@ struct Component
 };
 
 
-typedef size_t ComponentType;
+typedef unsigned __int16 ComponentType;
 
 template <class T>
-constexpr ComponentType GetComponentType() { return typeid(T).hash_code(); }
+constexpr ComponentType GetComponentType()
+{
+	return (ComponentType)(typeid(T).hash_code());
+}

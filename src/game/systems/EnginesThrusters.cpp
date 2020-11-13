@@ -10,7 +10,7 @@
 
 void EnginesThrusters::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
-	float dt = manager.getAllComponentsOfType<Clock>()[0]->deltaTime; // What if there is no clock?
+	float dt = manager.getAllComponentsOfType<Clock>().begin()->get()->deltaTime; // What if there is no clock?
 	for (Entity e : manager.getAllEntitiesWithComponentType<Engine>())
 	{
 		auto engine = manager.getComponentOfType<Engine>(e);

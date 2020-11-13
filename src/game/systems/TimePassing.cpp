@@ -24,7 +24,7 @@ void TimePassing::onStart(ECSManager& manager)
 void TimePassing::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
 	// What if there are no clocks? or more than one?
-	auto clock = manager.getAllComponentsOfType<Clock>()[0];
+	auto clock = manager.getAllComponentsOfType<Clock>().begin()->get();
 
 	// Update last frame's info
 	clock->lastFrameTicks = clock->currentTicks;

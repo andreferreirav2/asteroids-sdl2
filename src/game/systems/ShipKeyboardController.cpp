@@ -13,10 +13,9 @@ void ShipKeyboardController::onUpdate(ECSManager& manager, std::shared_ptr<Input
 	for (Entity e : manager.getAllEntitiesWithComponentType<ShipManualControls>())
 	{
 		auto shipControls = manager.getComponentOfType<ShipManualControls>(e);
+
 		auto engine = manager.getComponentOfType<Engine>(e);
-		auto weapon = manager.getComponentOfType<Weapon>(e);
-		auto weapon2nd = manager.getComponentOfType<SecondaryWeapon>(e);
-		if (shipControls && engine)
+		if (engine)
 		{
 			if (inputs->isPressed(shipControls->accelerate))
 			{
@@ -41,11 +40,14 @@ void ShipKeyboardController::onUpdate(ECSManager& manager, std::shared_ptr<Input
 			}
 		}
 
-		if (shipControls && weapon)
+		auto weapon = manager.getComponentOfType<Weapon>(e);
+		if (weapon)
 		{
 			weapon->setTrigger(inputs->isPressed(shipControls->shootPrimary));
 		}
-		if (shipControls && weapon2nd)
+
+		auto weapon2nd = manager.getComponentOfType<SecondaryWeapon>(e);
+		if (weapon2nd)
 		{
 			weapon2nd->setTrigger(inputs->isPressed(shipControls->shootSecondary));
 		}

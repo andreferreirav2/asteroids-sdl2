@@ -17,32 +17,25 @@
 void WeaponFiring::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
 	float dt = manager.getAllComponentsOfType<Clock>().begin()->get()->deltaTime; // What if there is no clock?
-	for (Entity e : manager.getAllEntitiesWithComponentType<Weapon>())
+	for (Entity e : manager.getAllEntitiesWithComponentType<Weapon, Transform, RigidBody>())
 	{
 		auto weapon = manager.getComponentOfType<Weapon>(e);
-		if (weapon)
+
+		if (weapon->shooting)
 		{
-			auto transform = manager.getComponentOfType<Transform>(e);
-			auto rb = manager.getComponentOfType<RigidBody>(e);
-			if (transform && rb && weapon->shooting)
-			{
-				weapon->weaponSpawn(transform, rb);
-			}
-			weapon->timeToNextShot -= dt;
+			weapon->weaponSpawn(manager.getComponentOfType<Transform>(e), manager.getComponentOfType<RigidBody>(e));
 		}
+		weapon->timeToNextShot -= dt;
 	}
-	for (Entity e : manager.getAllEntitiesWithComponentType<SecondaryWeapon>())
+
+	for (Entity e : manager.getAllEntitiesWithComponentType<SecondaryWeapon, Transform, RigidBody>())
 	{
 		auto secondaryWeapon = manager.getComponentOfType<SecondaryWeapon>(e);
-		if (secondaryWeapon)
+
+		if (secondaryWeapon->shooting)
 		{
-			auto transform = manager.getComponentOfType<Transform>(e);
-			auto rb = manager.getComponentOfType<RigidBody>(e);
-			if (transform && rb && secondaryWeapon->shooting)
-			{
-				secondaryWeapon->weaponSpawn(transform, rb);
-			}
-			secondaryWeapon->timeToNextShot -= dt;
+			secondaryWeapon->weaponSpawn(manager.getComponentOfType<Transform>(e), manager.getComponentOfType<RigidBody>(e));
 		}
+		secondaryWeapon->timeToNextShot -= dt;
 	}
 }

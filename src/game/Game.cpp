@@ -209,8 +209,8 @@ int main(int argc, char* args[])
 	soundFxPlayer.onStart(manager);
 
 	int frames = 0;
-	//while (true && manager.getComponentOfType<Clock>(game)->currentTicks < 5000)
-	while (true)
+	while (true && manager.getComponentOfType<Clock>(game)->currentTicks < 5000)
+		//while (true)
 	{
 		auto inputs = app.parseInputs(); // parse inputs from SDL
 		if (inputs->isPressed(Key::QUIT))

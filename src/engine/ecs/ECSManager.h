@@ -1,5 +1,7 @@
 #pragma once
 #include <set>
+#include <algorithm>
+#include <iterator >
 #include <unordered_map>
 #include "Entity.h"
 #include "Component.h"
@@ -67,43 +69,16 @@ public:
 		return m_componentTypesToEntity[componentType];
 	}
 
-	template <typename T>
-	std::set<std::tuple<Entity, std::shared_ptr<T>>> getAllEntitiesWithComponentTypes()
+	template <typename T, typename U>
+	std::set<Entity> getAllEntitiesWithComponentType()
 	{
-		static ComponentType componentType = GetComponentType<T>();
-
-		auto entities = m_componentTypesToEntity[componentType];
-
-		std::set<std::tuple<Entity, std::shared_ptr<T>>> setTuples = {};
-		for (auto ent : entities)
-		{
-			setTuples.insert(std::make_tuple<Entity, std::shared_ptr<T>>(std::move(ent), getComponentOfType<T>(ent)));
-		}
-		return setTuples;
+		return intersect(getAllEntitiesWithComponentType<T>(), getAllEntitiesWithComponentType<U>());
 	}
 
-	template <typename T, typename U>
-	std::vector<std::tuple<Entity, std::shared_ptr<T>, std::shared_ptr<U>>> getAllEntitiesWithComponentTypes()
+	template <typename T, typename U, typename V>
+	std::set<Entity> getAllEntitiesWithComponentType()
 	{
-		static ComponentType componentTypeT = GetComponentType<T>();
-		static ComponentType componentTypeU = GetComponentType<U>();
-
-		auto entities = m_componentTypesToEntity[componentTypeT];
-		auto entitiesU = m_componentTypesToEntity[componentTypeU];
-		entities.insert(entitiesU.begin(), entitiesU.end());
-
-		auto tuples = std::vector<std::tuple<Entity, std::shared_ptr<T>, std::shared_ptr<U>>>(entities.size());
-		int i = 0;
-		for (auto ent : entities)
-		{
-			EntityComponentTypeHash hashT = entityComponentHash(ent, componentTypeT);
-			EntityComponentTypeHash hashU = entityComponentHash(ent, componentTypeU);
-			tuples[i++] = std::make_tuple<Entity, std::shared_ptr<T>, std::shared_ptr<U>>(
-				std::move(ent),
-				std::static_pointer_cast<T>(m_entityComponentTypeHashToComponent[hashT]),
-				std::static_pointer_cast<U>(m_entityComponentTypeHashToComponent[hashU]));
-		}
-		return tuples;
+		return intersect(getAllEntitiesWithComponentType<T>(), intersect(getAllEntitiesWithComponentType<U>(), getAllEntitiesWithComponentType<V>()));
 	}
 
 	template <typename T>
@@ -127,6 +102,14 @@ private:
 	EntityComponentTypeHash entityComponentHash(Entity e, ComponentType t)
 	{
 		return (e << 16) | t;
+	}
+
+	std::set<Entity> intersect(std::set<Entity> a, std::set<Entity> b)
+	{
+		std::set<Entity> intersect;
+		std::set_intersection(a.begin(), a.end(), b.begin(), b.end(),
+			std::inserter(intersect, intersect.begin()));
+		return intersect;
 	}
 
 	/*

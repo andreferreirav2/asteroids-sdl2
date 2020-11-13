@@ -13,20 +13,18 @@ void ShipGameController::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> i
 {
 	if (inputs->controllerEnabled)
 	{
-		for (Entity e : manager.getAllEntitiesWithComponentType<ShipManualControls>())
+		for (Entity e : manager.getAllEntitiesWithComponentType<ShipManualControls, Engine, Transform>())
 		{
 			auto shipControls = manager.getComponentOfType<ShipManualControls>(e);
 			auto engine = manager.getComponentOfType<Engine>(e);
 			auto transform = manager.getComponentOfType<Transform>(e);
-			if (shipControls && engine && transform)
+
+			float magnitude = sqrt(pow(inputs->leftAxis.x, 2) + pow(inputs->leftAxis.y, 2));
+			std::cerr << magnitude << std::endl;
+			if (magnitude > JOYSTICK_MARGIN)
 			{
-				float magnitude = sqrt(pow(inputs->leftAxis.x, 2) + pow(inputs->leftAxis.y, 2));
-				std::cerr << magnitude << std::endl;
-				if (magnitude > JOYSTICK_MARGIN)
-				{
-					transform->rotation = atan2(-pow(inputs->leftAxis.y, 3), pow(inputs->leftAxis.x, 3)) * (180.0 / 3.1415f);
-					engine->thrustValue = std::min(pow(magnitude, 3), 1.0f);
-				}
+				transform->rotation = atan2(-pow(inputs->leftAxis.y, 3), pow(inputs->leftAxis.x, 3)) * (180.0 / 3.1415f);
+				engine->thrustValue = std::min(pow(magnitude, 3), 1.0f);
 			}
 		}
 	}

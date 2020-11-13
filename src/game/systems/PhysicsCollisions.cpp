@@ -8,24 +8,29 @@
 
 void PhysicsCollisions::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
-	// Clear all colliders
-	/*
-	for (auto& collider : manager.getAllComponentsOfType<CircleCollider>())
+	std::set<Entity> entitiesSet = manager.getAllEntitiesWithComponentType<CircleCollider, Transform>();
+	size_t entitiesSize = entitiesSet.size();
+
+	// Pre-fetch all components
+	auto entities = std::vector<Entity>(entitiesSize);
+	auto colliders = std::vector<std::shared_ptr<CircleCollider>>(entitiesSize);
+	auto transforms = std::vector<std::shared_ptr<Transform>>(entitiesSize);
+	int i = 0;
+	for (auto ent : entitiesSet)
 	{
-		collider->collidingEntities.clear();
+		entities[i] = ent;
+		colliders[i] = manager.getComponentOfType<CircleCollider>(ent);
+		transforms[i] = manager.getComponentOfType<Transform>(ent);
+		++i;
 	}
-	*/
 
-	//auto es = manager.getAllEntitiesWithComponentTypes<CircleCollider, Transform>();
-
-	auto const& entities = manager.getAllEntitiesWithComponentTypes<CircleCollider, Transform>();
-	size_t entitiesSize = entities.size();
+	// TODO: check groups of layers against other groups of colliding layers, instead of all to all
+	// O(n2)
 	for (int i = 0; i < entitiesSize; ++i)
 	{
-		auto& it1 = entities[i];
-		Entity e1 = std::get<0>(it1);
-		auto const& collider1 = std::get<1>(it1);
-		auto const& transform1 = std::get<2>(it1);
+		Entity e1 = entities[i];
+		auto const& collider1 = colliders[i];
+		auto const& transform1 = transforms[i];
 		auto const& transform1Position = transform1->position;
 		auto const& collider1Radius = collider1->radius;
 		auto const& collider1Layer = collider1->layer;
@@ -33,10 +38,9 @@ void PhysicsCollisions::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> in
 
 		for (int j = i + 1; j < entitiesSize; ++j)
 		{
-			auto& it2 = entities[j];
-			Entity e2 = std::get<0>(it2);
-			auto const& collider2 = std::get<1>(it2);
-			auto const& transform2 = std::get<2>(it2);
+			Entity e2 = entities[j];
+			auto const& collider2 = colliders[j];
+			auto const& transform2 = transforms[j];
 			auto const& transform2Position = transform2->position;
 			auto const& collider2Radius = collider2->radius;
 			auto const& collider2Layer = collider2->layer;
@@ -55,8 +59,6 @@ void PhysicsCollisions::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> in
 					std::cerr << e1 << " is touching " << e2 << std::endl;
 					manager.destroyEntity(e1);
 					manager.destroyEntity(e2);
-					//collider1->collidingEntities.insert(e2);
-					//collider2->collidingEntities.insert(e1);
 				}
 			}
 		}

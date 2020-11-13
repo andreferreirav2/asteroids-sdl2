@@ -57,49 +57,39 @@ void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 	}
 	*/
 
-	for (auto& e : manager.getAllEntitiesWithComponentType<Transform>())
+	for (auto& e : manager.getAllEntitiesWithComponentType<SpriteSDL, Transform>())
 	{
 		auto sprite = manager.getComponentOfType<SpriteSDL>(e);
 		auto transform = manager.getComponentOfType<Transform>(e);
-		if (sprite)
+
+		SDL_RendererFlip flipType;
+		if (sprite->flipVertical)
 		{
-			SDL_RendererFlip flipType;
-			if (sprite->flipVertical)
-			{
-				flipType = SDL_FLIP_VERTICAL;
-			}
-			else if (sprite->flipHorizontal)
-			{
-				flipType = SDL_FLIP_HORIZONTAL;
-			}
-			else
-			{
-				flipType = SDL_FLIP_NONE;
-			}
-
-			if (sprite->loadedTexture == nullptr) // If sprite is new and texture is not loaded yet
-			{
-				setTexture(sprite);
-			}
-
-			unsigned int sizeX = sprite->size.x * transform->scale.x;
-			unsigned int sizeY = sprite->size.y * transform->scale.y;
-			m_sdlApp.drawTexture(
-				sprite->loadedTexture->texture,
-				sprite->cliping,
-				{ static_cast<int>(transform->position.x - sizeX / 2), static_cast<int>(transform->position.y - sizeY / 2),
-				  sizeX, sizeY },
-				-transform->rotation - sprite->rotationAngle,
-				flipType);
+			flipType = SDL_FLIP_VERTICAL;
+		}
+		else if (sprite->flipHorizontal)
+		{
+			flipType = SDL_FLIP_HORIZONTAL;
 		}
 		else
 		{
-			m_sdlApp.drawRect(
-				{ static_cast<int>(transform->position.x) - 12, static_cast<int>(transform->position.y) - 12,
-				  24, 24 },
-				{ 0x00, 0x00, 0x00, 0xFF },
-				true);
+			flipType = SDL_FLIP_NONE;
 		}
+
+		if (sprite->loadedTexture == nullptr) // If sprite is new and texture is not loaded yet
+		{
+			setTexture(sprite);
+		}
+
+		unsigned int sizeX = sprite->size.x * transform->scale.x;
+		unsigned int sizeY = sprite->size.y * transform->scale.y;
+		m_sdlApp.drawTexture(
+			sprite->loadedTexture->texture,
+			sprite->cliping,
+			{ static_cast<int>(transform->position.x - sizeX / 2), static_cast<int>(transform->position.y - sizeY / 2),
+				sizeX, sizeY },
+			-transform->rotation - sprite->rotationAngle,
+			flipType);
 	}
 
 	m_sdlApp.present();

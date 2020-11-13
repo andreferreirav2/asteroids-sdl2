@@ -83,7 +83,7 @@ public:
 	}
 
 	template <typename T, typename U>
-	std::vector<std::tuple<Entity, std::shared_ptr<T>, std::shared_ptr<U>>>& getAllEntitiesWithComponentTypes()
+	std::vector<std::tuple<Entity, std::shared_ptr<T>, std::shared_ptr<U>>> getAllEntitiesWithComponentTypes()
 	{
 		static ComponentType componentTypeT = GetComponentType<T>();
 		static ComponentType componentTypeU = GetComponentType<U>();

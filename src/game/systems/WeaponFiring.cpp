@@ -1,5 +1,6 @@
 #include "WeaponFiring.h"
 #include "../components/Weapon.h"
+#include "../components/SecondaryWeapon.h"
 #include "../components/Transform.h"
 #include "../components/RigidBody.h"
 #include "../components/Clock.h"
@@ -22,11 +23,26 @@ void WeaponFiring::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 		if (weapon)
 		{
 			auto transform = manager.getComponentOfType<Transform>(e);
-			if (transform && weapon->shooting)
+			auto rb = manager.getComponentOfType<RigidBody>(e);
+			if (transform && rb && weapon->shooting)
 			{
-				weapon->weaponSpawn(transform);
+				weapon->weaponSpawn(transform, rb);
 			}
 			weapon->timeToNextShot -= dt;
+		}
+	}
+	for (Entity e : manager.getAllEntitiesWithComponentType<SecondaryWeapon>())
+	{
+		auto secondaryWeapon = manager.getComponentOfType<SecondaryWeapon>(e);
+		if (secondaryWeapon)
+		{
+			auto transform = manager.getComponentOfType<Transform>(e);
+			auto rb = manager.getComponentOfType<RigidBody>(e);
+			if (transform && rb && secondaryWeapon->shooting)
+			{
+				secondaryWeapon->weaponSpawn(transform, rb);
+			}
+			secondaryWeapon->timeToNextShot -= dt;
 		}
 	}
 }

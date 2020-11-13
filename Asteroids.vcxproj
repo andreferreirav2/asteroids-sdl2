@@ -190,6 +190,7 @@
     <ClInclude Include="src\engine\ecs\Entity.h" />
     <ClInclude Include="src\engine\ecs\System.h" />
     <ClInclude Include="src\engine\sdl\SDLApp.h" />
+    <ClInclude Include="src\game\components\SecondaryWeapon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

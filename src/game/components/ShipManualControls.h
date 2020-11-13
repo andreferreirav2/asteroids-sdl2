@@ -4,11 +4,12 @@
 
 struct ShipManualControls : public Component
 {
-	ShipManualControls(Key accelerate, Key turnLeft, Key turnRight, Key shoot) :
+	ShipManualControls(Key accelerate, Key turnLeft, Key turnRight, Key shootPrimary, Key shootSecondary) :
 		accelerate(accelerate),
 		turnLeft(turnLeft),
 		turnRight(turnRight),
-		shoot(shoot)
+		shootPrimary(shootPrimary),
+		shootSecondary(shootSecondary)
 
 	{
 	}
@@ -16,5 +17,6 @@ struct ShipManualControls : public Component
 	Key accelerate;
 	Key turnLeft;
 	Key turnRight;
-	Key shoot;
+	Key shootPrimary;
+	Key shootSecondary;
 };

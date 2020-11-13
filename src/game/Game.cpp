@@ -11,6 +11,7 @@
 #include "components/Boundless.h"
 #include "components/BoundariesKill.h"
 #include "components/Weapon.h"
+#include "components/SecondaryWeapon.h"
 #include "components/Clock.h"
 #include "components/CircleCollider.h"
 #include "systems/PhysicsDynamics.h"
@@ -131,11 +132,11 @@ int main(int argc, char* args[])
 	manager.addComponent(ship, make_shared<RigidBody>(1.0f, 2.0f));
 	manager.addComponent(ship, shipSprite);
 	manager.addComponent(ship, make_shared<Engine>(300.0f, 150.f));
-	manager.addComponent(ship, make_shared<ShipManualControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE));
+	manager.addComponent(ship, make_shared<ShipManualControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE, Key::KEY_DOWN));
 	manager.addComponent(ship, make_shared<Boundless>());
 	manager.addComponent(ship, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
 	manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH));
-	manager.addComponent(ship, make_shared<Weapon>(0.3f, [&](shared_ptr<Transform> gun)
+	manager.addComponent(ship, make_shared<Weapon>(0.3f, [&](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
 		{
 			Entity shot = manager.createEntity();
 			auto shotRb = std::make_shared<RigidBody>(1.0f, 0.0f);
@@ -143,6 +144,15 @@ int main(int argc, char* args[])
 			manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 200 * cos(gun->rotation * DEG_2_RAG), -200 * sin(gun->rotation * DEG_2_RAG)));
 			manager.addComponent(shot, shotSprite);
 			manager.addComponent(shot, std::make_shared<CircleCollider>(4.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH));
+			manager.addComponent(shot, make_shared<BoundariesKill>());
+		}));
+	manager.addComponent(ship, make_shared<SecondaryWeapon>(1.0f, 0, [&](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
+		{
+			Entity shot = manager.createEntity();
+			manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation, 3.0f, 3.0f));
+			manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.3f, gunRb->velocity.x, gunRb->velocity.y));
+			manager.addComponent(shot, shotSprite);
+			manager.addComponent(shot, std::make_shared<CircleCollider>(10.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH));
 			manager.addComponent(shot, make_shared<BoundariesKill>());
 		}));
 
@@ -199,7 +209,8 @@ int main(int argc, char* args[])
 	soundFxPlayer.onStart(manager);
 
 	int frames = 0;
-	while (true && manager.getComponentOfType<Clock>(game)->currentTicks < 5000)
+	//while (true && manager.getComponentOfType<Clock>(game)->currentTicks < 5000)
+	while (true)
 	{
 		auto inputs = app.parseInputs(); // parse inputs from SDL
 		if (inputs->isPressed(Key::QUIT))

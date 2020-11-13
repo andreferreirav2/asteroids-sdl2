@@ -74,6 +74,9 @@ void test_manager()
 	manager.addComponent(ship1, make_shared<Transform>(1.0f, 2.0f));
 
 
+	assert(manager.getComponentOfType<RigidBody>(ship1) == nullptr);
+
+
 	PhysicsDynamics physics = PhysicsDynamics();
 	physics.onUpdate(manager, nullptr);
 
@@ -195,6 +198,7 @@ int main(int argc, char* args[])
 	sdlRenderer.onStart(manager);
 	soundFxPlayer.onStart(manager);
 
+	int frames = 0;
 	while (true && manager.getComponentOfType<Clock>(game)->currentTicks < 5000)
 	{
 		auto inputs = app.parseInputs(); // parse inputs from SDL
@@ -213,6 +217,10 @@ int main(int argc, char* args[])
 		physicsCollisions.onUpdate(manager, inputs); // check for collisions
 		sdlRenderer.onUpdate(manager, inputs);
 		soundFxPlayer.onUpdate(manager, inputs);
+
+		++frames;
 	}
+	cerr << frames << endl;
+	cin.ignore();
 	return 0;
 }

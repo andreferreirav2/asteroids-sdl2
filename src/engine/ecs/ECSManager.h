@@ -68,6 +68,39 @@ public:
 	}
 
 	template <typename T>
+	std::set<std::tuple<Entity, std::shared_ptr<T>>> getAllEntitiesWithComponentTypes()
+	{
+		static ComponentType componentType = GetComponentType<T>();
+
+		auto entities = m_componentTypesToEntity[componentType];
+
+		std::set<std::tuple<Entity, std::shared_ptr<T>>> setTuples = {};
+		for (auto ent : entities)
+		{
+			setTuples.insert(std::make_tuple<Entity, std::shared_ptr<T>>(std::move(ent), getComponentOfType<T>(ent)));
+		}
+		return setTuples;
+	}
+
+	template <typename T, typename U>
+	std::set<std::tuple<Entity, std::shared_ptr<T>, std::shared_ptr<U>>> getAllEntitiesWithComponentTypes()
+	{
+		static ComponentType componentTypeT = GetComponentType<T>();
+		static ComponentType componentTypeU = GetComponentType<T>();
+
+		auto entities = m_componentTypesToEntity[componentTypeT];
+		auto entitiesU = m_componentTypesToEntity[componentTypeU];
+		entities.insert(entitiesU.begin(), entitiesU.end());
+
+		std::set<std::tuple<Entity, std::shared_ptr<T>, std::shared_ptr<U>>> setTuples = {};
+		for (auto ent : entities)
+		{
+			setTuples.insert(std::make_tuple<Entity, std::shared_ptr<T>, std::shared_ptr<U>>(std::move(ent), getComponentOfType<T>(ent), getComponentOfType<U>(ent)));
+		}
+		return setTuples;
+	}
+
+	template <typename T>
 	std::set<std::shared_ptr<T>> getAllComponentsOfType()
 	{
 		static ComponentType componentType = GetComponentType<T>();

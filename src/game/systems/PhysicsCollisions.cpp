@@ -2,6 +2,8 @@
 #include "../components/CircleCollider.h"
 #include "../components/Transform.h"
 #include "iostream"
+#include <vector>
+#include <tuple>
 
 
 void PhysicsCollisions::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
@@ -14,36 +16,40 @@ void PhysicsCollisions::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> in
 	}
 	*/
 
-	auto entitiesSet = manager.getAllEntitiesWithComponentType<CircleCollider>();
-	auto entities = std::vector<Entity>(entitiesSet.begin(), entitiesSet.end());
-	for (auto it1 = entities.begin(); it1 != entities.end(); ++it1)
+	//auto es = manager.getAllEntitiesWithComponentTypes<CircleCollider, Transform>();
+
+	auto entitiesComponentTuple = manager.getAllEntitiesWithComponentTypes<CircleCollider, Transform>();
+	auto entities = std::vector<std::tuple<Entity, std::shared_ptr<CircleCollider>, std::shared_ptr<Transform>>>(entitiesComponentTuple.begin(), entitiesComponentTuple.end());
+	for (int i = 0; i < entities.size(); ++i)
 	{
-		Entity e1 = *it1;
-		auto const& collider1 = manager.getComponentOfType<CircleCollider>(e1);
-		auto const& transform1 = manager.getComponentOfType<Transform>(e1);
+		auto& it1 = entities[i];
+		Entity e1 = std::get<0>(it1);
+		auto const& collider1 = std::get<1>(it1);
+		auto const& transform1 = std::get<2>(it1);
 
-		if (collider1 && transform1)
+		for (int j = i + 1; j < entities.size(); ++j)
 		{
-			for (auto it2 = it1 + 1; it2 != entities.end(); ++it2)
+			auto& it2 = entities[j];
+			Entity e2 = std::get<0>(it2);
+			auto const& collider2 = std::get<1>(it2);
+			auto const& transform2 = std::get<2>(it2);
+
+			if (collider1->layer & collider2->collidesWith
+				|| collider2->layer & collider1->collidesWith)
 			{
-				Entity e2 = *it2;
+				float deltaX = transform1->position.x - transform2->position.x;
+				float deltaY = transform1->position.y - transform2->position.y;
+				float radii = collider1->radius + collider2->radius;
 
-				auto const& collider2 = manager.getComponentOfType<CircleCollider>(e2);
-				auto const& transform2 = manager.getComponentOfType<Transform>(e2);
-
-				if (collider2 && transform2 &&
-					(collider1->layer & collider2->collidesWith
-						|| collider2->layer & collider1->collidesWith))
+				float dist2 = deltaX * deltaX + deltaY * deltaY;
+				float radii2 = radii * radii;
+				if (dist2 < radii2)
 				{
-					float dist = sqrt(pow(transform1->position.x - transform2->position.x, 2) + pow(transform1->position.y - transform2->position.y, 2));
-					if (dist < collider1->radius + collider2->radius)
-					{
-						std::cerr << e1 << " is touching " << e2 << std::endl;
-						manager.destroyEntity(e1);
-						manager.destroyEntity(e2);
-						//collider1->collidingEntities.insert(e2);
-						//collider2->collidingEntities.insert(e1);
-					}
+					std::cerr << e1 << " is touching " << e2 << std::endl;
+					manager.destroyEntity(e1);
+					manager.destroyEntity(e2);
+					//collider1->collidingEntities.insert(e2);
+					//collider2->collidingEntities.insert(e1);
 				}
 			}
 		}

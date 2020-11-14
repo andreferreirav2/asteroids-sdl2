@@ -163,6 +163,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\game\components\AsteroidSpawnerParams.h" />
+    <ClInclude Include="src\game\components\Score.h" />
+    <ClInclude Include="src\game\components\ScoreAwarder.h" />
     <ClInclude Include="src\game\systems\AsteroidSpawner.h" />
     <ClInclude Include="src\game\systems\DestroyAfterEntitiesTime.h" />
     <ClInclude Include="src\game\components\BoundariesKill.h" />

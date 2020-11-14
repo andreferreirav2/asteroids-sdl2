@@ -5,6 +5,7 @@
 #include "../components/Transform.h"
 #include "../components/RigidBody.h"
 #include "../components/CircleCollider.h"
+#include "../components/ScoreAwarder.h"
 #include <cmath>
 #include <memory>
 #include <string>
@@ -23,8 +24,7 @@ void spawnAsteroid(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> a
 
 float randBetween(float a, float b)
 {
-	float r = (float)rand() / (RAND_MAX);
-	return a + (b - a) * r;
+	return a + (b - a) * rand() / RAND_MAX;
 }
 
 void spawnChildAsteroids(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> asteroidSpawn, int kind, std::shared_ptr<Transform> parentTransform, float2 velocity)
@@ -34,8 +34,8 @@ void spawnChildAsteroids(ECSManager& manager, std::shared_ptr<AsteroidSpawnerPar
 	{
 		float randomAngle = randBetween(0, TWO_PI);
 		auto newVel = velocity;
-		newVel.x += cos(randomAngle) * 20;
-		newVel.y += sin(randomAngle) * 20;
+		newVel.x += cos(randomAngle) * randBetween(-20, 20);
+		newVel.y += sin(randomAngle) * randBetween(-20, 20);
 		spawnAsteroid(manager, asteroidSpawn, kind, parentTransform->position, randomAngle, newVel);
 	}
 }
@@ -54,24 +54,29 @@ void spawnAsteroid(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> a
 	if (kind == SMALL_ASTEROID) // small ast
 	{
 		manager.addComponent(ast, asteroidSmallSprite);
+		manager.addComponent(ast, std::make_shared<ScoreAwarder>(100));
 		manager.addComponent(ast, std::make_shared<RigidBody>(1.0f, 0.0f, velocity.x, velocity.y));
 		manager.addComponent(ast, std::make_shared<CircleCollider>(8.0f, asteroidSpawn->asteroidsColliderLayer, asteroidSpawn->asteroidsCollidesWith));
 	}
 	else if (kind == MEDIUM_ASTEROID) // medium ast
 	{
 		manager.addComponent(ast, asteroidMediumSprite);
+		manager.addComponent(ast, std::make_shared<ScoreAwarder>(50));
 		manager.addComponent(ast, std::make_shared<RigidBody>(2.0f, 0.0f, velocity.x, velocity.y));
 		manager.addComponent(ast, std::make_shared<CircleCollider>(20.0f, asteroidSpawn->asteroidsColliderLayer, asteroidSpawn->asteroidsCollidesWith, [&manager, asteroidSpawn, transform, rotation, velocity](Entity other)
 			{
+				//TODO: Spawn destroy particles
 				spawnChildAsteroids(manager, asteroidSpawn, SMALL_ASTEROID, transform, velocity);
 			}));
 	}
 	else // big ast
 	{
 		manager.addComponent(ast, asteroidLargeSprite);
+		manager.addComponent(ast, std::make_shared<ScoreAwarder>(20));
 		manager.addComponent(ast, std::make_shared<RigidBody>(4.0f, 0.0f, velocity.x, velocity.y));
 		manager.addComponent(ast, std::make_shared<CircleCollider>(32.0f, asteroidSpawn->asteroidsColliderLayer, asteroidSpawn->asteroidsCollidesWith, [&manager, asteroidSpawn, transform, rotation, velocity](Entity other)
 			{
+				//TODO: Spawn destroy particles
 				spawnChildAsteroids(manager, asteroidSpawn, MEDIUM_ASTEROID, transform, velocity);
 			}));
 	}
@@ -121,18 +126,21 @@ void AsteroidSpawner::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inpu
 			velocity.x *= magnitude;
 			velocity.y *= magnitude;
 
+			int asteroidKind;
 			if (i < asteroidSpawn->smallRatio) // small ast
 			{
-				spawnAsteroid(manager, asteroidSpawn, SMALL_ASTEROID, position, rotation, velocity);
+				asteroidKind = SMALL_ASTEROID;
 			}
 			else if (i < asteroidSpawn->smallRatio + asteroidSpawn->mediumRatio) // medium ast
 			{
-				spawnAsteroid(manager, asteroidSpawn, MEDIUM_ASTEROID, position, rotation, velocity);
+				asteroidKind = MEDIUM_ASTEROID;
 			}
 			else // big ast
 			{
-				spawnAsteroid(manager, asteroidSpawn, BIG_ASTEROID, position, rotation, velocity);
+				asteroidKind = BIG_ASTEROID;
 			}
+
+			spawnAsteroid(manager, asteroidSpawn, asteroidKind, position, rotation, velocity);
 		}
 	}
 }

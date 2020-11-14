@@ -14,6 +14,8 @@
 #include "components/Weapon.h"
 #include "components/SecondaryWeapon.h"
 #include "components/Clock.h"
+#include "components/Score.h"
+#include "components/ScoreAwarder.h"
 #include "components/AsteroidSpawnerParams.h"
 #include "components/CircleCollider.h"
 #include "systems/PhysicsDynamics.h"
@@ -128,6 +130,7 @@ int main(int argc, char* args[])
 
 	Entity game = manager.createEntity();
 	manager.addComponent(game, make_shared<Clock>(1.0f, 1000));
+	manager.addComponent(game, make_shared<Score>());
 	manager.addComponent(game, make_shared<AsteroidSpawnerParams>(1.0f, 2.0f, 0.1f, 0.5f, 0.4f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH, rect({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT })));
 
 	Entity ship = manager.createEntity();
@@ -142,12 +145,12 @@ int main(int argc, char* args[])
 	manager.addComponent(ship, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
 	manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH, [&manager, shipTransform, shipRb](Entity other)
 		{
-			manager.destroyEntity(other);
 			shipTransform->position = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
 			shipTransform->rotation = 90.f;
 
 			shipRb->velocity = { 0.0f, 0.0f };
 			// TODO: reduce 1 life + respawn OR gameover
+			manager.destroyEntity(other);
 		}));
 	manager.addComponent(ship, make_shared<Weapon>(0.3f, [&manager, &shotSprite](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
 		{
@@ -158,6 +161,14 @@ int main(int argc, char* args[])
 			manager.addComponent(shot, shotSprite);
 			manager.addComponent(shot, std::make_shared<CircleCollider>(4.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, shot](Entity other)
 				{
+					auto scoreBoard = manager.getAllComponentsOfType<Score>().begin()->get();
+					auto scoreAwarder = manager.getComponentOfType<ScoreAwarder>(other);
+					if (scoreBoard && scoreAwarder)
+					{
+						scoreBoard->score += scoreAwarder->score;
+						cerr << "score: " << scoreBoard->score << endl;
+					}
+
 					manager.destroyEntity(other);
 					manager.destroyEntity(shot);
 				}));
@@ -171,6 +182,14 @@ int main(int argc, char* args[])
 			manager.addComponent(mine, mineSprite);
 			manager.addComponent(mine, std::make_shared<CircleCollider>(10.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, mine](Entity other)
 				{
+					auto scoreBoard = manager.getAllComponentsOfType<Score>().begin()->get();
+					auto scoreAwarder = manager.getComponentOfType<ScoreAwarder>(other);
+					if (scoreBoard && scoreAwarder)
+					{
+						scoreBoard->score += scoreAwarder->score;
+						cerr << "score: " << scoreBoard->score << endl;
+					}
+
 					manager.destroyEntity(other);
 					manager.destroyEntity(mine);
 				}));

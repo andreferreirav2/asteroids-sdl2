@@ -17,10 +17,27 @@ int const BIG_ASTEROID = 2;
 
 #define DEG_2_RAG 0.0174533f
 
+constexpr float TWO_PI = 360 * DEG_2_RAG;
+
+void spawnAsteroid(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> asteroidSpawn, int kind, float2 position, float rotation, float2 velocity);
+
 float randBetween(float a, float b)
 {
 	float r = (float)rand() / (RAND_MAX);
 	return a + (b - a) * r;
+}
+
+void spawnChildAsteroids(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> asteroidSpawn, int kind, std::shared_ptr<Transform> parentTransform, float2 velocity)
+{
+	int newAsts = randBetween(1, 3);
+	for (float i = 0; i < newAsts; i++)
+	{
+		float randomAngle = randBetween(0, TWO_PI);
+		auto newVel = velocity;
+		newVel.x += cos(randomAngle) * 20;
+		newVel.y += sin(randomAngle) * 20;
+		spawnAsteroid(manager, asteroidSpawn, kind, parentTransform->position, randomAngle, newVel);
+	}
 }
 
 void spawnAsteroid(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> asteroidSpawn, int kind, float2 position, float rotation, float2 velocity)
@@ -46,19 +63,7 @@ void spawnAsteroid(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> a
 		manager.addComponent(ast, std::make_shared<RigidBody>(2.0f, 0.0f, velocity.x, velocity.y));
 		manager.addComponent(ast, std::make_shared<CircleCollider>(20.0f, asteroidSpawn->asteroidsColliderLayer, asteroidSpawn->asteroidsCollidesWith, [&manager, asteroidSpawn, transform, rotation, velocity](Entity other)
 			{
-				int newAsts = static_cast<int>(randBetween(2, 5));
-				float randomAngle = randBetween(0, 360.0f);
-				for (int i = 0; i < newAsts; i++)
-				{
-					auto newPos = transform->position;
-					newPos.x += cos(DEG_2_RAG * (randomAngle + 360 * ((i + 1) / newAsts))) * 30;
-					newPos.y += sin(DEG_2_RAG * (randomAngle + 360 * ((i + 1) / newAsts))) * 30;
-
-					auto newVel = velocity;
-					newVel.x += (newPos.x - transform->position.x) / 2;
-					newVel.y += (newPos.y - transform->position.y) / 2;
-					spawnAsteroid(manager, asteroidSpawn, SMALL_ASTEROID, newPos, randomAngle, newVel);
-				}
+				spawnChildAsteroids(manager, asteroidSpawn, SMALL_ASTEROID, transform, velocity);
 			}));
 	}
 	else // big ast
@@ -67,19 +72,7 @@ void spawnAsteroid(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> a
 		manager.addComponent(ast, std::make_shared<RigidBody>(4.0f, 0.0f, velocity.x, velocity.y));
 		manager.addComponent(ast, std::make_shared<CircleCollider>(32.0f, asteroidSpawn->asteroidsColliderLayer, asteroidSpawn->asteroidsCollidesWith, [&manager, asteroidSpawn, transform, rotation, velocity](Entity other)
 			{
-				int newAsts = static_cast<int>(randBetween(2, 5));
-				float randomAngle = randBetween(0, 360.0f);
-				for (int i = 0; i < newAsts; i++)
-				{
-					auto newPos = transform->position;
-					newPos.x += cos(DEG_2_RAG * (randomAngle + 360 * ((i + 1) / newAsts))) * 30;
-					newPos.y += sin(DEG_2_RAG * (randomAngle + 360 * ((i + 1) / newAsts))) * 30;
-
-					auto newVel = velocity;
-					newVel.x = (newVel.x + newPos.x - transform->position.x) / 2;
-					newVel.y = (newVel.y + newPos.y - transform->position.y) / 2;
-					spawnAsteroid(manager, asteroidSpawn, MEDIUM_ASTEROID, newPos, randomAngle, newVel);
-				}
+				spawnChildAsteroids(manager, asteroidSpawn, MEDIUM_ASTEROID, transform, velocity);
 			}));
 	}
 }

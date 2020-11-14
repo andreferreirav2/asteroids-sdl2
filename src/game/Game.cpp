@@ -132,17 +132,21 @@ int main(int argc, char* args[])
 
 	Entity ship = manager.createEntity();
 	auto shipTransform = make_shared<Transform>(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 90.f);
+	auto shipRb = make_shared<RigidBody>(1.0f, 2.0f);
 	manager.addComponent(ship, shipTransform);
-	manager.addComponent(ship, make_shared<RigidBody>(1.0f, 2.0f));
+	manager.addComponent(ship, shipRb);
 	manager.addComponent(ship, shipSprite);
 	manager.addComponent(ship, make_shared<Engine>(300.0f, 150.f));
 	manager.addComponent(ship, make_shared<ShipManualControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE, Key::KEY_DOWN));
 	manager.addComponent(ship, make_shared<Boundless>());
 	manager.addComponent(ship, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
-	manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH, [&manager, shipTransform](Entity other)
+	manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH, [&manager, shipTransform, shipRb](Entity other)
 		{
 			manager.destroyEntity(other);
 			shipTransform->position = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+			shipTransform->rotation = 90.f;
+
+			shipRb->velocity = { 0.0f, 0.0f };
 			// TODO: reduce 1 life + respawn OR gameover
 		}));
 	manager.addComponent(ship, make_shared<Weapon>(0.3f, [&manager, &shotSprite](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)

@@ -9,6 +9,7 @@
 #include <memory>
 #include <string>
 #include <cstdlib>
+#include "../components/BoundariesKill.h"
 
 int const SMALL_ASTEROID = 0;
 int const MEDIUM_ASTEROID = 1;
@@ -31,6 +32,7 @@ void spawnAsteroid(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> a
 	Entity ast = manager.createEntity();
 	auto transform = std::make_shared<Transform>(position.x, position.y, rotation);
 	manager.addComponent(ast, transform);
+	manager.addComponent(ast, std::make_shared<BoundariesKill>());
 
 	if (kind == SMALL_ASTEROID) // small ast
 	{

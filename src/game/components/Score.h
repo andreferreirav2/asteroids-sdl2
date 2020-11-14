@@ -3,6 +3,6 @@
 
 struct Score : public Component
 {
-	Score(int score) : score(score) {};
+	Score(int score = 0) : score(score) {};
 	int score = 0;
 };

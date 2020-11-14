@@ -102,14 +102,44 @@ void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 			flipType);
 	}
 
-	auto scoreBoard = manager.getAllComponentsOfType<Score>().begin()->get();
 	// Score
-	// TODO: reuse texture between frames
-	auto text = m_sdlApp.loadText(toString(scoreBoard->score, 8));
-	m_sdlApp.drawTexture(
-		text->texture,
-		{ }, // TODO: should clipping be mandatory?
-		{ 20, 20, text->dimentions.x, text->dimentions.y });
+	int player = 0;
+	for (auto scoreBoard : manager.getAllComponentsOfType<Score>())
+	{
+		// TODO: reuse texture between frames
+		auto text = m_sdlApp.loadText(toString(scoreBoard->score, 8));
+		int w = text->dimentions.x;
+		int h = text->dimentions.y;
+		int x, y;
+		switch (player++)
+		{
+		case 0:
+			x = 20;
+			y = 20;
+			break;
+		case 1:
+			x = m_sdlApp.getScreenWidth() - 20 - w;
+			y = 20;
+			break;
+		case 2:
+			x = 20;
+			y = m_sdlApp.getScreenHeigth() - 20 - h;
+			break;
+		case 3:
+			x = m_sdlApp.getScreenWidth() - 20 - w;
+			y = m_sdlApp.getScreenHeigth() - 20 - h;
+			break;
+		default:
+			x = 0;
+			y = 0;
+			break;
+		}
+
+		m_sdlApp.drawTexture(
+			text->texture,
+			{ }, // TODO: should clipping be mandatory?
+			{ x, y, text->dimentions.x, text->dimentions.y });
+	}
 
 	m_sdlApp.present();
 }

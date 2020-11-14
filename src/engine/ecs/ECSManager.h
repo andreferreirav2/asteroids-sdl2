@@ -1,7 +1,8 @@
 #pragma once
 #include <set>
 #include <algorithm>
-#include <iterator >
+#include <iterator>
+#include <functional>
 #include <unordered_map>
 #include "Entity.h"
 #include "Component.h"

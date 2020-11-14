@@ -57,8 +57,13 @@ void PhysicsCollisions::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> in
 				if (dist2 < radii2)
 				{
 					std::cerr << e1 << " is touching " << e2 << std::endl;
-					manager.destroyEntity(e1);
-					manager.destroyEntity(e2);
+					if (collider1->onCollide) {
+						collider1->onCollide(e2);
+					}
+					if (collider2->onCollide)
+					{
+						collider2->onCollide(e1);
+					}
 				}
 			}
 		}

@@ -131,42 +131,44 @@ int main(int argc, char* args[])
 	manager.addComponent(game, make_shared<AsteroidSpawnerParams>(1.0f, 2.0f, 0.1f, 0.5f, 0.4f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH, rect({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT })));
 
 	Entity ship = manager.createEntity();
-	manager.addComponent(ship, make_shared<Transform>(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 90.f));
+	auto shipTransform = make_shared<Transform>(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 90.f);
+	manager.addComponent(ship, shipTransform);
 	manager.addComponent(ship, make_shared<RigidBody>(1.0f, 2.0f));
 	manager.addComponent(ship, shipSprite);
 	manager.addComponent(ship, make_shared<Engine>(300.0f, 150.f));
 	manager.addComponent(ship, make_shared<ShipManualControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE, Key::KEY_DOWN));
 	manager.addComponent(ship, make_shared<Boundless>());
 	manager.addComponent(ship, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
-	manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH, [&](Entity other)
+	manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH, [&manager, shipTransform](Entity other)
 		{
-			manager.destroyEntity(ship);
 			manager.destroyEntity(other);
+			shipTransform->position = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+			// TODO: reduce 1 life + respawn OR gameover
 		}));
-	manager.addComponent(ship, make_shared<Weapon>(0.3f, [&](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
+	manager.addComponent(ship, make_shared<Weapon>(0.3f, [&manager, &shotSprite](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
 		{
 			Entity shot = manager.createEntity();
 			auto shotRb = std::make_shared<RigidBody>(1.0f, 0.0f);
 			manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
 			manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 200 * cos(gun->rotation * DEG_2_RAG), -200 * sin(gun->rotation * DEG_2_RAG)));
 			manager.addComponent(shot, shotSprite);
-			manager.addComponent(shot, std::make_shared<CircleCollider>(4.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&](Entity other)
+			manager.addComponent(shot, std::make_shared<CircleCollider>(4.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, shot](Entity other)
 				{
-					manager.destroyEntity(shot);
 					manager.destroyEntity(other);
+					manager.destroyEntity(shot);
 				}));
 			manager.addComponent(shot, make_shared<BoundariesKill>());
 		}));
-	manager.addComponent(ship, make_shared<SecondaryWeapon>(1.0f, 0, [&](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
+	manager.addComponent(ship, make_shared<SecondaryWeapon>(1.0f, 0, [&manager, &mineSprite](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
 		{
 			Entity mine = manager.createEntity();
 			manager.addComponent(mine, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
 			manager.addComponent(mine, std::make_shared<RigidBody>(1.0f, 0.3f, gunRb->velocity.x, gunRb->velocity.y));
 			manager.addComponent(mine, mineSprite);
-			manager.addComponent(mine, std::make_shared<CircleCollider>(10.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&](Entity other)
+			manager.addComponent(mine, std::make_shared<CircleCollider>(10.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, mine](Entity other)
 				{
-					manager.destroyEntity(mine);
 					manager.destroyEntity(other);
+					manager.destroyEntity(mine);
 				}));
 			manager.addComponent(mine, make_shared<BoundariesKill>());
 			manager.addComponent(mine, make_shared<DestroyAfterTime>(10.0f));

@@ -4,6 +4,9 @@
 #include "../components/Score.h"
 #include <sstream>
 #include <iomanip>
+#include <stdio.h>
+#include <iostream>
+#include "../components/Lives.h"
 
 std::string toString(int value, int zeros)
 {
@@ -72,40 +75,15 @@ void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 		auto sprite = manager.getComponentOfType<SpriteSDL>(e);
 		auto transform = manager.getComponentOfType<Transform>(e);
 
-		SDL_RendererFlip flipType;
-		if (sprite->flipVertical)
-		{
-			flipType = SDL_FLIP_VERTICAL;
-		}
-		else if (sprite->flipHorizontal)
-		{
-			flipType = SDL_FLIP_HORIZONTAL;
-		}
-		else
-		{
-			flipType = SDL_FLIP_NONE;
-		}
-
-		if (sprite->loadedTexture == nullptr) // If sprite is new and texture is not loaded yet
-		{
-			setTexture(sprite);
-		}
-
-		unsigned int sizeX = sprite->size.x * transform->scale.x;
-		unsigned int sizeY = sprite->size.y * transform->scale.y;
-		m_sdlApp.drawTexture(
-			sprite->loadedTexture->texture,
-			sprite->cliping,
-			{ static_cast<int>(transform->position.x - sizeX / 2), static_cast<int>(transform->position.y - sizeY / 2),
-				sizeX, sizeY },
-			-transform->rotation - sprite->rotationAngle,
-			flipType);
+		drawSpriteSDL(sprite, transform->position, transform->rotation, transform->scale);
 	}
 
 	// Score
 	int player = 0;
-	for (auto scoreBoard : manager.getAllComponentsOfType<Score>())
+	for (auto e : manager.getAllEntitiesWithComponentType<Score>())
 	{
+		auto scoreBoard = manager.getComponentOfType<Score>(e);
+
 		// TODO: reuse texture between frames
 		auto text = m_sdlApp.loadText(toString(scoreBoard->score, 8));
 		int w = text->dimentions.x;
@@ -114,7 +92,7 @@ void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 		switch (player++)
 		{
 		case 0:
-			x = 20;
+			x = 20 + 128 - w;
 			y = 20;
 			break;
 		case 1:
@@ -122,16 +100,17 @@ void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 			y = 20;
 			break;
 		case 2:
-			x = 20;
-			y = m_sdlApp.getScreenHeigth() - 20 - h;
+			x = 20 + 128 - w;
+			y = m_sdlApp.getScreenHeigth() - 52 - h;
 			break;
 		case 3:
 			x = m_sdlApp.getScreenWidth() - 20 - w;
-			y = m_sdlApp.getScreenHeigth() - 20 - h;
+			y = m_sdlApp.getScreenHeigth() - 52 - h;
 			break;
 		default:
 			x = 0;
 			y = 0;
+			std::cerr << "More than 4 players found!!! " << std::endl;
 			break;
 		}
 
@@ -139,7 +118,51 @@ void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 			text->texture,
 			{ }, // TODO: should clipping be mandatory?
 			{ x, y, text->dimentions.x, text->dimentions.y });
+
+
+		auto sprite = manager.getComponentOfType<SpriteSDL>(e);
+		auto lives = manager.getComponentOfType<Lives>(e);
+		if (sprite && lives)
+		{
+			float xPos = static_cast<float>(x + text->dimentions.x + 4 - sprite->size.x);
+			float yPos = static_cast<float>(text->dimentions.y + y + 12);
+			for (int i = 0; i < lives->left; i++)
+			{
+				drawSpriteSDL(sprite, { xPos - (sprite->size.x + 4) * i, yPos }, 90);
+			}
+		}
 	}
 
 	m_sdlApp.present();
+}
+
+void SDLRenderer::drawSpriteSDL(std::shared_ptr<SpriteSDL>& sprite, float2 position, float rotation, float2 scale)
+{
+	SDL_RendererFlip flipType;
+	if (sprite->flipVertical)
+	{
+		flipType = SDL_FLIP_VERTICAL;
+	}
+	else if (sprite->flipHorizontal)
+	{
+		flipType = SDL_FLIP_HORIZONTAL;
+	}
+	else
+	{
+		flipType = SDL_FLIP_NONE;
+	}
+
+	if (sprite->loadedTexture == nullptr) // If sprite is new and texture is not loaded yet
+	{
+		setTexture(sprite);
+	}
+
+	unsigned int sizeX = sprite->size.x * scale.x;
+	unsigned int sizeY = sprite->size.y * scale.y;
+	m_sdlApp.drawTexture(
+		sprite->loadedTexture->texture,
+		sprite->cliping,
+		{ static_cast<int>(position.x - sizeX / 2), static_cast<int>(position.y - sizeY / 2), sizeX, sizeY },
+		-rotation - sprite->rotationAngle,
+		flipType);
 }

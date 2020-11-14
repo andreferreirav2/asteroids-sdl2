@@ -15,6 +15,8 @@ public:
 	void onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs) override;
 
 private:
+	void drawSpriteSDL(std::shared_ptr<SpriteSDL>& sprite, float2 position, float rotation = 0.0f, float2 scale = float2({ 1.0f, 1.0f }));
+
 	SDLApp& m_sdlApp;
 };
 

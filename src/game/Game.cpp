@@ -39,6 +39,8 @@
 #else
 #include <unistd.h>
 #endif
+#include "components/Respawn.h"
+#include "components/Lives.h"
 
 using namespace std;
 
@@ -133,7 +135,7 @@ int main(int argc, char* args[])
 	manager.addComponent(game, make_shared<Clock>(1.0f, 1000));
 	manager.addComponent(game, make_shared<AsteroidSpawnerParams>(1.0f, 2.0f, 0.1f, 0.5f, 0.4f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH, rect({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT })));
 
-	int players = 1;
+	int players = 4;
 	for (int i = 0; i < players; i++)
 	{
 		float2 spawn = { SCREEN_WIDTH / 2 + (-100 * (players - 1) + 200 * i), SCREEN_HEIGHT / 2 };
@@ -146,28 +148,44 @@ int main(int argc, char* args[])
 		manager.addComponent(ship, shipRb);
 		manager.addComponent(ship, shipSprite);
 		manager.addComponent(ship, scoreBoard);
+		manager.addComponent(ship, make_shared<Respawn>(spawn, 90.0f));
+		manager.addComponent(ship, make_shared<Lives>(3));
 		manager.addComponent(ship, make_shared<Engine>(300.0f, 150.f));
 		manager.addComponent(ship, make_shared<ShipManualControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE, Key::KEY_DOWN));
 		manager.addComponent(ship, make_shared<Boundless>());
 		manager.addComponent(ship, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
-		manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH, [&manager, shipTransform, shipRb, spawn](Entity other)
+		manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH, [&manager, ship](Entity other)
 			{
-				shipTransform->position = spawn;
-				shipTransform->rotation = 90.f;
+				auto respawn = manager.getComponentOfType<Respawn>(ship);
+				if (respawn)
+				{
+					auto shipTransform = manager.getComponentOfType<Transform>(ship);
+					auto shipRb = manager.getComponentOfType<RigidBody>(ship);
 
-				shipRb->velocity = { 0.0f, 0.0f };
-				// TODO: reduce 1 life + respawn OR gameover
+					shipTransform->position = respawn->position;
+					shipTransform->rotation = respawn->rotation;
+					shipRb->velocity = { 0.0f, 0.0f };
+				}
+
+				auto lives = manager.getComponentOfType<Lives>(ship);
+				if (lives && --lives->left < 0)
+				{
+					cerr << "Game over! lives: " << lives->left << endl;
+					// TODO: gameover
+				}
+
 				manager.destroyEntity(other);
 			}));
-		manager.addComponent(ship, make_shared<Weapon>(0.3f, [&manager, &shotSprite, scoreBoard](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
+		manager.addComponent(ship, make_shared<Weapon>(0.3f, [&manager, &shotSprite, ship](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
 			{
 				Entity shot = manager.createEntity();
 				auto shotRb = std::make_shared<RigidBody>(1.0f, 0.0f);
 				manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
 				manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 200 * cos(gun->rotation * DEG_2_RAG), -200 * sin(gun->rotation * DEG_2_RAG)));
 				manager.addComponent(shot, shotSprite);
-				manager.addComponent(shot, std::make_shared<CircleCollider>(4.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, shot, scoreBoard](Entity other)
+				manager.addComponent(shot, std::make_shared<CircleCollider>(4.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, ship, shot](Entity other)
 					{
+						auto scoreBoard = manager.getComponentOfType<Score>(ship);
 						auto scoreAwarder = manager.getComponentOfType<ScoreAwarder>(other);
 						if (scoreBoard && scoreAwarder)
 						{
@@ -179,14 +197,15 @@ int main(int argc, char* args[])
 					}));
 				manager.addComponent(shot, make_shared<BoundariesKill>());
 			}));
-		manager.addComponent(ship, make_shared<SecondaryWeapon>(1.0f, 0, [&manager, &mineSprite, scoreBoard](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
+		manager.addComponent(ship, make_shared<SecondaryWeapon>(1.0f, 0, [&manager, &mineSprite, ship](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
 			{
 				Entity mine = manager.createEntity();
 				manager.addComponent(mine, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
 				manager.addComponent(mine, std::make_shared<RigidBody>(1.0f, 0.3f, gunRb->velocity.x, gunRb->velocity.y));
 				manager.addComponent(mine, mineSprite);
-				manager.addComponent(mine, std::make_shared<CircleCollider>(10.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, mine, scoreBoard](Entity other)
+				manager.addComponent(mine, std::make_shared<CircleCollider>(10.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, ship, mine](Entity other)
 					{
+						auto scoreBoard = manager.getComponentOfType<Score>(ship);
 						auto scoreAwarder = manager.getComponentOfType<ScoreAwarder>(other);
 						if (scoreBoard && scoreAwarder)
 						{

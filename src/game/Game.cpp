@@ -14,6 +14,7 @@
 #include "components/Weapon.h"
 #include "components/SecondaryWeapon.h"
 #include "components/Clock.h"
+#include "components/AsteroidSpawnerParams.h"
 #include "components/CircleCollider.h"
 #include "systems/PhysicsDynamics.h"
 #include "systems/SDLRenderer.h"
@@ -24,6 +25,7 @@
 #include "systems/BoundariesChecker.h"
 #include "systems/TimePassing.h"
 #include "systems/PhysicsCollisions.h"
+#include "systems/AsteroidSpawner.h"
 #include "systems/WeaponFiring.h"
 #include "systems/DestroyAfterEntitiesTime.h"
 #include <stdio.h>
@@ -121,14 +123,12 @@ int main(int argc, char* args[])
 	auto shipSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 16, 24 }), rect({ 0, 0, 64, 96 }));
 	auto shotSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 2, 3 }), rect({ 0, 160, 32, 48 }));
 	auto mineSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0, false, false, uint2({ 12, 12 }), rect({ 32, 160, 48, 48 }));
-	auto asteroidSmallSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0.0f, false, false, uint2({ 16, 16 }), rect({ 0, 96, 64, 64 }));
-	auto asteroidMediumSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0.0f, false, false, uint2({ 40, 40 }), rect({ 64, 0, 160, 160 }));
-	auto asteroidLargeSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0.0f, false, false, uint2({ 64, 64 }), rect({ 224, 0, 288, 288 }));
 
 	ECSManager manager;
 
 	Entity game = manager.createEntity();
 	manager.addComponent(game, make_shared<Clock>(1.0f, 1000));
+	manager.addComponent(game, make_shared<AsteroidSpawnerParams>(1.0f, 2.0f, 0.1f, 0.5f, 0.4f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH, rect({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT })));
 
 	Entity ship = manager.createEntity();
 	manager.addComponent(ship, make_shared<Transform>(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 90.f));
@@ -172,36 +172,6 @@ int main(int argc, char* args[])
 			manager.addComponent(mine, make_shared<DestroyAfterTime>(10.0f));
 		}));
 
-	// small ast
-	for (int i = 0; i < 20; i++)
-	{
-		Entity ast = manager.createEntity();
-		manager.addComponent(ast, make_shared<Transform>(0, 100 * i, i * 30.0f));
-		manager.addComponent(ast, make_shared<RigidBody>(1.0f, 0.0f, 10.0f, 0.0f));
-		manager.addComponent(ast, asteroidSmallSprite);
-		manager.addComponent(ast, make_shared<CircleCollider>(8.0f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH));
-	}
-
-	// medium ast
-	for (int i = 0; i < 20; i++)
-	{
-		Entity ast = manager.createEntity();
-		manager.addComponent(ast, make_shared<Transform>(0, 100 * i, i * 20.0f));
-		manager.addComponent(ast, make_shared<RigidBody>(1.0f, 0.0f, 10.0f, 0.0f));
-		manager.addComponent(ast, asteroidMediumSprite);
-		manager.addComponent(ast, make_shared<CircleCollider>(20.0f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH));
-	}
-
-	// big ast
-	for (int i = 0; i < 20; i++)
-	{
-		Entity ast = manager.createEntity();
-		manager.addComponent(ast, make_shared<Transform>(0, 100 * i, i * 10.0f));
-		manager.addComponent(ast, make_shared<RigidBody>(1.0f, 0.0f, 10.0f, 0.0f));
-		manager.addComponent(ast, asteroidLargeSprite);
-		manager.addComponent(ast, make_shared<CircleCollider>(32.0f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH));
-	}
-
 	TimePassing timePassing = TimePassing();
 	ShipKeyboardController shipKeyboardController = ShipKeyboardController();
 	ShipGameController shipGameController = ShipGameController();
@@ -209,6 +179,7 @@ int main(int argc, char* args[])
 	WeaponFiring weaponFiring = WeaponFiring();
 	PhysicsDynamics physicsDynamics = PhysicsDynamics();
 	PhysicsCollisions physicsCollisions = PhysicsCollisions();
+	AsteroidSpawner asteroidSpawner = AsteroidSpawner();
 	DestroyAfterEntitiesTime destroyAfterEntitiesTime = DestroyAfterEntitiesTime();
 	BoundariesChecker boundariesChecker = BoundariesChecker({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT });
 	SDLRenderer sdlRenderer = SDLRenderer(app);
@@ -223,12 +194,13 @@ int main(int argc, char* args[])
 	destroyAfterEntitiesTime.onStart(manager);
 	boundariesChecker.onStart(manager);
 	physicsCollisions.onStart(manager);
+	asteroidSpawner.onStart(manager);
 	sdlRenderer.onStart(manager);
 	soundFxPlayer.onStart(manager);
 
 	int frames = 0;
-	while (true && manager.getComponentOfType<Clock>(game)->currentTicks < 5000)
-		//while (true)
+	//while (true && manager.getComponentOfType<Clock>(game)->currentTicks < 5000)
+	while (true)
 	{
 		auto inputs = app.parseInputs(); // parse inputs from SDL
 		if (inputs->isPressed(Key::QUIT))
@@ -245,6 +217,7 @@ int main(int argc, char* args[])
 		destroyAfterEntitiesTime.onUpdate(manager, inputs); // destroy objects after time
 		boundariesChecker.onUpdate(manager, inputs); // apply boundaries or 
 		physicsCollisions.onUpdate(manager, inputs); // check for collisions
+		asteroidSpawner.onUpdate(manager, inputs); // spawn new asteroids
 		sdlRenderer.onUpdate(manager, inputs);
 		soundFxPlayer.onUpdate(manager, inputs);
 

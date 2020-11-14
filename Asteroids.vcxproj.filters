@@ -58,6 +58,9 @@
     <ClCompile Include="src\game\systems\DestroyAfterEntitiesTime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\systems\AsteroidSpawner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\engine\ecs\Component.h">
@@ -109,5 +112,7 @@
     <ClInclude Include="src\game\components\SecondaryWeapon.h" />
     <ClInclude Include="src\game\components\DestroyAfterTime.h" />
     <ClInclude Include="src\game\systems\DestroyAfterEntitiesTime.h" />
+    <ClInclude Include="src\game\systems\AsteroidSpawner.h" />
+    <ClInclude Include="src\game\components\AsteroidSpawnerParams.h" />
   </ItemGroup>
 </Project>

@@ -17,19 +17,15 @@ void PhysicsDynamics::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inpu
 		auto rb = manager.getComponentOfType<RigidBody>(e);
 		auto transform = manager.getComponentOfType<Transform>(e);
 
-		float velMagnitude = sqrt(pow(rb->velocity.x, 2) + pow(rb->velocity.y, 2));
-		if (velMagnitude != 0.0f)
+		float velMagnitude = rb->velocity.x * rb->velocity.x + rb->velocity.y * rb->velocity.y;
+		if (velMagnitude > EPSILON)
 		{
 			rb->velocity.x += rb->drag * dt * -rb->velocity.x;
 			rb->velocity.y += rb->drag * dt * -rb->velocity.y;
 		}
-
-		if (std::abs(rb->velocity.x) < EPSILON)
+		else
 		{
 			rb->velocity.x = 0.0f;
-		}
-		if (std::abs(rb->velocity.y) < EPSILON)
-		{
 			rb->velocity.y = 0.0f;
 		}
 

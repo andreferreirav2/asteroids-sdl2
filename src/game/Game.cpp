@@ -120,6 +120,7 @@ int main(int argc, char* args[])
 
 	auto shipSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 16, 24 }), rect({ 0, 0, 64, 96 }));
 	auto shotSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 2, 3 }), rect({ 0, 160, 32, 48 }));
+	auto mineSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0, false, false, uint2({ 12, 12 }), rect({ 32, 160, 48, 48 }));
 	auto asteroidSmallSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0.0f, false, false, uint2({ 16, 16 }), rect({ 0, 96, 64, 64 }));
 	auto asteroidMediumSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0.0f, false, false, uint2({ 40, 40 }), rect({ 64, 0, 160, 160 }));
 	auto asteroidLargeSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0.0f, false, false, uint2({ 64, 64 }), rect({ 224, 0, 288, 288 }));
@@ -151,9 +152,9 @@ int main(int argc, char* args[])
 	manager.addComponent(ship, make_shared<SecondaryWeapon>(1.0f, 0, [&](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
 		{
 			Entity mine = manager.createEntity();
-			manager.addComponent(mine, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation, 3.0f, 3.0f));
+			manager.addComponent(mine, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
 			manager.addComponent(mine, std::make_shared<RigidBody>(1.0f, 0.3f, gunRb->velocity.x, gunRb->velocity.y));
-			manager.addComponent(mine, shotSprite);
+			manager.addComponent(mine, mineSprite);
 			manager.addComponent(mine, std::make_shared<CircleCollider>(10.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH));
 			manager.addComponent(mine, make_shared<BoundariesKill>());
 			manager.addComponent(mine, make_shared<DestroyAfterTime>(1.0f));

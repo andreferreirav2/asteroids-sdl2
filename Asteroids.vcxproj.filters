@@ -55,6 +55,9 @@
     <ClCompile Include="src\game\systems\BoundariesChecker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\systems\DestroyAfterEntitiesTime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\engine\ecs\Component.h">
@@ -104,5 +107,7 @@
     <ClInclude Include="src\game\systems\BoundariesChecker.h" />
     <ClInclude Include="src\game\components\BoundariesKill.h" />
     <ClInclude Include="src\game\components\SecondaryWeapon.h" />
+    <ClInclude Include="src\game\components\DestroyAfterTime.h" />
+    <ClInclude Include="src\game\systems\DestroyAfterEntitiesTime.h" />
   </ItemGroup>
 </Project>

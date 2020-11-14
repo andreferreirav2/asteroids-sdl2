@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\sdl\SDLAppMixer.cpp" />
+    <ClCompile Include="src\game\systems\DestroyAfterEntitiesTime.cpp" />
     <ClCompile Include="src\game\systems\WeaponFiring.cpp" />
     <ClCompile Include="src\game\systems\PhysicsCollisions.cpp" />
     <ClCompile Include="src\game\systems\TimePassing.cpp" />
@@ -160,9 +161,11 @@
     <ClCompile Include="src\engine\sdl\SDLApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\game\systems\DestroyAfterEntitiesTime.h" />
     <ClInclude Include="src\game\components\BoundariesKill.h" />
     <ClInclude Include="src\game\components\CircleCollider.h" />
     <ClInclude Include="src\game\components\Clock.h" />
+    <ClInclude Include="src\game\components\DestroyAfterTime.h" />
     <ClInclude Include="src\game\components\SoundFXSDL.h" />
     <ClInclude Include="src\game\components\Boundless.h" />
     <ClInclude Include="src\game\components\Weapon.h" />

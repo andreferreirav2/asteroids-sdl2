@@ -9,6 +9,7 @@
 #include "components/SoundFXSDL.h"
 #include "components/ShipManualControls.h"
 #include "components/Boundless.h"
+#include "components/DestroyAfterTime.h"
 #include "components/BoundariesKill.h"
 #include "components/Weapon.h"
 #include "components/SecondaryWeapon.h"
@@ -24,6 +25,7 @@
 #include "systems/TimePassing.h"
 #include "systems/PhysicsCollisions.h"
 #include "systems/WeaponFiring.h"
+#include "systems/DestroyAfterEntitiesTime.h"
 #include <stdio.h>
 #include <iostream>
 #include <typeinfo>
@@ -148,12 +150,13 @@ int main(int argc, char* args[])
 		}));
 	manager.addComponent(ship, make_shared<SecondaryWeapon>(1.0f, 0, [&](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
 		{
-			Entity shot = manager.createEntity();
-			manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation, 3.0f, 3.0f));
-			manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.3f, gunRb->velocity.x, gunRb->velocity.y));
-			manager.addComponent(shot, shotSprite);
-			manager.addComponent(shot, std::make_shared<CircleCollider>(10.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH));
-			manager.addComponent(shot, make_shared<BoundariesKill>());
+			Entity mine = manager.createEntity();
+			manager.addComponent(mine, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation, 3.0f, 3.0f));
+			manager.addComponent(mine, std::make_shared<RigidBody>(1.0f, 0.3f, gunRb->velocity.x, gunRb->velocity.y));
+			manager.addComponent(mine, shotSprite);
+			manager.addComponent(mine, std::make_shared<CircleCollider>(10.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH));
+			manager.addComponent(mine, make_shared<BoundariesKill>());
+			manager.addComponent(mine, make_shared<DestroyAfterTime>(1.0f));
 		}));
 
 	// small ast
@@ -193,6 +196,7 @@ int main(int argc, char* args[])
 	WeaponFiring weaponFiring = WeaponFiring();
 	PhysicsDynamics physicsDynamics = PhysicsDynamics();
 	PhysicsCollisions physicsCollisions = PhysicsCollisions();
+	DestroyAfterEntitiesTime destroyAfterEntitiesTime = DestroyAfterEntitiesTime();
 	BoundariesChecker boundariesChecker = BoundariesChecker({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT });
 	SDLRenderer sdlRenderer = SDLRenderer(app);
 	SoundFxPlayer soundFxPlayer = SoundFxPlayer(app);
@@ -203,6 +207,7 @@ int main(int argc, char* args[])
 	enginesThrusters.onStart(manager);
 	weaponFiring.onStart(manager);
 	physicsDynamics.onStart(manager);
+	destroyAfterEntitiesTime.onStart(manager);
 	boundariesChecker.onStart(manager);
 	physicsCollisions.onStart(manager);
 	sdlRenderer.onStart(manager);
@@ -224,6 +229,7 @@ int main(int argc, char* args[])
 		enginesThrusters.onUpdate(manager, inputs); // move all engines
 		weaponFiring.onUpdate(manager, inputs); // fire projectiles
 		physicsDynamics.onUpdate(manager, inputs); // apply velocity to position
+		destroyAfterEntitiesTime.onUpdate(manager, inputs); // destroy objects after time
 		boundariesChecker.onUpdate(manager, inputs); // apply boundaries or 
 		physicsCollisions.onUpdate(manager, inputs); // check for collisions
 		sdlRenderer.onUpdate(manager, inputs);

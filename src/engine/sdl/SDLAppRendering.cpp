@@ -25,12 +25,12 @@ void SDLApp::clear(colorR8G8B8A8 const& color)
 	SDL_RenderClear(m_renderer.get());
 }
 
-void SDLApp::drawTextureFullscreen(std::shared_ptr<SDL_Texture> const& texture)
+void SDLApp::drawTextureFullscreen(std::shared_ptr<SDL_Texture> const texture)
 {
 	SDL_RenderCopy(m_renderer.get(), texture.get(), NULL, NULL);
 }
 
-void SDLApp::drawTexture(std::shared_ptr<SDL_Texture> const& texture, rect const& clip, rect const& coord, float angle, SDL_RendererFlip flipType)
+void SDLApp::drawTexture(std::shared_ptr<SDL_Texture> const texture, rect const& clip, rect const& coord, float angle, SDL_RendererFlip flipType)
 {
 	SDL_Rect* pClp = NULL;
 	SDL_Rect clp = { clip.x, clip.y, static_cast<int>(clip.w), static_cast<int>(clip.h) };
@@ -111,4 +111,33 @@ shared_ptr<LoadedTexture> SDLApp::getTexture(string const& imagePath)
 		return loadTexture(imagePath);
 	}
 	return it->second;
+}
+
+void SDLApp::loadFont(std::string const& fontPath, int fontSize)
+{
+	m_font.reset();
+	m_font = std::shared_ptr<TTF_Font>(TTF_OpenFont(fontPath.c_str(), fontSize), TTFFontDeleter());
+}
+
+std::shared_ptr<LoadedTexture> SDLApp::loadText(std::string const& text, colorR8G8B8 const& color)
+{
+	//Render text surface
+	auto textSurface = std::shared_ptr<SDL_Surface>(TTF_RenderText_Solid(m_font.get(), text.c_str(), SDL_Color({ color.r, color.g, color.b })), SDLSurfaceDeleter());
+	if (textSurface == NULL)
+	{
+		cerr << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << endl;
+		return nullptr;
+	}
+
+	//Create texture from surface pixels
+	auto texture = std::shared_ptr<SDL_Texture>(SDL_CreateTextureFromSurface(m_renderer.get(), textSurface.get()), SDLTextureDeleter());
+	if (texture == NULL)
+	{
+		cerr << "Unable to create texture from rendered text! SDL Error " << SDL_GetError() << endl;
+		return nullptr;
+	}
+
+	auto ltexture = std::make_shared<LoadedTexture>(texture, text, uint2({ static_cast<unsigned int>(textSurface->w), static_cast<unsigned int>(textSurface->h) }));
+	//m_textureCache.insert_or_assign(text, ltexture);
+	return ltexture;
 }

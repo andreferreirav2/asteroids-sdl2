@@ -10,6 +10,14 @@ struct SDLWindowDeleter
 	}
 };
 
+struct TTFFontDeleter
+{
+	void operator()(TTF_Font* font)
+	{
+		TTF_CloseFont(font);
+	}
+};
+
 struct SDLGameControllerDeleter
 {
 	void operator()(SDL_GameController* controller)

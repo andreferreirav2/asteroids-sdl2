@@ -1,7 +1,6 @@
 #include "SDLApp.h"
 #include "SDLResourceDeleters.h"
 #include <SDL_image.h>
-#include <SDL_mixer.h>
 #include <iostream>
 #include <memory>
 
@@ -96,6 +95,13 @@ bool SDLApp::init()
 		return false;
 	}
 
+	//Initialize SDL_ttf
+	if (TTF_Init() == -1)
+	{
+		cerr << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << endl;
+		return false;
+	}
+
 	//Initialize SDL_mixer
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
 	{
@@ -108,6 +114,7 @@ bool SDLApp::init()
 
 void SDLApp::close()
 {
+	TTF_Quit();
 	Mix_Quit();
 	IMG_Quit();
 	SDL_Quit();

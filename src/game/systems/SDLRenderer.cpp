@@ -1,6 +1,16 @@
 #include "SDLRenderer.h"
 #include "../components/SpriteSDL.h"
 #include "../components/Transform.h"
+#include "../components/Score.h"
+#include <sstream>
+#include <iomanip>
+
+std::string toString(int value, int zeros)
+{
+	std::stringstream ss;
+	ss << std::setw(zeros) << std::setfill(' ') << value;
+	return ss.str();
+}
 
 SDLRenderer::SDLRenderer(SDLApp& sdlApp) :
 	m_sdlApp(sdlApp)
@@ -91,6 +101,15 @@ void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 			-transform->rotation - sprite->rotationAngle,
 			flipType);
 	}
+
+	auto scoreBoard = manager.getAllComponentsOfType<Score>().begin()->get();
+	// Score
+	// TODO: reuse texture between frames
+	auto text = m_sdlApp.loadText(toString(scoreBoard->score, 8));
+	m_sdlApp.drawTexture(
+		text->texture,
+		{ }, // TODO: should clipping be mandatory?
+		{ 20, 20, text->dimentions.x, text->dimentions.y });
 
 	m_sdlApp.present();
 }

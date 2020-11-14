@@ -121,6 +121,7 @@ int main(int argc, char* args[])
 	// Pre load assets
 	app.loadTexture(string("assets/sprites/atlas.png"));
 	app.getMusic(string("assets/audio/shoot.wav"));
+	app.loadFont(string("assets/fonts/Roboto-Regular.ttf"), 28);
 
 	auto shipSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 16, 24 }), rect({ 0, 0, 64, 96 }));
 	auto shotSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 2, 3 }), rect({ 0, 160, 32, 48 }));
@@ -129,8 +130,8 @@ int main(int argc, char* args[])
 	ECSManager manager;
 
 	Entity game = manager.createEntity();
-	manager.addComponent(game, make_shared<Clock>(1.0f, 1000));
-	manager.addComponent(game, make_shared<Score>());
+	manager.addComponent(game, make_shared<Clock>(20.0f, 1000));
+	manager.addComponent(game, make_shared<Score>(1234567890));
 	manager.addComponent(game, make_shared<AsteroidSpawnerParams>(1.0f, 2.0f, 0.1f, 0.5f, 0.4f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH, rect({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT })));
 
 	Entity ship = manager.createEntity();
@@ -166,7 +167,7 @@ int main(int argc, char* args[])
 					if (scoreBoard && scoreAwarder)
 					{
 						scoreBoard->score += scoreAwarder->score;
-						cerr << "score: " << scoreBoard->score << endl;
+						//cerr << "score: " << scoreBoard->score << endl;
 					}
 
 					manager.destroyEntity(other);
@@ -187,7 +188,7 @@ int main(int argc, char* args[])
 					if (scoreBoard && scoreAwarder)
 					{
 						scoreBoard->score += scoreAwarder->score;
-						cerr << "score: " << scoreBoard->score << endl;
+						//cerr << "score: " << scoreBoard->score << endl;
 					}
 
 					manager.destroyEntity(other);

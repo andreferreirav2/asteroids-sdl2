@@ -56,7 +56,7 @@ void PhysicsCollisions::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> in
 				float radii2 = radii * radii;
 				if (dist2 < radii2)
 				{
-					std::cerr << e1 << " is touching " << e2 << std::endl;
+					//std::cerr << e1 << " is touching " << e2 << std::endl;
 					if (collider1->onCollide)
 					{
 						collider1->onCollide(e2);

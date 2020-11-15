@@ -6,9 +6,9 @@
 
 struct LoadedTexture
 {
-	LoadedTexture(std::shared_ptr<SDL_Texture> texture, std::string path, uint2 dimentions) : texture(texture), path(path), dimentions(dimentions) {};
+	LoadedTexture(std::shared_ptr<SDL_Texture> texture, std::string key, uint2 dimentions) : texture(texture), key(key), dimentions(dimentions) {};
 
 	std::shared_ptr<SDL_Texture> texture;
-	std::string path;
+	std::string key;
 	uint2 dimentions;
 };

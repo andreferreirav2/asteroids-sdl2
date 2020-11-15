@@ -80,12 +80,25 @@ void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 
 	// Score
 	int player = 0;
+	std::set<int> currentScores;
 	for (auto e : manager.getAllEntitiesWithComponentType<Score>())
 	{
 		auto scoreBoard = manager.getComponentOfType<Score>(e);
+		int score = scoreBoard->score;
 
-		// TODO: reuse texture between frames
-		auto text = m_sdlApp.loadText(toString(scoreBoard->score, 8));
+		currentScores.insert(score);
+		std::shared_ptr<LoadedTexture> text;
+		if (m_scoresTextTextureCache.find(score) != m_scoresTextTextureCache.end())
+		{
+			text = m_scoresTextTextureCache[score];
+		}
+		else
+		{
+			text = m_sdlApp.loadText(toString(score, 8));
+			m_scoresTextTextureCache[score] = text;
+		}
+
+
 		int w = text->dimentions.x;
 		int h = text->dimentions.y;
 		int x, y;
@@ -129,6 +142,21 @@ void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 			for (int i = 0; i < lives->left; i++)
 			{
 				drawSpriteSDL(sprite, { xPos - (sprite->size.x + 4) * i, yPos }, 90);
+			}
+		}
+	}
+
+	if (m_scoresTextTextureCache.size() > currentScores.size())
+	{
+		for (auto it = m_scoresTextTextureCache.cbegin(); it != m_scoresTextTextureCache.cend();)
+		{
+			if (currentScores.find(it->first) == currentScores.end())
+			{
+				m_scoresTextTextureCache.erase(it++);
+			}
+			else
+			{
+				++it;
 			}
 		}
 	}

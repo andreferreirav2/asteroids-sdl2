@@ -160,6 +160,7 @@
     <ClCompile Include="src\game\systems\PhysicsDynamics.cpp" />
     <ClCompile Include="src\game\Game.cpp" />
     <ClCompile Include="src\engine\sdl\SDLApp.cpp" />
+    <ClCompile Include="src\game\systems\EnemyAI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\game\components\AsteroidSpawnerParams.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="src\game\components\Respawn.h" />
     <ClInclude Include="src\game\components\Score.h" />
     <ClInclude Include="src\game\components\ScoreAwarder.h" />
+    <ClInclude Include="src\game\components\ShipAIControls.h" />
     <ClInclude Include="src\game\systems\AsteroidSpawner.h" />
     <ClInclude Include="src\game\systems\DestroyAfterEntitiesTime.h" />
     <ClInclude Include="src\game\components\BoundariesKill.h" />
@@ -201,6 +203,7 @@
     <ClInclude Include="src\engine\ecs\System.h" />
     <ClInclude Include="src\engine\sdl\SDLApp.h" />
     <ClInclude Include="src\game\components\SecondaryWeapon.h" />
+    <ClInclude Include="src\game\systems\EnemyAI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

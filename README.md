@@ -10,7 +10,6 @@ Asteroids clone using SDL2 with an ECS architecture
 	* enemy sound effect "danger music"
 * Weapon progression system
 * Secondary weapon ammo
-* Mine Explosion
 * Create Heat seaking missile
 * Replace all 2d sprites with OpenGL rendering
 	* Ship

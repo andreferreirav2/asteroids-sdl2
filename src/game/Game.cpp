@@ -57,7 +57,7 @@ int ENEMY_WEAPON_COLLIDER_LAYER = 1 << 3;
 int ASTEROIDS_COLLIDER_LAYER = 1 << 4;
 
 int PLAYER_COLLIDES_WITH = ENEMY_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
-int PLAYER_WEAPON_COLLIDES_WITH = ENEMY_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
+int PLAYER_WEAPON_COLLIDES_WITH = PLAYER_WEAPON_COLLIDER_LAYER | ENEMY_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
 int ENEMY_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;
 int ENEMY_WEAPON_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
 int ASTEROIDS_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER;
@@ -128,6 +128,7 @@ int main(int argc, char* args[])
 	auto shipSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 16, 24 }), rect({ 0, 0, 64, 96 }));
 	auto shotSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 2, 3 }), rect({ 0, 160, 32, 48 }));
 	auto mineSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0, false, false, uint2({ 12, 12 }), rect({ 32, 160, 48, 48 }));
+	auto explosionSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0, false, false, uint2({ 12, 12 }), rect({ 0, 288, 224, 224 }));
 
 	ECSManager manager;
 
@@ -176,7 +177,7 @@ int main(int argc, char* args[])
 
 				manager.destroyEntity(other);
 			}));
-		manager.addComponent(ship, make_shared<Weapon>(0.3f, [&manager, &shotSprite, ship](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
+		manager.addComponent(ship, make_shared<Weapon>(0.3f, [&manager, shotSprite, ship](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
 			{
 				Entity shot = manager.createEntity();
 				auto shotRb = std::make_shared<RigidBody>(1.0f, 0.0f);
@@ -197,23 +198,35 @@ int main(int argc, char* args[])
 					}));
 				manager.addComponent(shot, make_shared<BoundariesKill>());
 			}));
-		manager.addComponent(ship, make_shared<SecondaryWeapon>(1.0f, 0, [&manager, &mineSprite, ship](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
+		manager.addComponent(ship, make_shared<SecondaryWeapon>(1.0f, 0, [&manager, mineSprite, explosionSprite, ship](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
 			{
 				Entity mine = manager.createEntity();
-				manager.addComponent(mine, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
+				auto mineTransform = std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation);
+				manager.addComponent(mine, mineTransform);
 				manager.addComponent(mine, std::make_shared<RigidBody>(1.0f, 0.3f, gunRb->velocity.x, gunRb->velocity.y));
 				manager.addComponent(mine, mineSprite);
-				manager.addComponent(mine, std::make_shared<CircleCollider>(10.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, ship, mine](Entity other)
+				manager.addComponent(mine, std::make_shared<CircleCollider>(10.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, ship, mine, explosionSprite, mineTransform](Entity other)
 					{
-						auto scoreBoard = manager.getComponentOfType<Score>(ship);
-						auto scoreAwarder = manager.getComponentOfType<ScoreAwarder>(other);
-						if (scoreBoard && scoreAwarder)
-						{
-							scoreBoard->score += scoreAwarder->score;
-						}
 						// TODO: play explosion sound
 						// TODO: play explosion animation
-						manager.destroyEntity(other);
+
+						// Spawn explosion ball
+						Entity explosion = manager.createEntity();
+						manager.addComponent(explosion, std::make_shared<Transform>(mineTransform->position.x, mineTransform->position.y, mineTransform->rotation, 20.0f, 20.0f));
+						manager.addComponent(explosion, explosionSprite);
+						manager.addComponent(explosion, make_shared<BoundariesKill>());
+						manager.addComponent(explosion, make_shared<DestroyAfterTime>(0.15f));
+						manager.addComponent(explosion, std::make_shared<CircleCollider>(100.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, ship](Entity other)
+							{
+								auto scoreBoard = manager.getComponentOfType<Score>(ship);
+								auto scoreAwarder = manager.getComponentOfType<ScoreAwarder>(other);
+								if (scoreBoard && scoreAwarder)
+								{
+									scoreBoard->score += scoreAwarder->score;
+								}
+								manager.destroyEntity(other);
+							}));
+
 						manager.destroyEntity(mine);
 					}));
 				manager.addComponent(mine, make_shared<BoundariesKill>());

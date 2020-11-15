@@ -1,8 +1,9 @@
 #pragma once
 #include "Weapon.h"
-#include "../components/Transform.h"
 #include <functional>
 #include <memory>
+
+struct Transform;
 
 struct SecondaryWeapon : public Weapon
 {

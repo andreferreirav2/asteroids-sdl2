@@ -1,7 +1,7 @@
 #include "DestroyAfterEntitiesTime.h"
-#include "../components/DestroyAfterTime.h"
+#include "../../components/DestroyAfterTime.h"
 #include <cmath>
-#include "../components/Clock.h"
+#include "../../components/Clock.h"
 
 
 void DestroyAfterEntitiesTime::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)

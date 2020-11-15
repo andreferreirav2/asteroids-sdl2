@@ -1,6 +1,6 @@
 #pragma once
-#include "../../engine/sdl/SDLApp.h"
-#include "../../engine/ecs/ECSManager.h"
+#include "../../../engine/sdl/SDLApp.h"
+#include "../../../engine/ecs/ECSManager.h"
 
 class SoundFxPlayer : public System
 {

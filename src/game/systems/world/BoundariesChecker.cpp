@@ -1,8 +1,8 @@
 #include "BoundariesChecker.h"
-#include "../components/Transform.h"
-#include "../components/Boundless.h"
-#include "../components/BoundariesKill.h"
-#include "../components/PlayArea.h"
+#include "../../components/Transform.h"
+#include "../../components/Boundless.h"
+#include "../../components/BoundariesKill.h"
+#include "../../components/PlayArea.h"
 #include <cmath>
 
 

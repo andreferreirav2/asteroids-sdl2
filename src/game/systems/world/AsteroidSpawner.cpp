@@ -1,17 +1,17 @@
 #include "AsteroidSpawner.h"
-#include "../../engine/Math.h"
-#include "../components/AsteroidSpawnerParams.h"
-#include "../components/Clock.h"
-#include "../components/SpriteSDL.h"
-#include "../components/Transform.h"
-#include "../components/RigidBody.h"
-#include "../components/CircleCollider.h"
-#include "../components/ScoreAwarder.h"
+#include "../../../engine/Math.h"
+#include "../../components/AsteroidSpawnerParams.h"
+#include "../../components/Clock.h"
+#include "../../components/SpriteSDL.h"
+#include "../../components/Transform.h"
+#include "../../components/RigidBody.h"
+#include "../../components/CircleCollider.h"
+#include "../../components/ScoreAwarder.h"
 #include <cmath>
 #include <memory>
 #include <string>
-#include "../components/BoundariesKill.h"
-#include "../components/PlayArea.h"
+#include "../../components/BoundariesKill.h"
+#include "../../components/PlayArea.h"
 
 int const SMALL_ASTEROID = 0;
 int const MEDIUM_ASTEROID = 1;

@@ -1,11 +1,11 @@
 #pragma once
 #include "../../engine/ecs/Component.h"
-#include "../../engine/sdl/LoadedTexture.h"
 #include "../../engine/Types.h"
 #include <string>
 #include <memory>
 
 struct SDL_Texture;
+struct LoadedTexture;
 
 struct SpriteSDL : public Component
 {

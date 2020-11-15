@@ -1,11 +1,11 @@
 #include "PhysicsDynamics.h"
-#include "../components/RigidBody.h"
-#include "../components/Transform.h"
+#include "../../components/RigidBody.h"
+#include "../../components/Transform.h"
 #include <algorithm>
 #include <math.h>
 #include "iostream"
-#include "../components/Clock.h"
-#include "../../engine/Math.h"
+#include "../../components/Clock.h"
+#include "../../../engine/Math.h"
 
 
 void PhysicsDynamics::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)

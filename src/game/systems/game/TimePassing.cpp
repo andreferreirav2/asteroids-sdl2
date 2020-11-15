@@ -1,5 +1,5 @@
 #include "TimePassing.h"
-#include "../components/Clock.h"
+#include "../../components/Clock.h"
 #include <SDL.h>
 #include <iostream>
 

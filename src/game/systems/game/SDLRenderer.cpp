@@ -1,12 +1,12 @@
 #include "SDLRenderer.h"
-#include "../components/SpriteSDL.h"
-#include "../components/Transform.h"
-#include "../components/Score.h"
+#include "../../components/SpriteSDL.h"
+#include "../../components/Transform.h"
+#include "../../components/Score.h"
 #include <sstream>
 #include <iomanip>
 #include <stdio.h>
 #include <iostream>
-#include "../components/Lives.h"
+#include "../../components/Lives.h"
 
 std::string toString(int value, int zeros)
 {

@@ -1,8 +1,7 @@
 #pragma once
-#include "../../engine/ecs/ECSManager.h"
-#include "../../engine/Types.h"
+#include "../../../engine/ecs/ECSManager.h"
 
-class AsteroidSpawner : public System
+class ShipKeyboardController : public System
 {
 public:
 	// Inherited via System

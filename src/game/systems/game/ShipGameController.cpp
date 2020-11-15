@@ -1,8 +1,8 @@
 #include "ShipGameController.h"
-#include "../components/RigidBody.h"
-#include "../components/Transform.h"
-#include "../components/Engine.h"
-#include "../components/ShipManualControls.h"
+#include "../../components/RigidBody.h"
+#include "../../components/Transform.h"
+#include "../../components/Engine.h"
+#include "../../components/ShipManualControls.h"
 
 #include <iostream>
 #include <algorithm>

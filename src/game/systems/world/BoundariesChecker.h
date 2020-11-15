@@ -1,7 +1,8 @@
 #pragma once
-#include "../../engine/ecs/ECSManager.h"
+#include "../../../engine/ecs/ECSManager.h"
+#include "../../../engine/Types.h"
 
-class EnginesThrusters : public System
+class BoundariesChecker : public System
 {
 public:
 	// Inherited via System

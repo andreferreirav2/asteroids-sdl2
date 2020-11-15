@@ -1,7 +1,7 @@
 #pragma once
-#include "../../engine/ecs/ECSManager.h"
-#include "../../engine/sdl/SDLApp.h"
-#include "../components/SpriteSDL.h"
+#include "../../../engine/ecs/ECSManager.h"
+#include "../../../engine/sdl/SDLApp.h"
+#include "../../components/SpriteSDL.h"
 #include <memory>
 #include <map>
 

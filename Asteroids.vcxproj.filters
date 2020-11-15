@@ -10,22 +10,10 @@
     <ClCompile Include="src\game\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\systems\PhysicsDynamics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\game\systems\SDLRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\engine\sdl\SDLApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\engine\input\Inputs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\game\systems\ShipKeyboardController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\game\systems\EnginesThrusters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\engine\sdl\SDLAppRendering.cpp">
@@ -34,37 +22,49 @@
     <ClCompile Include="src\engine\sdl\SDLAppInputs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\systems\ShipGameController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\engine\sdl\SDLAppMixer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\systems\SoundFxPlayer.cpp">
+    <ClCompile Include="src\game\systems\world\AsteroidSpawner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\systems\TimePassing.cpp">
+    <ClCompile Include="src\game\systems\world\PhysicsDynamics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\systems\PhysicsCollisions.cpp">
+    <ClCompile Include="src\game\systems\world\PhysicsCollisions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\systems\WeaponFiring.cpp">
+    <ClCompile Include="src\game\systems\world\BoundariesChecker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\systems\BoundariesChecker.cpp">
+    <ClCompile Include="src\game\systems\combat\EnemyAIController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\systems\DestroyAfterEntitiesTime.cpp">
+    <ClCompile Include="src\game\systems\combat\EnemySpawner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\systems\AsteroidSpawner.cpp">
+    <ClCompile Include="src\game\systems\combat\EnginesThrusters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\systems\EnemySpawner.cpp">
+    <ClCompile Include="src\game\systems\combat\WeaponFiring.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\systems\EnemyAIController.cpp">
+    <ClCompile Include="src\game\systems\game\DestroyAfterEntitiesTime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\systems\game\SDLRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\systems\game\ShipGameController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\systems\game\ShipKeyboardController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\systems\game\SoundFxPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\systems\game\TimePassing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -78,9 +78,6 @@
     <ClInclude Include="src\engine\ecs\Entity.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\game\systems\PhysicsDynamics.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\game\components\RigidBody.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -90,46 +87,49 @@
     <ClInclude Include="src\game\components\Transform.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\game\systems\SDLRenderer.h" />
     <ClInclude Include="src\engine\sdl\SDLApp.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\game\components\Engine.h" />
     <ClInclude Include="src\engine\input\Inputs.h" />
-    <ClInclude Include="src\game\systems\ShipKeyboardController.h" />
-    <ClInclude Include="src\game\systems\EnginesThrusters.h" />
     <ClInclude Include="src\engine\Types.h" />
     <ClInclude Include="src\game\components\SpriteSDL.h" />
     <ClInclude Include="src\engine\sdl\SDLResourceDeleters.h" />
     <ClInclude Include="src\engine\sdl\LoadedTexture.h" />
     <ClInclude Include="src\game\components\Boundless.h" />
     <ClInclude Include="src\game\components\ShipManualControls.h" />
-    <ClInclude Include="src\game\systems\ShipGameController.h" />
     <ClInclude Include="src\game\components\SoundFXSDL.h" />
-    <ClInclude Include="src\game\systems\SoundFxPlayer.h" />
     <ClInclude Include="src\game\components\Weapon.h" />
     <ClInclude Include="src\game\components\Clock.h" />
-    <ClInclude Include="src\game\systems\TimePassing.h" />
-    <ClInclude Include="src\game\systems\PhysicsCollisions.h" />
     <ClInclude Include="src\game\components\CircleCollider.h" />
-    <ClInclude Include="src\game\systems\WeaponFiring.h" />
-    <ClInclude Include="src\game\systems\BoundariesChecker.h" />
     <ClInclude Include="src\game\components\BoundariesKill.h" />
     <ClInclude Include="src\game\components\SecondaryWeapon.h" />
     <ClInclude Include="src\game\components\DestroyAfterTime.h" />
-    <ClInclude Include="src\game\systems\DestroyAfterEntitiesTime.h" />
-    <ClInclude Include="src\game\systems\AsteroidSpawner.h" />
     <ClInclude Include="src\game\components\AsteroidSpawnerParams.h" />
     <ClInclude Include="src\game\components\Score.h" />
     <ClInclude Include="src\game\components\ScoreAwarder.h" />
     <ClInclude Include="src\game\components\Respawn.h" />
     <ClInclude Include="src\game\components\Lives.h" />
     <ClInclude Include="src\game\components\ShipAIControls.h" />
-    <ClInclude Include="src\game\systems\EnemySpawner.h" />
     <ClInclude Include="src\game\components\EnemySpawnerParams.h" />
     <ClInclude Include="src\engine\Math.h" />
     <ClInclude Include="src\game\components\Player.h" />
-    <ClInclude Include="src\game\systems\EnemyAIController.h" />
     <ClInclude Include="src\game\components\PlayArea.h" />
+    <ClInclude Include="src\game\systems\world\AsteroidSpawner.h" />
+    <ClInclude Include="src\game\systems\world\PhysicsDynamics.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\systems\world\PhysicsCollisions.h" />
+    <ClInclude Include="src\game\systems\world\BoundariesChecker.h" />
+    <ClInclude Include="src\game\systems\combat\WeaponFiring.h" />
+    <ClInclude Include="src\game\systems\combat\EnemyAIController.h" />
+    <ClInclude Include="src\game\systems\combat\EnemySpawner.h" />
+    <ClInclude Include="src\game\systems\combat\EnginesThrusters.h" />
+    <ClInclude Include="src\game\systems\game\DestroyAfterEntitiesTime.h" />
+    <ClInclude Include="src\game\systems\game\SDLRenderer.h" />
+    <ClInclude Include="src\game\systems\game\ShipGameController.h" />
+    <ClInclude Include="src\game\systems\game\ShipKeyboardController.h" />
+    <ClInclude Include="src\game\systems\game\SoundFxPlayer.h" />
+    <ClInclude Include="src\game\systems\game\TimePassing.h" />
   </ItemGroup>
 </Project>

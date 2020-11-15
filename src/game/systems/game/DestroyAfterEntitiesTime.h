@@ -1,7 +1,8 @@
 #pragma once
-#include "../../engine/ecs/ECSManager.h"
+#include "../../../engine/ecs/ECSManager.h"
+#include "../../../engine/Types.h"
 
-class PhysicsCollisions : public System
+class DestroyAfterEntitiesTime : public System
 {
 public:
 	// Inherited via System

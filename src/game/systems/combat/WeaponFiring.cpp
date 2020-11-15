@@ -1,15 +1,15 @@
 #include "WeaponFiring.h"
-#include "../components/Weapon.h"
-#include "../components/SecondaryWeapon.h"
-#include "../components/Transform.h"
-#include "../components/RigidBody.h"
-#include "../components/Clock.h"
-#include "../components/SpriteSDL.h"
-#include "../components/CircleCollider.h"
+#include "../../components/Weapon.h"
+#include "../../components/SecondaryWeapon.h"
+#include "../../components/Transform.h"
+#include "../../components/RigidBody.h"
+#include "../../components/Clock.h"
+#include "../../components/SpriteSDL.h"
+#include "../../components/CircleCollider.h"
 #include <cmath>
 #include <memory>
 #include <string>
-#include "../../engine/Math.h"
+#include "../../../engine/Math.h"
 
 void WeaponFiring::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {

@@ -1,10 +1,10 @@
 #include "EnginesThrusters.h"
-#include "../components/Engine.h"
-#include "../components/Transform.h"
-#include "../components/RigidBody.h"
+#include "../../components/Engine.h"
+#include "../../components/Transform.h"
+#include "../../components/RigidBody.h"
 #include <cmath>
-#include "../../engine/Math.h"
-#include "../components/Clock.h"
+#include "../../../engine/Math.h"
+#include "../../components/Clock.h"
 
 void EnginesThrusters::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {

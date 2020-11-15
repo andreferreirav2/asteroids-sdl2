@@ -1,7 +1,7 @@
 #pragma once
-#include "../../engine/ecs/ECSManager.h"
+#include "../../../engine/ecs/ECSManager.h"
 
-class WeaponFiring : public System
+class PhysicsDynamics : public System
 {
 public:
 	// Inherited via System

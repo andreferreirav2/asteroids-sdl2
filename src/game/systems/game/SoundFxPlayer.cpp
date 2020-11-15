@@ -1,6 +1,6 @@
 #include "SoundFxPlayer.h"
-#include "../components/SoundFXSDL.h"
-#include "../components/Weapon.h"
+#include "../../components/SoundFXSDL.h"
+#include "../../components/Weapon.h"
 #include <cmath>
 
 

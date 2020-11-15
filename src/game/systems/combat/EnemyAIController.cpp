@@ -1,12 +1,12 @@
 #include "EnemyAIController.h"
-#include "../../engine/Math.h"
-#include "../../engine/Types.h"
-#include "../components/ShipAIControls.h"
-#include "../components/Transform.h"
-#include "../components/RigidBody.h"
-#include "../components/Engine.h"
-#include "../components/Weapon.h"
-#include "../components/Player.h"
+#include "../../../engine/Math.h"
+#include "../../../engine/Types.h"
+#include "../../components/ShipAIControls.h"
+#include "../../components/Transform.h"
+#include "../../components/RigidBody.h"
+#include "../../components/Engine.h"
+#include "../../components/Weapon.h"
+#include "../../components/Player.h"
 #include <SDL.h>
 #include <iostream>
 

@@ -1,6 +1,6 @@
 #include "PhysicsCollisions.h"
-#include "../components/CircleCollider.h"
-#include "../components/Transform.h"
+#include "../../components/CircleCollider.h"
+#include "../../components/Transform.h"
 #include "iostream"
 #include <vector>
 #include <tuple>

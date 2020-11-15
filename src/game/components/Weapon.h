@@ -1,9 +1,10 @@
 #pragma once
 #include "../../engine/ecs/Component.h"
-#include "../components/Transform.h"
-#include "../components/RigidBody.h"
 #include <functional>
 #include <memory>
+
+struct Transform;
+struct RigidBody;
 
 struct Weapon : public Component
 {

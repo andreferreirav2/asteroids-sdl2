@@ -1,10 +1,10 @@
 #include "ShipKeyboardController.h"
-#include "../components/RigidBody.h"
-#include "../components/Transform.h"
-#include "../components/Engine.h"
-#include "../components/Weapon.h"
-#include "../components/SecondaryWeapon.h"
-#include "../components/ShipManualControls.h"
+#include "../../components/RigidBody.h"
+#include "../../components/Transform.h"
+#include "../../components/Engine.h"
+#include "../../components/Weapon.h"
+#include "../../components/SecondaryWeapon.h"
+#include "../../components/ShipManualControls.h"
 #include <iostream>
 
 void ShipKeyboardController::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)

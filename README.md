@@ -4,7 +4,6 @@ Asteroids clone using SDL2 with an ECS architecture
 
 ## TODO:
 * Create enemy ship
-	* sprite
 	* AI movement
 	* AI attack
 	* enemy sound effect "danger music"

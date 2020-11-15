@@ -2,6 +2,7 @@
 #include "../engine/ecs/ECSManager.h"
 #include "../engine/input/Inputs.h"
 #include "../engine/Types.h"
+#include "../engine/Math.h"
 #include "components/Transform.h"
 #include "components/RigidBody.h"
 #include "components/Engine.h"
@@ -17,6 +18,7 @@
 #include "components/Score.h"
 #include "components/ScoreAwarder.h"
 #include "components/AsteroidSpawnerParams.h"
+#include "components/EnemySpawnerParams.h"
 #include "components/CircleCollider.h"
 #include "systems/PhysicsDynamics.h"
 #include "systems/SDLRenderer.h"
@@ -31,6 +33,7 @@
 #include "systems/EnemySpawner.h"
 #include "systems/WeaponFiring.h"
 #include "systems/DestroyAfterEntitiesTime.h"
+#include "systems/EnemyAIController.h"
 #include <stdio.h>
 #include <iostream>
 #include <time.h>
@@ -43,14 +46,13 @@
 #endif
 #include "components/Respawn.h"
 #include "components/Lives.h"
+#include "components/Player.h"
+#include "components/PlayArea.h"
 
 using namespace std;
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
-
-#define RAD_2_DEG 57.2958f
-#define DEG_2_RAG 0.0174533f
 
 int PLAYER_COLLIDER_LAYER = 1 << 0;
 int PLAYER_WEAPON_COLLIDER_LAYER = 1 << 1;
@@ -59,10 +61,10 @@ int ENEMY_WEAPON_COLLIDER_LAYER = 1 << 3;
 int ASTEROIDS_COLLIDER_LAYER = 1 << 4;
 
 int PLAYER_COLLIDES_WITH = ENEMY_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
-int PLAYER_WEAPON_COLLIDES_WITH = ENEMY_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
+int PLAYER_WEAPON_COLLIDES_WITH = ENEMY_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
 int ENEMY_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;
-int ENEMY_WEAPON_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
-int ASTEROIDS_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER;
+int ENEMY_WEAPON_COLLIDES_WITH = PLAYER_COLLIDER_LAYER;
+int ASTEROIDS_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;
 
 
 void test_manager()
@@ -130,7 +132,7 @@ int main(int argc, char* args[])
 	app.getMusic(string("assets/audio/shoot.wav"));
 	app.loadFont(string("assets/fonts/Roboto-Regular.ttf"), 28);
 
-	auto shipSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 16, 24 }), rect({ 0, 0, 64, 96 }));
+	auto shipSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 12, 18 }), rect({ 0, 0, 64, 96 }));
 	auto shotSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 2, 3 }), rect({ 0, 160, 32, 48 }));
 	auto mineSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0, false, false, uint2({ 12, 12 }), rect({ 32, 160, 48, 48 }));
 	auto explosionSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0, false, false, uint2({ 12, 12 }), rect({ 0, 288, 224, 224 }));
@@ -138,10 +140,12 @@ int main(int argc, char* args[])
 	ECSManager manager;
 
 	Entity game = manager.createEntity();
+	manager.addComponent(game, make_shared<PlayArea>(rect({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT })));
 	manager.addComponent(game, make_shared<Clock>(1.0f, 1000));
-	manager.addComponent(game, make_shared<AsteroidSpawnerParams>(1.0f, 2.0f, 0.1f, 0.5f, 0.4f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH, rect({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT })));
+	manager.addComponent(game, make_shared<AsteroidSpawnerParams>(1.0f, 2.0f, 50, 0.1f, 0.5f, 0.4f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH));
+	manager.addComponent(game, make_shared<EnemySpawnerParams>(20.0f, 30.0f, 0, ENEMY_COLLIDER_LAYER, ENEMY_COLLIDES_WITH, ENEMY_WEAPON_COLLIDER_LAYER, ENEMY_WEAPON_COLLIDES_WITH));
 
-	int players = 4;
+	int players = 1;
 	for (int i = 0; i < players; i++)
 	{
 		float2 spawn = { SCREEN_WIDTH / 2 + (-100 * (players - 1) + 200 * i), SCREEN_HEIGHT / 2 };
@@ -159,6 +163,7 @@ int main(int argc, char* args[])
 		manager.addComponent(ship, make_shared<Engine>(400.0f, 150.f));
 		manager.addComponent(ship, make_shared<ShipManualControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE, Key::KEY_DOWN));
 		manager.addComponent(ship, make_shared<Boundless>());
+		manager.addComponent(ship, make_shared<Player>());
 		manager.addComponent(ship, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
 		manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH, [&manager, ship](Entity other)
 			{
@@ -248,8 +253,9 @@ int main(int argc, char* args[])
 	PhysicsCollisions physicsCollisions = PhysicsCollisions();
 	AsteroidSpawner asteroidSpawner = AsteroidSpawner();
 	EnemySpawner enemySpawner = EnemySpawner();
+	EnemyAIController enemyAIController = EnemyAIController();
 	DestroyAfterEntitiesTime destroyAfterEntitiesTime = DestroyAfterEntitiesTime();
-	BoundariesChecker boundariesChecker = BoundariesChecker({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT });
+	BoundariesChecker boundariesChecker = BoundariesChecker();
 	SDLRenderer sdlRenderer = SDLRenderer(app);
 	SoundFxPlayer soundFxPlayer = SoundFxPlayer(app);
 
@@ -264,6 +270,7 @@ int main(int argc, char* args[])
 	physicsCollisions.onStart(manager);
 	asteroidSpawner.onStart(manager);
 	enemySpawner.onStart(manager);
+	enemyAIController.onStart(manager);
 	sdlRenderer.onStart(manager);
 	soundFxPlayer.onStart(manager);
 
@@ -288,6 +295,7 @@ int main(int argc, char* args[])
 		physicsCollisions.onUpdate(manager, inputs); // check for collisions
 		asteroidSpawner.onUpdate(manager, inputs); // spawn new asteroids
 		enemySpawner.onUpdate(manager, inputs); // spawn new enemies
+		enemyAIController.onUpdate(manager, inputs); // control AIs
 		sdlRenderer.onUpdate(manager, inputs);
 		soundFxPlayer.onUpdate(manager, inputs);
 

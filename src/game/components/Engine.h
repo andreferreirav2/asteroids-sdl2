@@ -8,6 +8,6 @@ struct Engine : public Component
 	float thrustValue;
 	float turnValue;
 
-	float thrustSpeed;
-	float turnSpeed;
+	const float thrustSpeed;
+	const float turnSpeed;
 };

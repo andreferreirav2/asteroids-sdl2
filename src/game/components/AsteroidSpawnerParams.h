@@ -3,13 +3,31 @@
 
 struct AsteroidSpawnerParams : public Component
 {
-	AsteroidSpawnerParams(float minInterval, float maxInterval, float smallRatio, float mediumRatio, float bigRatio, int asteroidsColliderLayer, int asteroidsCollidesWith, rect playArea)
-		: minInterval(minInterval), maxInterval(maxInterval), smallRatio(smallRatio), mediumRatio(mediumRatio), bigRatio(bigRatio), asteroidsColliderLayer(asteroidsColliderLayer), asteroidsCollidesWith(asteroidsCollidesWith), playArea(playArea), timeToNextSpawn(0.0f)
+	AsteroidSpawnerParams(float minInterval,
+		float maxInterval,
+		int marginFromEdge,
+		float smallRatio,
+		float mediumRatio,
+		float bigRatio,
+		int asteroidsColliderLayer,
+		int asteroidsCollidesWith)
+		:
+		minInterval(minInterval),
+		maxInterval(maxInterval),
+		marginFromEdge(marginFromEdge),
+		smallRatio(smallRatio),
+		mediumRatio(mediumRatio),
+		bigRatio(bigRatio),
+		asteroidsColliderLayer(asteroidsColliderLayer),
+		asteroidsCollidesWith(asteroidsCollidesWith),
+		timeToNextSpawn(0.0f)
 	{
 	}
 
 	float minInterval;
 	float maxInterval;
+
+	int marginFromEdge;
 
 	float smallRatio;
 	float mediumRatio;
@@ -17,8 +35,6 @@ struct AsteroidSpawnerParams : public Component
 
 	int asteroidsColliderLayer;
 	int asteroidsCollidesWith;
-
-	rect playArea;
 
 	float timeToNextSpawn;
 };

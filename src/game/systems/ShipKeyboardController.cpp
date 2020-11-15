@@ -5,7 +5,6 @@
 #include "../components/Weapon.h"
 #include "../components/SecondaryWeapon.h"
 #include "../components/ShipManualControls.h"
-
 #include <iostream>
 
 void ShipKeyboardController::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)

@@ -161,9 +161,13 @@
     <ClCompile Include="src\game\systems\PhysicsDynamics.cpp" />
     <ClCompile Include="src\game\Game.cpp" />
     <ClCompile Include="src\engine\sdl\SDLApp.cpp" />
-    <ClCompile Include="src\game\systems\EnemyAI.cpp" />
+    <ClCompile Include="src\game\systems\EnemyAIController.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\engine\Math.h" />
+    <ClInclude Include="src\game\components\PlayArea.h" />
+    <ClInclude Include="src\game\components\Player.h" />
+    <ClInclude Include="src\game\components\EnemySpawnerParams.h" />
     <ClInclude Include="src\game\systems\EnemySpawner.h" />
     <ClInclude Include="src\game\components\AsteroidSpawnerParams.h" />
     <ClInclude Include="src\game\components\Lives.h" />
@@ -205,7 +209,7 @@
     <ClInclude Include="src\engine\ecs\System.h" />
     <ClInclude Include="src\engine\sdl\SDLApp.h" />
     <ClInclude Include="src\game\components\SecondaryWeapon.h" />
-    <ClInclude Include="src\game\systems\EnemyAI.h" />
+    <ClInclude Include="src\game\systems\EnemyAIController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

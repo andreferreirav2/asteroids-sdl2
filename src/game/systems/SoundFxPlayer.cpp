@@ -19,12 +19,12 @@ void SoundFxPlayer::onStart(ECSManager& manager)
 
 void SoundFxPlayer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
-	for (Entity e : manager.getAllEntitiesWithComponentType<SoundFXSDL, Weapon>())
+	for (Entity e : manager.getAllEntitiesWithComponentType<SoundFXSDL>())
 	{
 		auto soundFX = manager.getComponentOfType<SoundFXSDL>(e);
 		auto weapon = manager.getComponentOfType<Weapon>(e);
 
-		if (weapon->shooting)
+		if (weapon && weapon->shooting)
 		{
 			m_sdlApp.playSoundFX(soundFX->soundFX);
 		}

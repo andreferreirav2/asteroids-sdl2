@@ -1,4 +1,5 @@
 #include "AsteroidSpawner.h"
+#include "../../engine/Math.h"
 #include "../components/AsteroidSpawnerParams.h"
 #include "../components/Clock.h"
 #include "../components/SpriteSDL.h"
@@ -9,26 +10,14 @@
 #include <cmath>
 #include <memory>
 #include <string>
-#include <cstdlib>
 #include "../components/BoundariesKill.h"
+#include "../components/PlayArea.h"
 
 int const SMALL_ASTEROID = 0;
 int const MEDIUM_ASTEROID = 1;
 int const BIG_ASTEROID = 2;
 
-#define DEG_2_RAG 0.0174533f
-
 void spawnAsteroid(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> asteroidSpawn, int kind, float2 position, float rotation, float2 velocity);
-
-float randBetween(float a, float b)
-{
-	return a + (b - a) * rand() / RAND_MAX;
-}
-
-float randSign()
-{
-	return static_cast<float>(rand()) / RAND_MAX < 0.5 ? -1 : 1;
-}
 
 void spawnChildAsteroids(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> asteroidSpawn, int kind, std::shared_ptr<Transform> parentTransform, float2 velocity)
 {
@@ -88,6 +77,8 @@ void spawnAsteroid(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> a
 void AsteroidSpawner::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
 	float dt = manager.getAllComponentsOfType<Clock>().begin()->get()->deltaTime; // What if there is no clock?
+	rect playArea = manager.getAllComponentsOfType<PlayArea>().begin()->get()->area; // What if there is no play area?
+
 	for (Entity e : manager.getAllEntitiesWithComponentType<AsteroidSpawnerParams>())
 	{
 		auto asteroidSpawn = manager.getComponentOfType<AsteroidSpawnerParams>(e);
@@ -106,23 +97,27 @@ void AsteroidSpawner::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inpu
 			float wall = randBetween(0, 4);
 			if (wall < 1) // top
 			{
-				position = { randBetween(-50, asteroidSpawn->playArea.x + asteroidSpawn->playArea.w + 50.0f), asteroidSpawn->playArea.y - 50.0f };
+				position = { randBetween(-asteroidSpawn->marginFromEdge, playArea.x + playArea.w + asteroidSpawn->marginFromEdge),
+							 static_cast<float>(playArea.y - asteroidSpawn->marginFromEdge) };
 			}
 			else if (wall < 2) // bottom
 			{
-				position = { randBetween(-50, asteroidSpawn->playArea.x + asteroidSpawn->playArea.w + 50.0f), asteroidSpawn->playArea.y + asteroidSpawn->playArea.h + 50.0f };
+				position = { randBetween(-asteroidSpawn->marginFromEdge, playArea.x + playArea.w + asteroidSpawn->marginFromEdge),
+							 static_cast<float>(playArea.y + playArea.h + asteroidSpawn->marginFromEdge) };
 			}
 			else if (wall < 3) // right
 			{
-				position = { asteroidSpawn->playArea.x + asteroidSpawn->playArea.w + 50.0f, randBetween(-50, asteroidSpawn->playArea.y + asteroidSpawn->playArea.h + 50.0f) };
+				position = { static_cast<float>(playArea.x + playArea.w + asteroidSpawn->marginFromEdge),
+							 randBetween(-asteroidSpawn->marginFromEdge, playArea.y + playArea.h + asteroidSpawn->marginFromEdge) };
 			}
 			else // left
 			{
-				position = { asteroidSpawn->playArea.x - 50.0f, randBetween(-50, asteroidSpawn->playArea.y + asteroidSpawn->playArea.h + 50.0f) };
+				position = { static_cast<float>(playArea.x - asteroidSpawn->marginFromEdge),
+							  randBetween(-asteroidSpawn->marginFromEdge, playArea.y + playArea.h + asteroidSpawn->marginFromEdge) };
 			}
 
-			float2 randCenterPoint = { randBetween(asteroidSpawn->playArea.x + asteroidSpawn->playArea.w / 8, asteroidSpawn->playArea.x + asteroidSpawn->playArea.w * 7 / 8) ,
-									   randBetween(asteroidSpawn->playArea.y + asteroidSpawn->playArea.h / 8, asteroidSpawn->playArea.y + asteroidSpawn->playArea.h * 7 / 8) };
+			float2 randCenterPoint = { randBetween(playArea.x + playArea.w / 8, playArea.x + playArea.w * 7 / 8) ,
+									   randBetween(playArea.y + playArea.h / 8, playArea.y + playArea.h * 7 / 8) };
 			float2 velocity = { randCenterPoint.x - position.x, randCenterPoint.y - position.y };
 
 			float magnitude = randBetween(0.04f, 0.3f);

@@ -61,10 +61,10 @@
     <ClCompile Include="src\game\systems\AsteroidSpawner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\systems\EnemyAI.cpp">
+    <ClCompile Include="src\game\systems\EnemySpawner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\systems\EnemySpawner.cpp">
+    <ClCompile Include="src\game\systems\EnemyAIController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -125,7 +125,11 @@
     <ClInclude Include="src\game\components\Respawn.h" />
     <ClInclude Include="src\game\components\Lives.h" />
     <ClInclude Include="src\game\components\ShipAIControls.h" />
-    <ClInclude Include="src\game\systems\EnemyAI.h" />
     <ClInclude Include="src\game\systems\EnemySpawner.h" />
+    <ClInclude Include="src\game\components\EnemySpawnerParams.h" />
+    <ClInclude Include="src\engine\Math.h" />
+    <ClInclude Include="src\game\components\Player.h" />
+    <ClInclude Include="src\game\systems\EnemyAIController.h" />
+    <ClInclude Include="src\game\components\PlayArea.h" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 #include "EnemySpawner.h"
-
+#include "../../engine/Math.h"
 #include "../components/Engine.h"
 #include "../components/Transform.h"
 #include "../components/RigidBody.h"
@@ -8,59 +8,82 @@
 #include "../components/CircleCollider.h"
 #include <memory>
 #include "../components/Weapon.h"
+#include "../components/Boundless.h"
 #include "../components/BoundariesKill.h"
 #include "../components/ScoreAwarder.h"
+#include "../components/Clock.h"
+#include "../components/EnemySpawnerParams.h"
+#include "../components/DestroyAfterTime.h"
+#include "../components/ShipAIControls.h"
+#include "../components/PlayArea.h"
 
 using namespace std;
-
-#define RAD_2_DEG 57.2958f
-#define DEG_2_RAG 0.0174533f
 
 
 void EnemySpawner::onStart(ECSManager& manager)
 {
-	// TODO Remove from here and reuse base ones
-	int PLAYER_COLLIDER_LAYER = 1 << 0;
-	int PLAYER_WEAPON_COLLIDER_LAYER = 1 << 1;
-	int ENEMY_COLLIDER_LAYER = 1 << 2;
-	int ENEMY_WEAPON_COLLIDER_LAYER = 1 << 3;
-	int ASTEROIDS_COLLIDER_LAYER = 1 << 4;
 
-	int PLAYER_COLLIDES_WITH = ENEMY_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
-	int PLAYER_WEAPON_COLLIDES_WITH = ENEMY_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
-	int ENEMY_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;
-	int ENEMY_WEAPON_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
-	int ASTEROIDS_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER;
-
-
-	auto shotSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 2, 3 }), rect({ 0, 160, 32, 48 }));
-	auto enemySprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 20, 12 }), rect({ 80, 160, 128, 60 }));
-
-
-	Entity enemy = manager.createEntity();
-	manager.addComponent(enemy, make_shared<Transform>(200, 200, 90.f));
-	manager.addComponent(enemy, make_shared<RigidBody>(1.0f, 2.0f));
-	manager.addComponent(enemy, std::make_shared<ScoreAwarder>(1000));
-	manager.addComponent(enemy, enemySprite);
-	manager.addComponent(enemy, make_shared<Engine>(300.0f, 150.f));
-	manager.addComponent(enemy, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
-	manager.addComponent(enemy, make_shared<CircleCollider>(7.0f, ENEMY_COLLIDER_LAYER, ENEMY_COLLIDES_WITH));
-	manager.addComponent(enemy, make_shared<Weapon>(0.3f, [&manager, enemy, shotSprite, ENEMY_WEAPON_COLLIDER_LAYER, ENEMY_WEAPON_COLLIDES_WITH](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
-		{
-			Entity shot = manager.createEntity();
-			auto shotRb = std::make_shared<RigidBody>(1.0f, 0.0f);
-			manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
-			manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 200 * cos(gun->rotation * DEG_2_RAG), -200 * sin(gun->rotation * DEG_2_RAG)));
-			manager.addComponent(shot, shotSprite);
-			manager.addComponent(shot, std::make_shared<CircleCollider>(4.0f, ENEMY_WEAPON_COLLIDER_LAYER, ENEMY_WEAPON_COLLIDES_WITH));
-			manager.addComponent(shot, make_shared<BoundariesKill>());
-		}));
 }
 
 void EnemySpawner::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
+	static auto enemySprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 20, 12 }), rect({ 80, 160, 128, 60 }));
 
+	rect playArea = manager.getAllComponentsOfType<PlayArea>().begin()->get()->area; // What if there is no play area?
+	float dt = manager.getAllComponentsOfType<Clock>().begin()->get()->deltaTime; // What if there is no clock?
+	for (Entity e : manager.getAllEntitiesWithComponentType<EnemySpawnerParams>())
+	{
+		auto enemySpawn = manager.getComponentOfType<EnemySpawnerParams>(e);
+		enemySpawn->timeToNextSpawn -= dt;
+
+		if (enemySpawn->timeToNextSpawn <= 0)
+		{
+			enemySpawn->timeToNextSpawn = randBetween(enemySpawn->minInterval, enemySpawn->maxInterval);
+
+
+			float2 position;
+			float wall = randBetween(0, 4);
+			if (wall < 1) // top
+			{
+				position = { randBetween(-enemySpawn->marginFromEdge, playArea.x + playArea.w + enemySpawn->marginFromEdge),
+							 static_cast<float>(playArea.y - enemySpawn->marginFromEdge) };
+			}
+			else if (wall < 2) // bottom
+			{
+				position = { randBetween(-enemySpawn->marginFromEdge, playArea.x + playArea.w + enemySpawn->marginFromEdge),
+							 static_cast<float>(playArea.y + playArea.h + enemySpawn->marginFromEdge) };
+			}
+			else if (wall < 3) // right
+			{
+				position = { static_cast<float>(playArea.x + playArea.w + enemySpawn->marginFromEdge),
+							 randBetween(-enemySpawn->marginFromEdge, playArea.y + playArea.h + enemySpawn->marginFromEdge) };
+			}
+			else // left
+			{
+				position = { static_cast<float>(playArea.x - enemySpawn->marginFromEdge),
+							  randBetween(-enemySpawn->marginFromEdge, playArea.y + playArea.h + enemySpawn->marginFromEdge) };
+			}
+
+
+			Entity enemyShip = manager.createEntity();
+			manager.addComponent(enemyShip, make_shared<Transform>(position.x, position.y, 90.f));
+			manager.addComponent(enemyShip, make_shared<RigidBody>(1.0f, 1.2f));
+			manager.addComponent(enemyShip, std::make_shared<ScoreAwarder>(1000));
+			manager.addComponent(enemyShip, std::make_shared<Boundless>());
+			manager.addComponent(enemyShip, std::make_shared<ShipAIControls>());
+			manager.addComponent(enemyShip, enemySprite);
+			manager.addComponent(enemyShip, make_shared<Engine>(300.0f, 150.f));
+			manager.addComponent(enemyShip, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
+			manager.addComponent(enemyShip, make_shared<CircleCollider>(7.0f, enemySpawn->enemyColliderLayer, enemySpawn->enemyCollidesWith));
+			manager.addComponent(enemyShip, make_shared<Weapon>(1.0f, [&manager, enemyShip, enemySpawn](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
+				{
+					Entity shot = manager.createEntity();
+					manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
+					manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 200 * cos(gun->rotation * DEG_2_RAG), -200 * sin(gun->rotation * DEG_2_RAG)));
+					manager.addComponent(shot, std::make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 2, 3 }), rect({ 0, 160, 32, 48 })));
+					manager.addComponent(shot, std::make_shared<CircleCollider>(4.0f, enemySpawn->enemyWeaponColliderLayer, enemySpawn->enemyWeaponCollidesWith));
+					manager.addComponent(shot, make_shared<BoundariesKill>());
+				}));
+		}
+	}
 }
-
-
-

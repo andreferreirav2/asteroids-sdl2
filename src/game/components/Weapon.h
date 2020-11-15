@@ -7,7 +7,13 @@
 
 struct Weapon : public Component
 {
-	Weapon(float shotInterval, std::function<void(std::shared_ptr<Transform>, std::shared_ptr<RigidBody>)> weaponSpawn) : shotInterval(shotInterval), weaponSpawn(weaponSpawn), timeToNextShot(0.0f), shooting(false) {};
+	Weapon(float shotInterval, std::function<void(std::shared_ptr<Transform>, std::shared_ptr<RigidBody>)> weaponSpawn) :
+		shotInterval(shotInterval),
+		timeToNextShot(0.0f),
+		shooting(false),
+		weaponSpawn(weaponSpawn)
+	{
+	};
 
 
 	bool setTrigger(bool isPulled)

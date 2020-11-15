@@ -18,8 +18,6 @@ int const BIG_ASTEROID = 2;
 
 #define DEG_2_RAG 0.0174533f
 
-constexpr float TWO_PI = 360 * DEG_2_RAG;
-
 void spawnAsteroid(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> asteroidSpawn, int kind, float2 position, float rotation, float2 velocity);
 
 float randBetween(float a, float b)
@@ -27,15 +25,20 @@ float randBetween(float a, float b)
 	return a + (b - a) * rand() / RAND_MAX;
 }
 
+float randSign()
+{
+	return static_cast<float>(rand()) / RAND_MAX < 0.5 ? -1 : 1;
+}
+
 void spawnChildAsteroids(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> asteroidSpawn, int kind, std::shared_ptr<Transform> parentTransform, float2 velocity)
 {
 	int newAsts = randBetween(1, 3);
 	for (float i = 0; i < newAsts; i++)
 	{
-		float randomAngle = randBetween(0, TWO_PI);
+		float randomAngle = randBetween(0, 360);
 		auto newVel = velocity;
-		newVel.x += cos(randomAngle) * randBetween(-20, 20);
-		newVel.y += sin(randomAngle) * randBetween(-20, 20);
+		newVel.x += cos(DEG_2_RAG * randomAngle) * randBetween(30, 60) * randSign();
+		newVel.y += sin(DEG_2_RAG * randomAngle) * randBetween(30, 60) * randSign();
 		spawnAsteroid(manager, asteroidSpawn, kind, parentTransform->position, randomAngle, newVel);
 	}
 }
@@ -122,7 +125,7 @@ void AsteroidSpawner::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inpu
 									   randBetween(asteroidSpawn->playArea.y + asteroidSpawn->playArea.h / 8, asteroidSpawn->playArea.y + asteroidSpawn->playArea.h * 7 / 8) };
 			float2 velocity = { randCenterPoint.x - position.x, randCenterPoint.y - position.y };
 
-			float magnitude = randBetween(0.02f, 0.2f);
+			float magnitude = randBetween(0.04f, 0.3f);
 			velocity.x *= magnitude;
 			velocity.y *= magnitude;
 

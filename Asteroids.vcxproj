@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\game\systems\EnemySpawner.cpp" />
     <ClCompile Include="src\game\systems\AsteroidSpawner.cpp" />
     <ClCompile Include="src\engine\sdl\SDLAppMixer.cpp" />
     <ClCompile Include="src\game\systems\DestroyAfterEntitiesTime.cpp" />
@@ -163,6 +164,7 @@
     <ClCompile Include="src\game\systems\EnemyAI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\game\systems\EnemySpawner.h" />
     <ClInclude Include="src\game\components\AsteroidSpawnerParams.h" />
     <ClInclude Include="src\game\components\Lives.h" />
     <ClInclude Include="src\game\components\Respawn.h" />

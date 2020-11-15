@@ -64,6 +64,9 @@
     <ClCompile Include="src\game\systems\EnemyAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\systems\EnemySpawner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\engine\ecs\Component.h">
@@ -123,5 +126,6 @@
     <ClInclude Include="src\game\components\Lives.h" />
     <ClInclude Include="src\game\components\ShipAIControls.h" />
     <ClInclude Include="src\game\systems\EnemyAI.h" />
+    <ClInclude Include="src\game\systems\EnemySpawner.h" />
   </ItemGroup>
 </Project>

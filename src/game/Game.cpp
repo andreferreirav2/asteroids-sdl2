@@ -28,10 +28,12 @@
 #include "systems/TimePassing.h"
 #include "systems/PhysicsCollisions.h"
 #include "systems/AsteroidSpawner.h"
+#include "systems/EnemySpawner.h"
 #include "systems/WeaponFiring.h"
 #include "systems/DestroyAfterEntitiesTime.h"
 #include <stdio.h>
 #include <iostream>
+#include <time.h>
 #include <typeinfo>
 #include <assert.h>
 #ifdef _WIN32
@@ -57,7 +59,7 @@ int ENEMY_WEAPON_COLLIDER_LAYER = 1 << 3;
 int ASTEROIDS_COLLIDER_LAYER = 1 << 4;
 
 int PLAYER_COLLIDES_WITH = ENEMY_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
-int PLAYER_WEAPON_COLLIDES_WITH = PLAYER_WEAPON_COLLIDER_LAYER | ENEMY_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
+int PLAYER_WEAPON_COLLIDES_WITH = ENEMY_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
 int ENEMY_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;
 int ENEMY_WEAPON_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
 int ASTEROIDS_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER;
@@ -120,6 +122,9 @@ int main(int argc, char* args[])
 		return 1;
 	}
 
+	// Seed random with time
+	srand(time(NULL));
+
 	// Pre load assets
 	app.loadTexture(string("assets/sprites/atlas.png"));
 	app.getMusic(string("assets/audio/shoot.wav"));
@@ -143,7 +148,7 @@ int main(int argc, char* args[])
 
 		Entity ship = manager.createEntity();
 		auto shipTransform = make_shared<Transform>(spawn.x, spawn.y, 90.f);
-		auto shipRb = make_shared<RigidBody>(1.0f, 2.0f);
+		auto shipRb = make_shared<RigidBody>(1.0f, 1.2f);
 		auto scoreBoard = make_shared<Score>();
 		manager.addComponent(ship, shipTransform);
 		manager.addComponent(ship, shipRb);
@@ -151,7 +156,7 @@ int main(int argc, char* args[])
 		manager.addComponent(ship, scoreBoard);
 		manager.addComponent(ship, make_shared<Respawn>(spawn, 90.0f));
 		manager.addComponent(ship, make_shared<Lives>(3));
-		manager.addComponent(ship, make_shared<Engine>(300.0f, 150.f));
+		manager.addComponent(ship, make_shared<Engine>(400.0f, 150.f));
 		manager.addComponent(ship, make_shared<ShipManualControls>(Key::KEY_UP, Key::KEY_LEFT, Key::KEY_RIGHT, Key::KEY_SPACE, Key::KEY_DOWN));
 		manager.addComponent(ship, make_shared<Boundless>());
 		manager.addComponent(ship, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
@@ -182,8 +187,9 @@ int main(int argc, char* args[])
 				Entity shot = manager.createEntity();
 				auto shotRb = std::make_shared<RigidBody>(1.0f, 0.0f);
 				manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
-				manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 200 * cos(gun->rotation * DEG_2_RAG), -200 * sin(gun->rotation * DEG_2_RAG)));
+				manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 300 * cos(gun->rotation * DEG_2_RAG), -300 * sin(gun->rotation * DEG_2_RAG)));
 				manager.addComponent(shot, shotSprite);
+				manager.addComponent(shot, make_shared<BoundariesKill>());
 				manager.addComponent(shot, std::make_shared<CircleCollider>(4.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, ship, shot](Entity other)
 					{
 						auto scoreBoard = manager.getComponentOfType<Score>(ship);
@@ -196,15 +202,16 @@ int main(int argc, char* args[])
 						manager.destroyEntity(other);
 						manager.destroyEntity(shot);
 					}));
-				manager.addComponent(shot, make_shared<BoundariesKill>());
 			}));
 		manager.addComponent(ship, make_shared<SecondaryWeapon>(1.0f, 0, [&manager, mineSprite, explosionSprite, ship](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
 			{
 				Entity mine = manager.createEntity();
 				auto mineTransform = std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation);
 				manager.addComponent(mine, mineTransform);
-				manager.addComponent(mine, std::make_shared<RigidBody>(1.0f, 0.3f, gunRb->velocity.x, gunRb->velocity.y));
 				manager.addComponent(mine, mineSprite);
+				manager.addComponent(mine, make_shared<Boundless>());
+				manager.addComponent(mine, make_shared<DestroyAfterTime>(10.0f));
+				manager.addComponent(mine, std::make_shared<RigidBody>(1.0f, 0.3f, gunRb->velocity.x, gunRb->velocity.y));
 				manager.addComponent(mine, std::make_shared<CircleCollider>(10.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, ship, mine, explosionSprite, mineTransform](Entity other)
 					{
 						// TODO: play explosion sound
@@ -229,8 +236,6 @@ int main(int argc, char* args[])
 
 						manager.destroyEntity(mine);
 					}));
-				manager.addComponent(mine, make_shared<BoundariesKill>());
-				manager.addComponent(mine, make_shared<DestroyAfterTime>(10.0f));
 			}));
 	}
 
@@ -242,6 +247,7 @@ int main(int argc, char* args[])
 	PhysicsDynamics physicsDynamics = PhysicsDynamics();
 	PhysicsCollisions physicsCollisions = PhysicsCollisions();
 	AsteroidSpawner asteroidSpawner = AsteroidSpawner();
+	EnemySpawner enemySpawner = EnemySpawner();
 	DestroyAfterEntitiesTime destroyAfterEntitiesTime = DestroyAfterEntitiesTime();
 	BoundariesChecker boundariesChecker = BoundariesChecker({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT });
 	SDLRenderer sdlRenderer = SDLRenderer(app);
@@ -257,6 +263,7 @@ int main(int argc, char* args[])
 	boundariesChecker.onStart(manager);
 	physicsCollisions.onStart(manager);
 	asteroidSpawner.onStart(manager);
+	enemySpawner.onStart(manager);
 	sdlRenderer.onStart(manager);
 	soundFxPlayer.onStart(manager);
 
@@ -280,6 +287,7 @@ int main(int argc, char* args[])
 		boundariesChecker.onUpdate(manager, inputs); // apply boundaries or 
 		physicsCollisions.onUpdate(manager, inputs); // check for collisions
 		asteroidSpawner.onUpdate(manager, inputs); // spawn new asteroids
+		enemySpawner.onUpdate(manager, inputs); // spawn new enemies
 		sdlRenderer.onUpdate(manager, inputs);
 		soundFxPlayer.onUpdate(manager, inputs);
 

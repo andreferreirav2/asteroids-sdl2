@@ -27,7 +27,8 @@ void WeaponFiring::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 				weapon->weaponSpawn(transform, rb);
 			}
 		}
-		weapon->timeToNextShot -= dt;
+
+		weapon->onUpdate(dt);
 	}
 
 	for (Entity e : manager.getAllEntitiesWithComponentType<SecondaryWeapon>())
@@ -43,6 +44,6 @@ void WeaponFiring::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 				secondaryWeapon->weaponSpawn(transform, rb);
 			}
 		}
-		secondaryWeapon->timeToNextShot -= dt;
+		secondaryWeapon->onUpdate(dt);
 	}
 }

@@ -63,8 +63,8 @@ int ASTEROIDS_COLLIDER_LAYER = 1 << 4;
 int PLAYER_COLLIDES_WITH = ENEMY_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
 int PLAYER_WEAPON_COLLIDES_WITH = ENEMY_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
 int ENEMY_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;
-int ENEMY_WEAPON_COLLIDES_WITH = PLAYER_COLLIDER_LAYER;
-int ASTEROIDS_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;
+int ENEMY_WEAPON_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
+int ASTEROIDS_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER;
 
 
 void test_manager()
@@ -143,7 +143,7 @@ int main(int argc, char* args[])
 	manager.addComponent(game, make_shared<PlayArea>(rect({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT })));
 	manager.addComponent(game, make_shared<Clock>(1.0f, 1000));
 	manager.addComponent(game, make_shared<AsteroidSpawnerParams>(1.0f, 2.0f, 50, 0.1f, 0.5f, 0.4f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH));
-	manager.addComponent(game, make_shared<EnemySpawnerParams>(20.0f, 30.0f, 0, ENEMY_COLLIDER_LAYER, ENEMY_COLLIDES_WITH, ENEMY_WEAPON_COLLIDER_LAYER, ENEMY_WEAPON_COLLIDES_WITH));
+	manager.addComponent(game, make_shared<EnemySpawnerParams>(30.0f, 40.0f, 0, ENEMY_COLLIDER_LAYER, ENEMY_COLLIDES_WITH, ENEMY_WEAPON_COLLIDER_LAYER, ENEMY_WEAPON_COLLIDES_WITH));
 
 	int players = 1;
 	for (int i = 0; i < players; i++)
@@ -192,9 +192,10 @@ int main(int argc, char* args[])
 				Entity shot = manager.createEntity();
 				auto shotRb = std::make_shared<RigidBody>(1.0f, 0.0f);
 				manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
-				manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 300 * cos(gun->rotation * DEG_2_RAG), -300 * sin(gun->rotation * DEG_2_RAG)));
+				manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 400 * cos(gun->rotation * DEG_2_RAG), -400 * sin(gun->rotation * DEG_2_RAG)));
 				manager.addComponent(shot, shotSprite);
-				manager.addComponent(shot, make_shared<BoundariesKill>());
+				manager.addComponent(shot, make_shared<Boundless>());
+				manager.addComponent(shot, make_shared<DestroyAfterTime>(1.0f));
 				manager.addComponent(shot, std::make_shared<CircleCollider>(4.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, ship, shot](Entity other)
 					{
 						auto scoreBoard = manager.getComponentOfType<Score>(ship);

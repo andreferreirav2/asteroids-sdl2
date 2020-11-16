@@ -17,9 +17,12 @@ struct Weapon : public Component
 	};
 
 
+	void onUpdate(float dt) { timeToNextShot -= dt; }
+	bool canFire() { return timeToNextShot <= 0.0f; }
+
 	bool setTrigger(bool isPulled)
 	{
-		if (isPulled && timeToNextShot <= 0.0f)
+		if (isPulled && canFire())
 		{
 			shooting = true;
 			timeToNextShot = shotInterval;

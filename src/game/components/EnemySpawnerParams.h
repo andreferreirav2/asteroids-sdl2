@@ -18,7 +18,7 @@ struct EnemySpawnerParams : public Component
 		enemyCollidesWith(enemyCollidesWith),
 		enemyWeaponColliderLayer(enemyWeaponColliderLayer),
 		enemyWeaponCollidesWith(enemyWeaponCollidesWith),
-		timeToNextSpawn(0.0f)
+		timeToNextSpawn(20.0f)
 	{
 	}
 

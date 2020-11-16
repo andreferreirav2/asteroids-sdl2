@@ -48,17 +48,22 @@ void spawnAsteroid(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> a
 		manager.addComponent(ast, asteroidSmallSprite);
 		manager.addComponent(ast, std::make_shared<ScoreAwarder>(100));
 		manager.addComponent(ast, std::make_shared<RigidBody>(1.0f, 0.0f, velocity.x, velocity.y));
-		manager.addComponent(ast, std::make_shared<CircleCollider>(8.0f, asteroidSpawn->asteroidsColliderLayer, asteroidSpawn->asteroidsCollidesWith));
+		manager.addComponent(ast, std::make_shared<CircleCollider>(8.0f, asteroidSpawn->asteroidsColliderLayer, asteroidSpawn->asteroidsCollidesWith, [&manager, ast](Entity other)
+			{
+				//TODO: Spawn destroy particles
+				manager.destroyEntity(ast);
+			}));
 	}
 	else if (kind == MEDIUM_ASTEROID) // medium ast
 	{
 		manager.addComponent(ast, asteroidMediumSprite);
 		manager.addComponent(ast, std::make_shared<ScoreAwarder>(50));
 		manager.addComponent(ast, std::make_shared<RigidBody>(2.0f, 0.0f, velocity.x, velocity.y));
-		manager.addComponent(ast, std::make_shared<CircleCollider>(20.0f, asteroidSpawn->asteroidsColliderLayer, asteroidSpawn->asteroidsCollidesWith, [&manager, asteroidSpawn, transform, rotation, velocity](Entity other)
+		manager.addComponent(ast, std::make_shared<CircleCollider>(20.0f, asteroidSpawn->asteroidsColliderLayer, asteroidSpawn->asteroidsCollidesWith, [&manager, ast, asteroidSpawn, transform, rotation, velocity](Entity other)
 			{
 				//TODO: Spawn destroy particles
 				spawnChildAsteroids(manager, asteroidSpawn, SMALL_ASTEROID, transform, velocity);
+				manager.destroyEntity(ast);
 			}));
 	}
 	else // big ast
@@ -66,10 +71,11 @@ void spawnAsteroid(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> a
 		manager.addComponent(ast, asteroidLargeSprite);
 		manager.addComponent(ast, std::make_shared<ScoreAwarder>(20));
 		manager.addComponent(ast, std::make_shared<RigidBody>(4.0f, 0.0f, velocity.x, velocity.y));
-		manager.addComponent(ast, std::make_shared<CircleCollider>(32.0f, asteroidSpawn->asteroidsColliderLayer, asteroidSpawn->asteroidsCollidesWith, [&manager, asteroidSpawn, transform, rotation, velocity](Entity other)
+		manager.addComponent(ast, std::make_shared<CircleCollider>(32.0f, asteroidSpawn->asteroidsColliderLayer, asteroidSpawn->asteroidsCollidesWith, [&manager, ast, asteroidSpawn, transform, rotation, velocity](Entity other)
 			{
 				//TODO: Spawn destroy particles
 				spawnChildAsteroids(manager, asteroidSpawn, MEDIUM_ASTEROID, transform, velocity);
+				manager.destroyEntity(ast);
 			}));
 	}
 }

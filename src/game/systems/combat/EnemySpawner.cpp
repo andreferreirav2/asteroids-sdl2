@@ -72,7 +72,7 @@ void EnemySpawner::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 			manager.addComponent(enemyShip, std::make_shared<Boundless>());
 			manager.addComponent(enemyShip, std::make_shared<ShipAIControls>());
 			manager.addComponent(enemyShip, enemySprite);
-			manager.addComponent(enemyShip, make_shared<Engine>(300.0f, 150.f));
+			manager.addComponent(enemyShip, make_shared<Engine>(300.0f, 70.f));
 			manager.addComponent(enemyShip, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
 			manager.addComponent(enemyShip, make_shared<CircleCollider>(7.0f, enemySpawn->enemyColliderLayer, enemySpawn->enemyCollidesWith));
 			manager.addComponent(enemyShip, make_shared<Weapon>(1.0f, [&manager, enemyShip, enemySpawn](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
@@ -80,9 +80,14 @@ void EnemySpawner::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 					Entity shot = manager.createEntity();
 					manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
 					manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 200 * cos(gun->rotation * DEG_2_RAG), -200 * sin(gun->rotation * DEG_2_RAG)));
-					manager.addComponent(shot, std::make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 2, 3 }), rect({ 0, 160, 32, 48 })));
-					manager.addComponent(shot, std::make_shared<CircleCollider>(4.0f, enemySpawn->enemyWeaponColliderLayer, enemySpawn->enemyWeaponCollidesWith));
-					manager.addComponent(shot, make_shared<BoundariesKill>());
+					manager.addComponent(shot, std::make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 4, 6 }), rect({ 0, 160, 32, 48 })));
+					manager.addComponent(shot, std::make_shared<CircleCollider>(4.0f, enemySpawn->enemyWeaponColliderLayer, enemySpawn->enemyWeaponCollidesWith, [&manager, shot](Entity other)
+						{
+							manager.destroyEntity(shot);
+						}));
+
+					manager.addComponent(shot, make_shared<Boundless>());
+					manager.addComponent(shot, make_shared<DestroyAfterTime>(2));
 				}));
 		}
 	}

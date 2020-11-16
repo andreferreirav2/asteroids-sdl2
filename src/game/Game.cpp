@@ -66,56 +66,8 @@ int ENEMY_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;
 int ENEMY_WEAPON_COLLIDES_WITH = PLAYER_COLLIDER_LAYER;// | ASTEROIDS_COLLIDER_LAYER;
 int ASTEROIDS_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;// | ENEMY_WEAPON_COLLIDER_LAYER;
 
-
-void test_manager()
-{
-	ECSManager manager;
-
-
-	Entity game = manager.createEntity();
-	manager.addComponent(game, make_shared<Clock>());
-
-	assert(manager.getAllComponentsOfType<Transform>().size() == 0);
-	assert(manager.getAllEntitiesWithComponentType<Transform>().size() == 0);
-	assert(manager.getAllComponentsOfType<RigidBody>().size() == 0);
-	assert(manager.getAllEntitiesWithComponentType<RigidBody>().size() == 0);
-
-	Entity ship = manager.createEntity();
-	manager.addComponent(ship, make_shared<Transform>(0.0f, 0.0f));
-	manager.addComponent(ship, make_shared<RigidBody>(1.0f, 0.0f, 0.0f));
-	Entity ship1 = manager.createEntity();
-	manager.addComponent(ship1, make_shared<Transform>(1.0f, 2.0f));
-
-
-	assert(manager.getComponentOfType<RigidBody>(ship1) == nullptr);
-
-
-	PhysicsDynamics physics = PhysicsDynamics();
-	physics.onUpdate(manager, nullptr);
-
-	assert(manager.getAllComponentsOfType<Transform>().size() == 2);
-	assert(manager.getAllEntitiesWithComponentType<Transform>().size() == 2);
-	assert(manager.getAllComponentsOfType<RigidBody>().size() == 1);
-	assert(manager.getAllEntitiesWithComponentType<RigidBody>().size() == 1);
-
-	manager.removeComponentOfType<Transform>(ship);
-
-	assert(manager.getAllComponentsOfType<Transform>().size() == 1);
-	assert(manager.getAllEntitiesWithComponentType<Transform>().size() == 1);
-	assert(manager.getAllComponentsOfType<RigidBody>().size() == 1);
-	assert(manager.getAllEntitiesWithComponentType<RigidBody>().size() == 1);
-
-	manager.destroyEntity(ship);
-
-	assert(manager.getAllComponentsOfType<Transform>().size() == 1);
-	assert(manager.getAllEntitiesWithComponentType<Transform>().size() == 1);
-	assert(manager.getAllComponentsOfType<RigidBody>().size() == 0);
-	assert(manager.getAllEntitiesWithComponentType<RigidBody>().size() == 0);
-}
-
 int main(int argc, char* args[])
 {
-	test_manager();
 
 	SDLApp app = SDLApp(SCREEN_WIDTH, SCREEN_HEIGHT);
 	if (!app.init())
@@ -245,35 +197,27 @@ int main(int argc, char* args[])
 			}));
 	}
 
-	TimePassing timePassing = TimePassing();
-	ShipKeyboardController shipKeyboardController = ShipKeyboardController();
-	ShipGameController shipGameController = ShipGameController();
-	EnginesThrusters enginesThrusters = EnginesThrusters();
-	WeaponFiring weaponFiring = WeaponFiring();
-	PhysicsDynamics physicsDynamics = PhysicsDynamics();
-	PhysicsCollisions physicsCollisions = PhysicsCollisions();
-	AsteroidSpawner asteroidSpawner = AsteroidSpawner();
-	EnemySpawner enemySpawner = EnemySpawner();
-	EnemyAIController enemyAIController = EnemyAIController();
-	DestroyAfterEntitiesTime destroyAfterEntitiesTime = DestroyAfterEntitiesTime();
-	BoundariesChecker boundariesChecker = BoundariesChecker();
-	SDLRenderer sdlRenderer = SDLRenderer(app);
-	SoundFxPlayer soundFxPlayer = SoundFxPlayer(app);
+	auto systems = vector<shared_ptr<System>>{
+		make_shared<TimePassing>(),
+		make_shared<ShipKeyboardController>(),
+		make_shared<ShipGameController>(),
+		make_shared<EnginesThrusters>(),
+		make_shared<WeaponFiring>(),
+		make_shared<PhysicsDynamics>(),
+		make_shared<PhysicsCollisions>(),
+		make_shared<AsteroidSpawner>(),
+		make_shared<EnemySpawner>(),
+		make_shared<EnemyAIController>(),
+		make_shared<DestroyAfterEntitiesTime>(),
+		make_shared<BoundariesChecker>(),
+		make_shared<SDLRenderer>(app),
+		make_shared<SoundFxPlayer>(app),
+	};
 
-	timePassing.onStart(manager);
-	shipKeyboardController.onStart(manager);
-	shipGameController.onStart(manager);
-	enginesThrusters.onStart(manager);
-	weaponFiring.onStart(manager);
-	physicsDynamics.onStart(manager);
-	destroyAfterEntitiesTime.onStart(manager);
-	boundariesChecker.onStart(manager);
-	physicsCollisions.onStart(manager);
-	asteroidSpawner.onStart(manager);
-	enemySpawner.onStart(manager);
-	enemyAIController.onStart(manager);
-	sdlRenderer.onStart(manager);
-	soundFxPlayer.onStart(manager);
+	for (auto const& system : systems)
+	{
+		system->onStart(manager);
+	}
 
 	int frames = 0;
 	//while (true && manager.getComponentOfType<Clock>(game)->currentTicks < 5000)
@@ -285,20 +229,10 @@ int main(int argc, char* args[])
 			break;
 		}
 
-		timePassing.onUpdate(manager, inputs); // calculate passage of time
-		shipKeyboardController.onUpdate(manager, inputs); // pass inputs to engine / weapons
-		shipGameController.onUpdate(manager, inputs); // pass inputs to engine / weapons from controller
-		enginesThrusters.onUpdate(manager, inputs); // move all engines
-		weaponFiring.onUpdate(manager, inputs); // fire projectiles
-		physicsDynamics.onUpdate(manager, inputs); // apply velocity to position
-		destroyAfterEntitiesTime.onUpdate(manager, inputs); // destroy objects after time
-		boundariesChecker.onUpdate(manager, inputs); // apply boundaries or 
-		physicsCollisions.onUpdate(manager, inputs); // check for collisions
-		asteroidSpawner.onUpdate(manager, inputs); // spawn new asteroids
-		enemySpawner.onUpdate(manager, inputs); // spawn new enemies
-		enemyAIController.onUpdate(manager, inputs); // control AIs
-		sdlRenderer.onUpdate(manager, inputs);
-		soundFxPlayer.onUpdate(manager, inputs);
+		for (auto const& system : systems)
+		{
+			system->onUpdate(manager, inputs);
+		}
 
 		++frames;
 	}

@@ -31,6 +31,9 @@ void searchForClosestFoe(ECSManager& manager, float2 const& pos, float const& ro
 		if (foeTransform)
 		{
 			auto foePos = foeTransform->position;
+			// Check if fow is closer around the edges than directly.
+			// If so, simulate that the player is actually outside of the play area,
+			//   so that distance calculation doesn't need to be changed
 			if (boundless)
 			{
 				if (foePos.x - pos.x > playArea.w / 2) // if foe is closer by right edge

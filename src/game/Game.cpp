@@ -63,8 +63,8 @@ int ASTEROIDS_COLLIDER_LAYER = 1 << 4;
 int PLAYER_COLLIDES_WITH = ENEMY_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
 int PLAYER_WEAPON_COLLIDES_WITH = ENEMY_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
 int ENEMY_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;
-int ENEMY_WEAPON_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | ASTEROIDS_COLLIDER_LAYER;
-int ASTEROIDS_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER | ENEMY_WEAPON_COLLIDER_LAYER;
+int ENEMY_WEAPON_COLLIDES_WITH = PLAYER_COLLIDER_LAYER;// | ASTEROIDS_COLLIDER_LAYER;
+int ASTEROIDS_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;// | ENEMY_WEAPON_COLLIDER_LAYER;
 
 
 void test_manager()
@@ -216,7 +216,7 @@ int main(int argc, char* args[])
 				manager.addComponent(mine, mineTransform);
 				manager.addComponent(mine, mineSprite);
 				manager.addComponent(mine, make_shared<Boundless>());
-				manager.addComponent(mine, make_shared<DestroyAfterTime>(10.0f));
+				//manager.addComponent(mine, make_shared<DestroyAfterTime>(30.0f));
 				manager.addComponent(mine, std::make_shared<RigidBody>(1.0f, 0.3f, gunRb->velocity.x, gunRb->velocity.y));
 				manager.addComponent(mine, std::make_shared<CircleCollider>(10.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, ship, mine, explosionSprite, mineTransform](Entity other)
 					{

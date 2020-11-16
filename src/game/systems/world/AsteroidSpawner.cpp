@@ -51,7 +51,7 @@ void spawnAsteroid(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> a
 		manager.addComponent(ast, std::make_shared<CircleCollider>(8.0f, asteroidSpawn->asteroidsColliderLayer, asteroidSpawn->asteroidsCollidesWith, [&manager, ast](Entity other)
 			{
 				//TODO: Spawn destroy particles
-				manager.destroyEntity(ast);
+				//manager.destroyEntity(ast);
 			}));
 	}
 	else if (kind == MEDIUM_ASTEROID) // medium ast
@@ -63,7 +63,7 @@ void spawnAsteroid(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> a
 			{
 				//TODO: Spawn destroy particles
 				spawnChildAsteroids(manager, asteroidSpawn, SMALL_ASTEROID, transform, velocity);
-				manager.destroyEntity(ast);
+				//manager.destroyEntity(ast);
 			}));
 	}
 	else // big ast
@@ -75,7 +75,7 @@ void spawnAsteroid(ECSManager& manager, std::shared_ptr<AsteroidSpawnerParams> a
 			{
 				//TODO: Spawn destroy particles
 				spawnChildAsteroids(manager, asteroidSpawn, MEDIUM_ASTEROID, transform, velocity);
-				manager.destroyEntity(ast);
+				//manager.destroyEntity(ast);
 			}));
 	}
 }

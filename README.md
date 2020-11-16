@@ -4,11 +4,14 @@ Asteroids clone using SDL2 with an ECS architecture
 
 ## TODO:
 * Create enemy ship
-	* AI movement
-	* AI attack
 	* enemy sound effect "danger music"
+* Create onCollide system + onDestroy system
+	* Don't call manager.deleteEntity directly, instead put it on a queue and delete them all at the end of the frame
+	* Will allow all collision callbacks to run before anything is deleted
 * Weapon progression system
-* Secondary weapon ammo
+	* Level up?
+	* Different weapon pickups? 
+* Secondary weapon ammo limit / pickups / indicator
 * Create Heat seaking missile
 * Replace all 2d sprites with OpenGL rendering
 	* Ship

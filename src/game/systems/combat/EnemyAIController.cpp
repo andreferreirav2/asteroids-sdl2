@@ -33,7 +33,23 @@ void searchForClosestFoe(ECSManager& manager, float2 const& pos, float const& ro
 			auto foePos = foeTransform->position;
 			if (boundless)
 			{
-				// TODO: Transform foe's position to adjust for worldwrap
+				if (foePos.x - pos.x > playArea.w / 2) // if foe is closer by right edge
+				{
+					foePos.x -= playArea.w;
+				}
+				else if (foePos.x - pos.x < -static_cast<int>(playArea.w / 2)) // if foe is closer by left edge
+				{
+					foePos.x += playArea.w;
+				}
+
+				if (foePos.y - pos.y > playArea.h / 2) // if foe is closer by bottom edge
+				{
+					foePos.y -= playArea.h;
+				}
+				else if (foePos.y - pos.y < -static_cast<int>(playArea.h / 2)) // if foe is closer by top edge
+				{
+					foePos.y += playArea.h;
+				}
 			}
 
 			auto distToFoe = distance(pos, foePos);

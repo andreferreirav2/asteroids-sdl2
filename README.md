@@ -88,3 +88,18 @@ The following steps were heavily inspired on [Lazy Foo's tutorials](https://lazy
 	* components in sequential vector/array instead of shared_ptr's
 * Move callbacks to inside systems, to remove logic from entity creation
 * Move inputs to it's own component
+
+## Resources
+
+* https://lazyfoo.net/tutorials/SDL/index.php
+* https://lazyfoo.net/tutorials/OpenGL/index.php
+* https://blog.winter.dev/2020/designing-a-physics-engine/
+* https://www.youtube.com/c/TheChernoProject/videos
+* ECS Architecture
+	* http://paulgestwicki.blogspot.com/2012/03/components-and-systems-of-morgans-raid.html?m=1
+	* http://entity-systems.wikidot.com/
+	* https://cbpowell.wordpress.com/2012/10/30/entity-component-game-programming-using-jruby-and-libgdx-part-1/
+	* https://austinmorlan.com/posts/entity_component_system/
+	* http://t-machine.org/index.php/2007/09/03/entity-systems-are-the-future-of-mmog-development-part-1/
+	* https://github.com/SanderMertens/flecs
+	* https://github.com/IainWinter/IwEngine/tree/master/IwEngine/include/iw/entity

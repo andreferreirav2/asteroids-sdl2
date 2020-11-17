@@ -11,6 +11,9 @@ enum class Key
 
 	KEY_SPACE,
 
+	KEY_2,
+	KEY_3,
+
 	QUIT,
 	// TODO: Fill remaining
 };

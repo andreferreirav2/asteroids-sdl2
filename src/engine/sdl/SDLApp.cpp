@@ -33,18 +33,13 @@ bool SDLApp::init()
 		return false;
 	}
 
-	Uint32 flags = SDL_WINDOW_SHOWN;
-	if (m_opengl)
-	{
-		// Init OpenGL
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+	// Init OpenGL
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
-		flags |= SDL_WINDOW_OPENGL;
-	}
 	// Create Window
 	m_window = shared_ptr<SDL_Window>(
-		SDL_CreateWindow("Asteroids", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_screenWidth, m_screenHeight, flags),
+		SDL_CreateWindow("Asteroids", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_screenWidth, m_screenHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL),
 		SDLWindowDeleter()
 		);
 	if (m_window == nullptr)
@@ -53,46 +48,41 @@ bool SDLApp::init()
 		return false;
 	}
 
-	if (m_opengl)
+	//Create context
+	m_glContext = SDL_GL_CreateContext(m_window.get());
+	if (m_glContext == NULL)
 	{
-		//Create context
-		m_glContext = SDL_GL_CreateContext(m_window.get());
-		if (m_glContext == NULL)
-		{
-			cerr << "OpenGL context could not be created! SDL Error: " << SDL_GetError() << endl;
-			return false;
-		}
-		//Use Vsync
-		if (SDL_GL_SetSwapInterval(1) < 0)
-		{
-			cerr << "Warning: Unable to set VSync! SDL Error: " << SDL_GetError() << endl;
-		}
-
-		//Initialize OpenGL
-		if (!initGL())
-		{
-			cerr << "Unable to initialize OpenGL!" << endl;
-			return false;
-		}
+		cerr << "OpenGL context could not be created! SDL Error: " << SDL_GetError() << endl;
+		return false;
 	}
-	else
+	//Use Vsync
+	if (SDL_GL_SetSwapInterval(1) < 0)
 	{
-		// Create texture renderer
-		m_renderer = shared_ptr<SDL_Renderer>(
-			SDL_CreateRenderer(m_window.get(), -1, SDL_RENDERER_ACCELERATED),
-			SDLRendererDeleter());
-		if (m_renderer == nullptr)
-		{
-			cerr << "Renderer could not be created! SDL Error: " << SDL_GetError() << endl;
-			return false;
-		}
-		SDL_SetRenderDrawColor(m_renderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
+		cerr << "Warning: Unable to set VSync! SDL Error: " << SDL_GetError() << endl;
+	}
 
-		// Set texture filtering to linear
-		if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
-		{
-			cerr << "Warning: Linear texture filtering not enabled" << endl;
-		}
+	//Initialize OpenGL
+	if (!initGL())
+	{
+		cerr << "Unable to initialize OpenGL!" << endl;
+		return false;
+	}
+
+	// Create texture renderer
+	m_renderer = shared_ptr<SDL_Renderer>(
+		SDL_CreateRenderer(m_window.get(), -1, SDL_RENDERER_ACCELERATED),
+		SDLRendererDeleter());
+	if (m_renderer == nullptr)
+	{
+		cerr << "Renderer could not be created! SDL Error: " << SDL_GetError() << endl;
+		return false;
+	}
+	SDL_SetRenderDrawColor(m_renderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
+
+	// Set texture filtering to linear
+	if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
+	{
+		cerr << "Warning: Linear texture filtering not enabled" << endl;
 	}
 
 	// Check for joysticks / controllers

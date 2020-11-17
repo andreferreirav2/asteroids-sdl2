@@ -53,10 +53,11 @@ public:
 	void renderGL();
 	void presentGL();
 
+	bool m_opengl;
+
 private:
 	unsigned int m_screenWidth;
 	unsigned int m_screenHeight;
-	bool m_opengl;
 	std::shared_ptr<SDL_Window> m_window = nullptr;
 	SDL_GLContext m_glContext = nullptr;
 	std::shared_ptr<SDL_Renderer> m_renderer = nullptr;

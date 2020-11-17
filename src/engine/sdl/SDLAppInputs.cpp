@@ -35,6 +35,10 @@ std::shared_ptr<Inputs> SDLApp::parseInputs()
 		keys.insert(Key::KEY_RIGHT);
 	if (keystates[SDL_SCANCODE_SPACE])
 		keys.insert(Key::KEY_SPACE);
+	if (keystates[SDL_SCANCODE_2])
+		keys.insert(Key::KEY_2);
+	if (keystates[SDL_SCANCODE_3])
+		keys.insert(Key::KEY_3);
 
 	m_inputs->update(keys);
 

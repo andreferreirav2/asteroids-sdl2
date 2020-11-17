@@ -54,7 +54,7 @@ using namespace std;
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
-const bool OPENGL = false;
+const bool OPENGL = true;
 
 int PLAYER_COLLIDER_LAYER = 1 << 0;
 int PLAYER_WEAPON_COLLIDER_LAYER = 1 << 1;
@@ -230,6 +230,14 @@ int main(int argc, char* args[])
 		if (inputs->isPressed(Key::QUIT))
 		{
 			break;
+		}
+		else if (inputs->isPressed(Key::KEY_2))
+		{
+			app.m_opengl = false;
+		}
+		else if (inputs->isPressed(Key::KEY_3))
+		{
+			app.m_opengl = true;
 		}
 
 		for (auto const& system : systems)

@@ -3,8 +3,12 @@
 #include "../Types.h"
 #include "LoadedTexture.h"
 #include <SDL.h>
+#include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
+#include <gl\glew.h>
+#include <SDL_opengl.h>
+#include <gl\glu.h>
 #include <memory>
 #include <string>
 #include <set>
@@ -22,6 +26,7 @@ public:
 	unsigned int getScreenWidth() const { return m_screenWidth; }
 	unsigned int getScreenHeigth() const { return m_screenHeight; }
 	bool isOpenGL();
+	void setOpenGL(bool openGL);
 
 	// Inputs
 	std::shared_ptr<Inputs> parseInputs();
@@ -49,15 +54,25 @@ public:
 	void drawRect(rect const& coord, colorR8G8B8A8 const& color, bool const& filled);
 	void present();
 
+
+
 	// 3D Rendering / OpenGL
+	void setClearColorGL(float r = 0.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f);
+	void setBuffersData();
 	void renderGL();
 	void presentGL();
-
-	bool m_opengl;
 
 private:
 	unsigned int m_screenWidth;
 	unsigned int m_screenHeight;
+
+	//Graphics program
+	bool m_opengl;
+	GLuint m_glProgramID = 0;
+	GLint m_glVertexPos2DLocation = -1;
+	GLuint m_glVBO = 0;
+	GLuint m_glIBO = 0;
+
 	std::shared_ptr<SDL_Window> m_window = nullptr;
 	SDL_GLContext m_glContext = nullptr;
 	std::shared_ptr<SDL_Renderer> m_renderer = nullptr;

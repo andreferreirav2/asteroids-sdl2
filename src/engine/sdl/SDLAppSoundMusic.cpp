@@ -1,6 +1,5 @@
 #include "SDLApp.h"
 #include "SDLResourceDeleters.h"
-#include <SDL_mixer.h>
 #include <iostream>
 #include <memory>
 

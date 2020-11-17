@@ -1,7 +1,6 @@
 #include "SDLApp.h"
 #include "LoadedTexture.h"
 #include "SDLResourceDeleters.h"
-#include <SDL_image.h>
 #include <iostream>
 #include <string>
 #include <memory>

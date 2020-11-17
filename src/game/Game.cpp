@@ -233,11 +233,11 @@ int main(int argc, char* args[])
 		}
 		else if (inputs->isPressed(Key::KEY_2))
 		{
-			app.m_opengl = false;
+			app.setOpenGL(false);
 		}
 		else if (inputs->isPressed(Key::KEY_3))
 		{
-			app.m_opengl = true;
+			app.setOpenGL(true);
 		}
 
 		for (auto const& system : systems)

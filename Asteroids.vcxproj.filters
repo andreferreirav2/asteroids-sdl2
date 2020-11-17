@@ -16,13 +16,7 @@
     <ClCompile Include="src\engine\input\Inputs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\sdl\SDLAppRendering.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\engine\sdl\SDLAppInputs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\engine\sdl\SDLAppMixer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\game\systems\world\AsteroidSpawner.cpp">
@@ -65,6 +59,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\game\systems\game\TimePassing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\sdl\SDLAppSoundMusic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\sdl\SDLApp2DRendering.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\sdl\SDLApp3DRendering.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

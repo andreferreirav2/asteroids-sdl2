@@ -53,6 +53,7 @@ using namespace std;
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
+const bool OPENGL = true;
 
 int PLAYER_COLLIDER_LAYER = 1 << 0;
 int PLAYER_WEAPON_COLLIDER_LAYER = 1 << 1;
@@ -69,7 +70,7 @@ int ASTEROIDS_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAY
 int main(int argc, char* args[])
 {
 
-	SDLApp app = SDLApp(SCREEN_WIDTH, SCREEN_HEIGHT);
+	SDLApp app = SDLApp(SCREEN_WIDTH, SCREEN_HEIGHT, OPENGL);
 	if (!app.init())
 	{
 		printf("Error starting SDLApp!");
@@ -210,7 +211,7 @@ int main(int argc, char* args[])
 		make_shared<EnemyAIController>(),
 		make_shared<DestroyAfterEntitiesTime>(),
 		make_shared<BoundariesChecker>(),
-		make_shared<SDLRenderer>(app),
+		//make_shared<SDLRenderer>(app),
 		make_shared<SoundFxPlayer>(app),
 	};
 
@@ -233,6 +234,10 @@ int main(int argc, char* args[])
 		{
 			system->onUpdate(manager, inputs);
 		}
+
+		// TODO: move to system
+		app.renderGL();
+		app.presentGL();
 
 		++frames;
 	}

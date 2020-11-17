@@ -200,3 +200,8 @@ void SDLApp::close()
 	IMG_Quit();
 	SDL_Quit();
 }
+
+bool SDLApp::isOpenGL()
+{
+	return m_opengl;
+}

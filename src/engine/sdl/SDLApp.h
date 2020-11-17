@@ -21,6 +21,7 @@ public:
 	void close();
 	unsigned int getScreenWidth() const { return m_screenWidth; }
 	unsigned int getScreenHeigth() const { return m_screenHeight; }
+	bool isOpenGL();
 
 	// Inputs
 	std::shared_ptr<Inputs> parseInputs();

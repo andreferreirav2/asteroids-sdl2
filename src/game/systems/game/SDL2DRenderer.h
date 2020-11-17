@@ -5,10 +5,10 @@
 #include <memory>
 #include <map>
 
-class SDLRenderer : public System
+class SDL2DRenderer : public System
 {
 public:
-	SDLRenderer(SDLApp& sdlApp);
+	SDL2DRenderer(SDLApp& sdlApp);
 	void setTexture(std::shared_ptr<SpriteSDL> sprite);
 
 	// Inherited via System

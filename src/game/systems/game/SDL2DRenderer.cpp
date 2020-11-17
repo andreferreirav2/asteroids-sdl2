@@ -1,4 +1,4 @@
-#include "SDLRenderer.h"
+#include "SDL2DRenderer.h"
 #include "../../components/SpriteSDL.h"
 #include "../../components/Transform.h"
 #include "../../components/Score.h"
@@ -15,12 +15,12 @@ std::string toString(int value, int zeros)
 	return ss.str();
 }
 
-SDLRenderer::SDLRenderer(SDLApp& sdlApp) :
+SDL2DRenderer::SDL2DRenderer(SDLApp& sdlApp) :
 	m_sdlApp(sdlApp)
 {
 }
 
-void SDLRenderer::setTexture(std::shared_ptr<SpriteSDL> sprite)
+void SDL2DRenderer::setTexture(std::shared_ptr<SpriteSDL> sprite)
 {
 	sprite->loadedTexture = m_sdlApp.getTexture(sprite->path); // Reuse same texture for all sprites, by path
 	if (sprite->size.x == 0 && sprite->size.y == 0)
@@ -29,7 +29,7 @@ void SDLRenderer::setTexture(std::shared_ptr<SpriteSDL> sprite)
 	}
 }
 
-void SDLRenderer::onStart(ECSManager& manager)
+void SDL2DRenderer::onStart(ECSManager& manager)
 {
 	for (auto& sprite : manager.getAllComponentsOfType<SpriteSDL>())
 	{
@@ -37,8 +37,13 @@ void SDLRenderer::onStart(ECSManager& manager)
 	}
 }
 
-void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
+void SDL2DRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 {
+	if (m_sdlApp.isOpenGL())
+	{
+		return;
+	}
+
 	m_sdlApp.clear({ 0x00, 0x00, 0x00, 0xff });
 
 	/*
@@ -164,7 +169,7 @@ void SDLRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 	m_sdlApp.present();
 }
 
-void SDLRenderer::drawSpriteSDL(std::shared_ptr<SpriteSDL>& sprite, float2 position, float rotation, float2 scale)
+void SDL2DRenderer::drawSpriteSDL(std::shared_ptr<SpriteSDL>& sprite, float2 position, float rotation, float2 scale)
 {
 	SDL_RendererFlip flipType;
 	if (sprite->flipVertical)

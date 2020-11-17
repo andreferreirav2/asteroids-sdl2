@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\sdl\SDLApp3DRendering.cpp" />
+    <ClCompile Include="src\game\systems\game\SDL3DRenderer.cpp" />
     <ClCompile Include="src\game\systems\combat\EnemySpawner.cpp" />
     <ClCompile Include="src\game\systems\world\AsteroidSpawner.cpp" />
     <ClCompile Include="src\engine\sdl\SDLAppSoundMusic.cpp" />
@@ -158,7 +159,7 @@
     <ClCompile Include="src\game\systems\combat\EnginesThrusters.cpp" />
     <ClCompile Include="src\engine\input\Inputs.cpp" />
     <ClCompile Include="src\game\systems\game\ShipKeyboardController.cpp" />
-    <ClCompile Include="src\game\systems\game\SDLRenderer.cpp" />
+    <ClCompile Include="src\game\systems\game\SDL2DRenderer.cpp" />
     <ClCompile Include="src\game\systems\world\PhysicsDynamics.cpp" />
     <ClCompile Include="src\game\Game.cpp" />
     <ClCompile Include="src\engine\sdl\SDLApp.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="src\game\components\PlayArea.h" />
     <ClInclude Include="src\game\components\Player.h" />
     <ClInclude Include="src\game\components\EnemySpawnerParams.h" />
+    <ClInclude Include="src\game\systems\game\SDL3DRenderer.h" />
     <ClInclude Include="src\game\systems\combat\EnemySpawner.h" />
     <ClInclude Include="src\game\components\AsteroidSpawnerParams.h" />
     <ClInclude Include="src\game\components\Lives.h" />
@@ -200,7 +202,7 @@
     <ClInclude Include="src\game\components\ShipManualControls.h" />
     <ClInclude Include="src\game\systems\game\ShipKeyboardController.h" />
     <ClInclude Include="src\engine\input\Inputs.h" />
-    <ClInclude Include="src\game\systems\game\SDLRenderer.h" />
+    <ClInclude Include="src\game\systems\game\SDL2DRenderer.h" />
     <ClInclude Include="src\game\components\RigidBody.h" />
     <ClInclude Include="src\game\components\Transform.h" />
     <ClInclude Include="src\game\systems\world\PhysicsDynamics.h" />

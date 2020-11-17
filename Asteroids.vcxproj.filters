@@ -46,9 +46,6 @@
     <ClCompile Include="src\game\systems\game\DestroyAfterEntitiesTime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\systems\game\SDLRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\game\systems\game\ShipGameController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -68,6 +65,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\engine\sdl\SDLApp3DRendering.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\systems\game\SDL2DRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\systems\game\SDL3DRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -129,10 +132,11 @@
     <ClInclude Include="src\game\systems\combat\EnemySpawner.h" />
     <ClInclude Include="src\game\systems\combat\EnginesThrusters.h" />
     <ClInclude Include="src\game\systems\game\DestroyAfterEntitiesTime.h" />
-    <ClInclude Include="src\game\systems\game\SDLRenderer.h" />
     <ClInclude Include="src\game\systems\game\ShipGameController.h" />
     <ClInclude Include="src\game\systems\game\ShipKeyboardController.h" />
     <ClInclude Include="src\game\systems\game\SoundFxPlayer.h" />
     <ClInclude Include="src\game\systems\game\TimePassing.h" />
+    <ClInclude Include="src\game\systems\game\SDL2DRenderer.h" />
+    <ClInclude Include="src\game\systems\game\SDL3DRenderer.h" />
   </ItemGroup>
 </Project>

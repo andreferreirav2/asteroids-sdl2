@@ -123,6 +123,13 @@ bool SDLApp::initGL()
 		return false;
 	}
 
+	//Get vertex attribute location
+	m_glMatrix = glGetUniformLocation(m_glProgramID, "MVP");
+	if (m_glMatrix == -1)
+	{
+		cerr << "MVP is not a valid glsl program variable!" << endl;
+		return false;
+	}
 
 	glDetachShader(m_glProgramID, vertexShader);
 	glDetachShader(m_glProgramID, fragmentShader);
@@ -140,6 +147,7 @@ void SDLApp::setClearColorGL(float r, float g, float b, float a)
 
 void SDLApp::setBuffersData()
 {
+
 	//Vertex Buffer Obj data
 	GLfloat vertexData[] =
 	{
@@ -155,20 +163,39 @@ void SDLApp::setBuffersData()
 	glGenBuffers(1, &m_glVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, m_glVBO);
 	glBufferData(GL_ARRAY_BUFFER, 3 * 4 * sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
+
 	//Create Index Buffer Obj
 	glGenBuffers(1, &m_glIBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_glIBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(GLuint), indexData, GL_STATIC_DRAW);
 }
 
+glm::mat4 camera(float x, float y, float rotate)
+{
+	// Orthographic camera
+	glm::mat4 proj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 100.0f); // In world coordinates
 
-void SDLApp::renderGL()
+	// Camera matrix
+	glm::mat4 view = glm::lookAt(
+		glm::vec3(0, 0, 1), // Camera is at (0,0,1), in World Space
+		glm::vec3(0, 0, 0), // and looks at the origin
+		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+	);
+	// Model matrix : an identity matrix (model will be at the origin)
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(x, -y, 0.0f));
+	model = glm::rotate(model, (rotate - 90) * 0.0174533f, glm::vec3(0.0f, 0.0f, 1.0f));
+	return proj * view * model;
+}
+
+void SDLApp::renderGL(float x, float y, float rotate)
 {
 	//Clear color buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Bind program
 	glUseProgram(m_glProgramID);
+
 
 	//Enable vertex position
 	glEnableVertexAttribArray(m_glVertexPos3DLocation);
@@ -179,6 +206,8 @@ void SDLApp::renderGL()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_glIBO);
 
 	// Draw
+	glm::mat4 mvp = camera(x, y, rotate);
+	glUniformMatrix4fv(m_glMatrix, 1, GL_FALSE, &mvp[0][0]);
 	glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL);
 
 	//Disable vertex position
@@ -191,14 +220,4 @@ void SDLApp::renderGL()
 void SDLApp::presentGL()
 {
 	SDL_GL_SwapWindow(m_window.get());
-}
-
-glm::mat4 camera(float Translate, glm::vec2 const& Rotate)
-{
-	glm::mat4 Projection = glm::ortho(0.f, 400.f, 0.f, 400.f, -1.f, 1.f);
-	glm::mat4 View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -Translate));
-	View = glm::rotate(View, Rotate.y, glm::vec3(-1.0f, 0.0f, 0.0f));
-	View = glm::rotate(View, Rotate.x, glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::mat4 Model = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f));
-	return Projection * View * Model;
 }

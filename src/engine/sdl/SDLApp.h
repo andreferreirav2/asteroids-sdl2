@@ -56,7 +56,7 @@ public:
 	void setOpenGL(bool openGL);
 	void setClearColorGL(float r = 0.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f);
 	void setBuffersData();
-	void renderGL();
+	void renderGL(float x, float y, float rotate);
 	void presentGL();
 
 private:
@@ -69,6 +69,7 @@ private:
 	std::string m_fragmentShaderPath;
 	GLuint m_glProgramID = 0;
 	GLint m_glVertexPos3DLocation = -1;
+	GLint m_glMatrix = -1;
 	GLuint m_glVBO = 0;
 	GLuint m_glIBO = 0;
 

@@ -116,10 +116,10 @@ bool SDLApp::initGL()
 	}
 
 	//Get vertex attribute location
-	m_glVertexPos3DLocation = glGetAttribLocation(m_glProgramID, "LVertexPos3D");
+	m_glVertexPos3DLocation = glGetAttribLocation(m_glProgramID, "vertexPosModelSpace");
 	if (m_glVertexPos3DLocation == -1)
 	{
-		cerr << "LVertexPos3D is not a valid glsl program variable!" << endl;
+		cerr << "vertexPosModelSpace is not a valid glsl program variable!" << endl;
 		return false;
 	}
 
@@ -165,7 +165,7 @@ void SDLApp::setBuffersData()
 void SDLApp::renderGL()
 {
 	//Clear color buffer
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Bind program
 	glUseProgram(m_glProgramID);

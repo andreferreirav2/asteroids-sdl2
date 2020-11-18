@@ -215,10 +215,10 @@
     <ClInclude Include="src\game\systems\combat\EnemyAIController.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="assets\shaders\fragment.glsl">
+    <FxCompile Include="assets\shaders\fragment.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="assets\shaders\vertex.glsl">
+    <FxCompile Include="assets\shaders\vertex.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>

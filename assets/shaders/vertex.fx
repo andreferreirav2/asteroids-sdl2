@@ -1,7 +1,8 @@
-#version 140
-in vec3 LVertexPos3D;
+#version 330 core
+layout(location = 0) in vec3 vertexPosModelSpace;
 
 void main()
 {
-	gl_Position = vec4(LVertexPos3D.x, LVertexPos3D.y, LVertexPos3D.z, 1);
+	gl_Position.xyz = vertexPosModelSpace;
+	gl_Position.w = 1.0;
 }

@@ -1,7 +1,7 @@
-#version 140
-out vec4 LFragment;
+#version 330 core
+out vec4 color;
 
 void main()
 {
-	LFragment = vec4(1.0, 1.0, 1.0, 1.0);
+	color = vec4(1.0, 1.0, 1.0, 1.0);
 }

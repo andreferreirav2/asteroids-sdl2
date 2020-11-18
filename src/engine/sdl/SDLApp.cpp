@@ -8,17 +8,12 @@ using std::endl;
 using std::shared_ptr;
 
 
-SDLApp::SDLApp() :
-	m_screenWidth(640),
-	m_screenHeight(480),
-	m_opengl(false)
-{
-}
-
-SDLApp::SDLApp(unsigned int m_screenWidth, unsigned int m_screenHeight, bool opengl) :
+SDLApp::SDLApp(unsigned int m_screenWidth, unsigned int m_screenHeight, bool opengl, std::string vertexShaderPath, std::string fragmentShaderPath) :
 	m_screenWidth(m_screenWidth),
 	m_screenHeight(m_screenHeight),
-	m_opengl(opengl)
+	m_opengl(opengl),
+	m_vertexShaderPath(vertexShaderPath),
+	m_fragmentShaderPath(fragmentShaderPath)
 {
 }
 
@@ -149,99 +144,6 @@ bool SDLApp::init()
 	return true;
 }
 
-bool SDLApp::initGL()
-{
-	GLenum error = GL_NO_ERROR;
-
-	// Create gl program
-	m_glProgramID = glCreateProgram();
-
-
-	// Define vertex shader
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	const GLchar* vertexShaderSource[] = { "#version 140\nin vec2 LVertexPos2D; void main() { gl_Position = vec4( LVertexPos2D.x, LVertexPos2D.y, 0, 1 ); }" };
-	glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
-	// Compile vertex shader
-	glCompileShader(vertexShader);
-	//Check for errors
-	GLint vShaderCompiled = GL_FALSE;
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vShaderCompiled);
-	if (vShaderCompiled != GL_TRUE)
-	{
-		cerr << "Unable to compile vertex shader: " << vertexShader << endl;
-		//printShaderLog(vertexShader);
-		return false;
-	}
-	// Bind vertex shader gl program
-	glAttachShader(m_glProgramID, vertexShader);
-
-
-	// Define fragment shader
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	const GLchar* fragmentShaderSource[] = { "#version 140\nout vec4 LFragment; void main() { LFragment = vec4( 1.0, 1.0, 1.0, 1.0 ); }" };
-	glShaderSource(fragmentShader, 1, fragmentShaderSource, NULL);
-	//Compile fragment shader
-	glCompileShader(fragmentShader);
-	//Check for errors
-	GLint fShaderCompiled = GL_FALSE;
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fShaderCompiled);
-	if (fShaderCompiled != GL_TRUE)
-	{
-		cerr << "Unable to compile fragment shader: " << fragmentShader << endl;
-		//printShaderLog(fragmentShader);
-		return false;
-	}
-	// Bind fragment shader gl program
-	glAttachShader(m_glProgramID, fragmentShader);
-
-
-	// Link gl program
-	glLinkProgram(m_glProgramID);
-	//Check for errors
-	GLint programSuccess = GL_TRUE;
-	glGetProgramiv(m_glProgramID, GL_LINK_STATUS, &programSuccess);
-	if (programSuccess != GL_TRUE)
-	{
-		cerr << "Error linking program: " << m_glProgramID << endl;
-		//printShaderLog(fragmentShader);
-		return false;
-	}
-
-
-	//Get vertex attribute location
-	m_glVertexPos2DLocation = glGetAttribLocation(m_glProgramID, "LVertexPos2D");
-	if (m_glVertexPos2DLocation == -1)
-	{
-		cerr << "LVertexPos2D is not a valid glsl program variable!" << endl;
-		return false;
-	}
-	/*
-	//Initialize Projection Matrix
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	//Check for errors
-	error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		cerr << "Error initializing OpenGL: " << gluErrorString(error) << endl;
-		return false;
-	}
-
-
-	//Initialize Modelview Matrix
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	//Check for errors
-	error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		cerr << "Error initializing OpenGL: " << gluErrorString(error) << endl;
-		return false;
-	}
-	*/
-
-	return true;
-}
 
 void SDLApp::close()
 {
@@ -249,14 +151,4 @@ void SDLApp::close()
 	Mix_Quit();
 	IMG_Quit();
 	SDL_Quit();
-}
-
-bool SDLApp::isOpenGL()
-{
-	return m_opengl;
-}
-
-void SDLApp::setOpenGL(bool opengl)
-{
-	m_opengl = opengl;
 }

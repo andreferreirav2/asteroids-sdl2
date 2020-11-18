@@ -18,15 +18,11 @@ class SDLApp
 {
 public:
 	// SDL general
-	SDLApp();
-	SDLApp(unsigned int m_screenWidth, unsigned int m_screenHeight, bool opengl);
+	SDLApp(unsigned int m_screenWidth, unsigned int m_screenHeight, bool opengl = false, std::string vertexShaderPath = "", std::string fragmentShaderPath = "");
 	bool init();
-	bool initGL();
 	void close();
 	unsigned int getScreenWidth() const { return m_screenWidth; }
 	unsigned int getScreenHeigth() const { return m_screenHeight; }
-	bool isOpenGL();
-	void setOpenGL(bool openGL);
 
 	// Inputs
 	std::shared_ptr<Inputs> parseInputs();
@@ -54,9 +50,10 @@ public:
 	void drawRect(rect const& coord, colorR8G8B8A8 const& color, bool const& filled);
 	void present();
 
-
-
 	// 3D Rendering / OpenGL
+	bool initGL();
+	bool isOpenGL();
+	void setOpenGL(bool openGL);
 	void setClearColorGL(float r = 0.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f);
 	void setBuffersData();
 	void renderGL();
@@ -68,8 +65,10 @@ private:
 
 	//Graphics program
 	bool m_opengl;
+	std::string m_vertexShaderPath;
+	std::string m_fragmentShaderPath;
 	GLuint m_glProgramID = 0;
-	GLint m_glVertexPos2DLocation = -1;
+	GLint m_glVertexPos3DLocation = -1;
 	GLuint m_glVBO = 0;
 	GLuint m_glIBO = 0;
 

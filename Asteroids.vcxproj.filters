@@ -139,4 +139,8 @@
     <ClInclude Include="src\game\systems\game\SDL2DRenderer.h" />
     <ClInclude Include="src\game\systems\game\SDL3DRenderer.h" />
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="assets\shaders\fragment.glsl" />
+    <FxCompile Include="assets\shaders\vertex.glsl" />
+  </ItemGroup>
 </Project>

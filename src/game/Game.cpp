@@ -71,7 +71,7 @@ int ASTEROIDS_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAY
 int main(int argc, char* args[])
 {
 
-	SDLApp app = SDLApp(SCREEN_WIDTH, SCREEN_HEIGHT, OPENGL);
+	SDLApp app = SDLApp(SCREEN_WIDTH, SCREEN_HEIGHT, OPENGL, "assets/shaders/vertex.fx", "assets/shaders/fragment.fx");
 	if (!app.init())
 	{
 		printf("Error starting SDLApp!");

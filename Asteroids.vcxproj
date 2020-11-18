@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_ttf-2.0.15\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_image-2.0.5\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_mixer-2.0.4\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2-2.0.12\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glew-2.1.0\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glfw-3.3.2.bin.WIN64\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glm-0.9.9.7\glm;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_ttf-2.0.15\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_image-2.0.5\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_mixer-2.0.4\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2-2.0.12\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glew-2.1.0\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glfw-3.3.2.bin.WIN64\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glfw-3.3.2.bin.WIN64\lib-vc2019;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glew-2.1.0\lib\Release\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_ttf-2.0.15\lib\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_mixer-2.0.4\lib\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_image-2.0.5\lib\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2-2.0.12\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -213,6 +213,14 @@
     <ClInclude Include="src\engine\sdl\SDLApp.h" />
     <ClInclude Include="src\game\components\SecondaryWeapon.h" />
     <ClInclude Include="src\game\systems\combat\EnemyAIController.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="assets\shaders\fragment.glsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\vertex.glsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -31,6 +31,6 @@ void SDL3DRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs
 	auto ship = manager.getAllEntitiesWithComponentType<Engine>();
 	auto transform = manager.getComponentOfType<Transform>(*(ship.begin()));
 
-	m_sdlApp.renderGL(transform->position.x / 100, transform->position.y / 100, transform->rotation);
+	m_sdlApp.renderGL(transform->position.x, transform->position.y, transform->rotation);
 	m_sdlApp.presentGL();
 }

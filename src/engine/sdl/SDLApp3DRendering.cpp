@@ -170,10 +170,11 @@ void SDLApp::setBuffersData()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(GLuint), indexData, GL_STATIC_DRAW);
 }
 
-glm::mat4 camera(float x, float y, float rotate)
+glm::mat4 camera()
 {
 	// Orthographic camera
-	glm::mat4 proj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 100.0f); // In world coordinates
+	// TODO: replace 400s and 300s with world coordinates
+	glm::mat4 proj = glm::ortho(-400.0f, 400.0f, -300.0f, 300.0f, 0.0f, 100.0f); // In world coordinates
 
 	// Camera matrix
 	glm::mat4 view = glm::lookAt(
@@ -181,11 +182,7 @@ glm::mat4 camera(float x, float y, float rotate)
 		glm::vec3(0, 0, 0), // and looks at the origin
 		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
 	);
-	// Model matrix : an identity matrix (model will be at the origin)
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(x, -y, 0.0f));
-	model = glm::rotate(model, (rotate - 90) * 0.0174533f, glm::vec3(0.0f, 0.0f, 1.0f));
-	return proj * view * model;
+	return proj * view;
 }
 
 void SDLApp::renderGL(float x, float y, float rotate)
@@ -206,7 +203,13 @@ void SDLApp::renderGL(float x, float y, float rotate)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_glIBO);
 
 	// Draw
-	glm::mat4 mvp = camera(x, y, rotate);
+	// TODO: replace 400s and 300s with world coordinates
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(x - 400, -y + 300, 0.0f));
+	model = glm::scale(model, glm::vec3(12.0f, 12.0f, 12.0f));
+	model = glm::rotate(model, glm::radians(rotate - 90), glm::vec3(0.0f, 0.0f, 1.0f));
+	glm::mat4 mvp = camera() * model;
+
 	glUniformMatrix4fv(m_glMatrix, 1, GL_FALSE, &mvp[0][0]);
 	glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL);
 

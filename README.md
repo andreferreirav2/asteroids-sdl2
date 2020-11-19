@@ -64,12 +64,15 @@ The following steps were heavily inspired on [Lazy Foo's tutorials](https://lazy
 * Collision checking is very naive, checking all colliders against all other unchecked colliders -> O(n2)
 	* Implementing quadtrees might help, although all objects are dynamic so objects will jump from one sector to another A LOT!
 
+
 ## TODO:
 * Create enemy ship
 	* enemy sound effect "danger music"
 * Create onCollide system + onDestroy system
 	* Don't call manager.deleteEntity directly, instead put it on a queue and delete them all at the end of the frame
 	* Will allow all collision callbacks to run before anything is deleted
+* Enemy progression system
+	* Faster more aggressive?
 * Weapon progression system
 	* Level up?
 	* Different weapon pickups? 
@@ -88,6 +91,7 @@ The following steps were heavily inspired on [Lazy Foo's tutorials](https://lazy
 	* components in sequential vector/array instead of shared_ptr's
 * Move callbacks to inside systems, to remove logic from entity creation
 * Move inputs to it's own component
+* Make world dimensions not tied to screen resolution
 
 ## Resources
 

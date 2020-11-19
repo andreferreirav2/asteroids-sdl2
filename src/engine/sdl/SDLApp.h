@@ -6,12 +6,15 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
-#include <gl\glew.h>
+#include <gl/glew.h>
 #include <SDL_opengl.h>
-#include <gl\glu.h>
+#include <gl/glu.h>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 #include <memory>
 #include <string>
 #include <set>
+#include <vector>
 #include <map>
 
 class SDLApp
@@ -58,6 +61,7 @@ public:
 	void setBuffersData();
 	void renderGL(float x, float y, float rotate);
 	void presentGL();
+	bool loadObjFile(std::string const& objPath, std::vector<glm::vec3>& vertices, std::vector<glm::vec3>& normals, std::vector<GLushort>& elements);
 
 private:
 	unsigned int m_screenWidth;
@@ -71,6 +75,7 @@ private:
 	GLint m_glVertexPos3DLocation = -1;
 	GLint m_glMatrix = -1;
 	GLuint m_glVBO = 0;
+	GLuint m_glVBONormals = 0;
 	GLuint m_glIBO = 0;
 
 	std::shared_ptr<SDL_Window> m_window = nullptr;

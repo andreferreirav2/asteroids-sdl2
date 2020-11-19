@@ -1,11 +1,12 @@
 #include "SDLApp.h"
 #include "../Types.h"
-#include <glm/mat4x4.hpp> // glm::mat4
-#include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <string>
 
 using namespace std;
 
@@ -145,42 +146,71 @@ void SDLApp::setClearColorGL(float r, float g, float b, float a)
 	glClearColor(r, g, b, a);
 }
 
+
 void SDLApp::setBuffersData()
 {
-
+	/*
 	//Vertex Buffer Obj data
 	GLfloat vertexData[] =
 	{
-		0.0f,  -0.3f, 0.0f,
-		-0.3f, -0.5f, 0.0f,
-		 0.0f, 0.7f, 0.0f,
-		0.3f, -0.5f, 0.0f,
+		0.0f,  -0.3f, 0.1f, // middle high
+		-0.4f, -0.5f, 0.0f, //left
+		 0.0f, 0.7f, 0.0f, // tip
+		0.4f, -0.5f, 0.0f, // right
+		0.0f,  -0.3f, 0.1f, // middle low
 	};
 	//Index Buffer Obj data
-	GLuint indexData[] = { 0, 1, 2, 3 };
+	GLuint indexData[] = {
+		0, 1, 2, // top left wing
+		0, 2, 3, // top right wing
+		4, 2, 1, // bottom left wing
+		4, 3, 2, // bottom right wing
+	};
 
 	//Create Vertex Buffer Obj
 	glGenBuffers(1, &m_glVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, m_glVBO);
-	glBufferData(GL_ARRAY_BUFFER, 3 * 4 * sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
 
 	//Create Index Buffer Obj
 	glGenBuffers(1, &m_glIBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_glIBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(GLuint), indexData, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData, GL_STATIC_DRAW);
+	*/
+
+
+	vector<glm::vec3> vertices;
+	vector<glm::vec3> normals;
+	vector<GLushort> faceElements;
+	loadObjFile("assets/models/asteroid OBJ.obj", vertices, normals, faceElements);
+
+
+	glGenBuffers(1, &m_glVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_glVBO);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_STATIC_DRAW);
+
+	//glGenBuffers(1, &m_glVBONormals);
+	//glBindBuffer(GL_ARRAY_BUFFER, m_glVBONormals);
+	//glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(normals[0]), normals.data(), GL_STATIC_DRAW);
+
+	glGenBuffers(1, &m_glIBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_glIBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, faceElements.size() * sizeof(GLushort), faceElements.data(), GL_STATIC_DRAW);
+
+
 }
 
 glm::mat4 camera()
 {
 	// Orthographic camera
 	// TODO: replace 400s and 300s with world coordinates
-	glm::mat4 proj = glm::ortho(-400.0f, 400.0f, -300.0f, 300.0f, 0.0f, 100.0f); // In world coordinates
+	glm::mat4 proj = glm::ortho(-400.0f, 400.0f, -300.0f, 300.0f, 0.0f, 1000.0f); // In world coordinates
 
 	// Camera matrix
 	glm::mat4 view = glm::lookAt(
-		glm::vec3(0, 0, 1), // Camera is at (0,0,1), in World Space
+		glm::vec3(0, 0, 100), // Camera is at (0,0,100), in World Space
 		glm::vec3(0, 0, 0), // and looks at the origin
-		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+		glm::vec3(0, 1, 0)  // Head is up
 	);
 	return proj * view;
 }
@@ -199,19 +229,19 @@ void SDLApp::renderGL(float x, float y, float rotate)
 
 	//Set vertex / index data
 	glBindBuffer(GL_ARRAY_BUFFER, m_glVBO);
-	glVertexAttribPointer(m_glVertexPos3DLocation, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), NULL);
+	glVertexAttribPointer(m_glVertexPos3DLocation, 3, GL_FLOAT, GL_FALSE, NULL, NULL);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_glIBO);
 
 	// Draw
 	// TODO: replace 400s and 300s with world coordinates
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(x - 400, -y + 300, 0.0f));
-	model = glm::scale(model, glm::vec3(12.0f, 12.0f, 12.0f));
-	model = glm::rotate(model, glm::radians(rotate - 90), glm::vec3(0.0f, 0.0f, 1.0f));
+	model = glm::rotate(model, glm::radians(rotate - 90), glm::vec3(1.0f, 0.0f, 1.0f));
+	model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 	glm::mat4 mvp = camera() * model;
 
 	glUniformMatrix4fv(m_glMatrix, 1, GL_FALSE, &mvp[0][0]);
-	glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, 35640, GL_UNSIGNED_SHORT, NULL);
 
 	//Disable vertex position
 	glDisableVertexAttribArray(m_glVertexPos3DLocation);
@@ -223,4 +253,69 @@ void SDLApp::renderGL(float x, float y, float rotate)
 void SDLApp::presentGL()
 {
 	SDL_GL_SwapWindow(m_window.get());
+}
+
+bool SDLApp::loadObjFile(string const& objPath, vector<glm::vec3>& vertices, vector<glm::vec3>& normals, vector<GLushort>& faceElements)
+{
+	ifstream in = ifstream(objPath.c_str(), ios::in);
+	if (!in)
+	{
+		cerr << "Unable to open obj file: " << objPath << endl;
+		return false;
+	}
+
+	string line;
+	while (getline(in, line))
+	{
+		if (line.substr(0, 2) == "v ") // Load vertices
+		{
+			istringstream s(line.substr(2));
+			glm::vec3 v; s >> v.x; s >> v.y; s >> v.z;
+			vertices.push_back(v);
+		}
+		else if (line.substr(0, 2) == "f ") // Load faceElements (vertex indexes)
+		{
+			istringstream s(line.substr(2));
+			string sa, sb, sc;
+			s >> sa;
+			s >> sb;
+			s >> sc;
+			sa = sa.substr(0, sa.find("/"));
+			sb = sb.substr(0, sb.find("/"));
+			sc = sc.substr(0, sc.find("/"));
+			GLushort a, b, c;
+			istringstream(sa) >> a;
+			istringstream(sb) >> b;
+			istringstream(sc) >> c;
+			faceElements.push_back(a - 1); faceElements.push_back(b - 1); faceElements.push_back(c - 1);
+		}
+		else if (line.substr(0, 2) == "vn") // Vertex normals
+		{
+			// ignore for now
+		}
+		else if (line.substr(0, 2) == "vt") // Vertex texture
+		{
+			// ignore for now
+		}
+		else if (line[0] == '#')
+		{
+			// ignore for now
+		}
+		else
+		{
+			// ignore for now
+		}
+	}
+
+	normals.resize(vertices.size(), glm::vec3(0.0, 0.0, 0.0));
+	for (int i = 0; i < faceElements.size(); i += 3)
+	{
+		GLushort ia = faceElements[i];
+		GLushort ib = faceElements[i + 1];
+		GLushort ic = faceElements[i + 2];
+		glm::vec3 normal = glm::normalize(glm::cross(
+			glm::vec3(vertices[ib]) - glm::vec3(vertices[ia]),
+			glm::vec3(vertices[ic]) - glm::vec3(vertices[ia])));
+		normals[ia] = normals[ib] = normals[ic] = normal;
+	}
 }

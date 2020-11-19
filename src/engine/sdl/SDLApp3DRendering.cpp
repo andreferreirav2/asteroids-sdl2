@@ -1,4 +1,5 @@
 #include "SDLApp.h"
+#include "LoadedObj.h"
 #include "../Types.h"
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -147,7 +148,7 @@ void SDLApp::setClearColorGL(float r, float g, float b, float a)
 }
 
 
-void SDLApp::setBuffersData()
+void SDLApp::bufferObjDataGL(shared_ptr<LoadedObj> obj)
 {
 	/*
 	//Vertex Buffer Obj data
@@ -179,25 +180,17 @@ void SDLApp::setBuffersData()
 	*/
 
 
-	vector<glm::vec3> vertices;
-	vector<glm::vec3> normals;
-	vector<GLushort> faceElements;
-	loadObjFile("assets/models/asteroid OBJ.obj", vertices, normals, faceElements);
-
-
-	glGenBuffers(1, &m_glVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_glVBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_STATIC_DRAW);
+	glGenBuffers(1, &obj->vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, obj->vbo);
+	glBufferData(GL_ARRAY_BUFFER, obj->vertices.size() * sizeof(glm::vec3), obj->vertices.data(), GL_STATIC_DRAW);
 
 	//glGenBuffers(1, &m_glVBONormals);
 	//glBindBuffer(GL_ARRAY_BUFFER, m_glVBONormals);
 	//glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(normals[0]), normals.data(), GL_STATIC_DRAW);
 
-	glGenBuffers(1, &m_glIBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_glIBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, faceElements.size() * sizeof(GLushort), faceElements.data(), GL_STATIC_DRAW);
-
-
+	glGenBuffers(1, &obj->ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj->ibo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, obj->faceElements.size() * sizeof(GLushort), obj->faceElements.data(), GL_STATIC_DRAW);
 }
 
 glm::mat4 camera()
@@ -215,33 +208,30 @@ glm::mat4 camera()
 	return proj * view;
 }
 
-void SDLApp::renderGL(float x, float y, float rotate)
+void SDLApp::renderObjGL(shared_ptr<LoadedObj> obj, glm::vec3 translate, float rotateAngle, glm::vec3 rotation, glm::vec3 scale)
 {
-	//Clear color buffer
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	//Bind program
 	glUseProgram(m_glProgramID);
-
 
 	//Enable vertex position
 	glEnableVertexAttribArray(m_glVertexPos3DLocation);
 
 	//Set vertex / index data
-	glBindBuffer(GL_ARRAY_BUFFER, m_glVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, obj->vbo);
 	glVertexAttribPointer(m_glVertexPos3DLocation, 3, GL_FLOAT, GL_FALSE, NULL, NULL);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_glIBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj->ibo);
 
 	// Draw
 	// TODO: replace 400s and 300s with world coordinates
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(x - 400, -y + 300, 0.0f));
-	model = glm::rotate(model, glm::radians(rotate - 90), glm::vec3(1.0f, 0.0f, 1.0f));
-	model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+	model = glm::translate(model, translate);
+	model = glm::rotate(model, glm::radians(rotateAngle), rotation);
+	model = glm::scale(model, scale);
+
 	glm::mat4 mvp = camera() * model;
 
 	glUniformMatrix4fv(m_glMatrix, 1, GL_FALSE, &mvp[0][0]);
-	glDrawElements(GL_TRIANGLES, 35640, GL_UNSIGNED_SHORT, NULL);
+	glDrawElements(GL_TRIANGLES, obj->faceElements.size(), GL_UNSIGNED_SHORT, 0);
 
 	//Disable vertex position
 	glDisableVertexAttribArray(m_glVertexPos3DLocation);
@@ -250,19 +240,27 @@ void SDLApp::renderGL(float x, float y, float rotate)
 	glUseProgram(NULL);
 }
 
+void SDLApp::clearGL()
+{
+	//Clear color buffer
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
 void SDLApp::presentGL()
 {
 	SDL_GL_SwapWindow(m_window.get());
 }
 
-bool SDLApp::loadObjFile(string const& objPath, vector<glm::vec3>& vertices, vector<glm::vec3>& normals, vector<GLushort>& faceElements)
+shared_ptr<LoadedObj> SDLApp::loadObjFileGL(string const& objPath)
 {
 	ifstream in = ifstream(objPath.c_str(), ios::in);
 	if (!in)
 	{
 		cerr << "Unable to open obj file: " << objPath << endl;
-		return false;
+		return nullptr;
 	}
+
+	auto loadedObj = make_shared<LoadedObj>(objPath);
 
 	string line;
 	while (getline(in, line))
@@ -271,7 +269,7 @@ bool SDLApp::loadObjFile(string const& objPath, vector<glm::vec3>& vertices, vec
 		{
 			istringstream s(line.substr(2));
 			glm::vec3 v; s >> v.x; s >> v.y; s >> v.z;
-			vertices.push_back(v);
+			loadedObj->vertices.push_back(v);
 		}
 		else if (line.substr(0, 2) == "f ") // Load faceElements (vertex indexes)
 		{
@@ -287,7 +285,7 @@ bool SDLApp::loadObjFile(string const& objPath, vector<glm::vec3>& vertices, vec
 			istringstream(sa) >> a;
 			istringstream(sb) >> b;
 			istringstream(sc) >> c;
-			faceElements.push_back(a - 1); faceElements.push_back(b - 1); faceElements.push_back(c - 1);
+			loadedObj->faceElements.push_back(a - 1); loadedObj->faceElements.push_back(b - 1); loadedObj->faceElements.push_back(c - 1);
 		}
 		else if (line.substr(0, 2) == "vn") // Vertex normals
 		{
@@ -307,15 +305,16 @@ bool SDLApp::loadObjFile(string const& objPath, vector<glm::vec3>& vertices, vec
 		}
 	}
 
-	normals.resize(vertices.size(), glm::vec3(0.0, 0.0, 0.0));
-	for (int i = 0; i < faceElements.size(); i += 3)
+	loadedObj->normals.resize(loadedObj->vertices.size(), glm::vec3(0.0, 0.0, 0.0));
+	for (int i = 0; i < loadedObj->faceElements.size(); i += 3)
 	{
-		GLushort ia = faceElements[i];
-		GLushort ib = faceElements[i + 1];
-		GLushort ic = faceElements[i + 2];
+		GLushort ia = loadedObj->faceElements[i];
+		GLushort ib = loadedObj->faceElements[i + 1];
+		GLushort ic = loadedObj->faceElements[i + 2];
 		glm::vec3 normal = glm::normalize(glm::cross(
-			glm::vec3(vertices[ib]) - glm::vec3(vertices[ia]),
-			glm::vec3(vertices[ic]) - glm::vec3(vertices[ia])));
-		normals[ia] = normals[ib] = normals[ic] = normal;
+			glm::vec3(loadedObj->vertices[ib]) - glm::vec3(loadedObj->vertices[ia]),
+			glm::vec3(loadedObj->vertices[ic]) - glm::vec3(loadedObj->vertices[ia])));
+		loadedObj->normals[ia] = loadedObj->normals[ib] = loadedObj->normals[ic] = normal;
 	}
+	return loadedObj;
 }

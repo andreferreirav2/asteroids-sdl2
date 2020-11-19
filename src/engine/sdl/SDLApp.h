@@ -2,6 +2,7 @@
 #include "../input/Inputs.h"
 #include "../Types.h"
 #include "LoadedTexture.h"
+#include "LoadedObj.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
@@ -58,10 +59,11 @@ public:
 	bool isOpenGL();
 	void setOpenGL(bool openGL);
 	void setClearColorGL(float r = 0.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f);
-	void setBuffersData();
-	void renderGL(float x, float y, float rotate);
+	void clearGL();
+	std::shared_ptr<LoadedObj> loadObjFileGL(std::string const& objPath);
+	void bufferObjDataGL(std::shared_ptr<LoadedObj> obj);
+	void renderObjGL(std::shared_ptr<LoadedObj> obj, glm::vec3 translate = glm::vec3(0, 0, 0), float rotateAngle = 0.0f, glm::vec3 rotation = glm::vec3(0, 0, 0), glm::vec3 scale = glm::vec3(1, 1, 1));
 	void presentGL();
-	bool loadObjFile(std::string const& objPath, std::vector<glm::vec3>& vertices, std::vector<glm::vec3>& normals, std::vector<GLushort>& elements);
 
 private:
 	unsigned int m_screenWidth;

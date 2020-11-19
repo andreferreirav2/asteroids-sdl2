@@ -166,6 +166,7 @@
     <ClCompile Include="src\game\systems\combat\EnemyAIController.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\engine\sdl\LoadedObj.h" />
     <ClInclude Include="src\engine\Math.h" />
     <ClInclude Include="src\game\components\PlayArea.h" />
     <ClInclude Include="src\game\components\Player.h" />

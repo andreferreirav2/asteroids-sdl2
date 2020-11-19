@@ -1,6 +1,7 @@
 #pragma once
 #include "../../../engine/ecs/ECSManager.h"
 #include "../../../engine/sdl/SDLApp.h"
+#include "../../../engine/sdl/LoadedObj.h"
 #include <memory>
 #include <map>
 
@@ -15,5 +16,6 @@ public:
 
 private:
 	SDLApp& m_sdlApp;
+	std::shared_ptr<LoadedObj> m_loadedObj;
 };
 

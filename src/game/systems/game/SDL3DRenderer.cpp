@@ -19,7 +19,8 @@ SDL3DRenderer::SDL3DRenderer(SDLApp& sdlApp) :
 void SDL3DRenderer::onStart(ECSManager& manager)
 {
 	m_sdlApp.setClearColorGL();
-	m_sdlApp.setBuffersData();
+	m_loadedObj = m_sdlApp.loadObjFileGL("assets/models/monkey.obj");
+	m_sdlApp.bufferObjDataGL(m_loadedObj);
 }
 
 void SDL3DRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
@@ -31,6 +32,7 @@ void SDL3DRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs
 	auto ship = manager.getAllEntitiesWithComponentType<Engine>();
 	auto transform = manager.getComponentOfType<Transform>(*(ship.begin()));
 
-	m_sdlApp.renderGL(transform->position.x, transform->position.y, transform->rotation);
+	m_sdlApp.clearGL();
+	m_sdlApp.renderObjGL(m_loadedObj, { transform->position.x - 400, -transform->position.y + 300, 0 }, transform->rotation - 90, { 0, 0, 1.0f }, { 13, 13, 13 });
 	m_sdlApp.presentGL();
 }

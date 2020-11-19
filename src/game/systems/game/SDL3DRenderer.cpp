@@ -39,7 +39,7 @@ void SDL3DRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs
 		auto mesh = manager.getComponentOfType<Mesh>(e);
 		auto transform = manager.getComponentOfType<Transform>(e);
 		auto obj = m_sdlApp.loadObjFileGL(mesh->path);
-		m_sdlApp.renderObjGL(obj, { transform->position.x - 400, -transform->position.y + 300, 0 }, transform->rotation - 90, { 0, 0, 1.0f }, { 13, 13, 13 });
+		m_sdlApp.renderObjGL(obj, { transform->position.x - 400, -transform->position.y + 300, 0 }, transform->rotation + mesh->rotation, { 0, 0, 1.0f }, { mesh->scale, mesh->scale, mesh->scale });
 
 	}
 	m_sdlApp.presentGL();

@@ -4,10 +4,14 @@
 
 struct Mesh : public Component
 {
-	Mesh(std::string path) :
-		path(path)
+	Mesh(std::string path, float scale = 1.0f, float rotation = 0.0f) :
+		path(path),
+		scale(scale),
+		rotation(rotation)
 	{
 	};
 
 	std::string path;
+	float rotation;
+	float scale;
 };

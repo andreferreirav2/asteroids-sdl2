@@ -45,11 +45,11 @@ void spawnAsteroid(ECSManager& manager, shared_ptr<AsteroidSpawnerParams> astero
 	auto transform = make_shared<Transform>(position.x, position.y, rotation);
 	manager.addComponent(ast, transform);
 	manager.addComponent(ast, make_shared<BoundariesKill>());
-	manager.addComponent(ast, make_shared<Mesh>(string("assets/models/monkey.obj")));
 
 	if (kind == SMALL_ASTEROID) // small ast
 	{
 		manager.addComponent(ast, asteroidSmallSprite);
+		manager.addComponent(ast, make_shared<Mesh>(string("assets/models/asteroid.obj"), 8.0f));
 		manager.addComponent(ast, make_shared<ScoreAwarder>(100));
 		manager.addComponent(ast, make_shared<RigidBody>(1.0f, 0.0f, velocity.x, velocity.y));
 		manager.addComponent(ast, make_shared<CircleCollider>(8.0f, asteroidSpawn->asteroidsColliderLayer, asteroidSpawn->asteroidsCollidesWith, [&manager, ast](Entity other)
@@ -61,6 +61,7 @@ void spawnAsteroid(ECSManager& manager, shared_ptr<AsteroidSpawnerParams> astero
 	else if (kind == MEDIUM_ASTEROID) // medium ast
 	{
 		manager.addComponent(ast, asteroidMediumSprite);
+		manager.addComponent(ast, make_shared<Mesh>(string("assets/models/asteroid.obj"), 20.0f));
 		manager.addComponent(ast, make_shared<ScoreAwarder>(50));
 		manager.addComponent(ast, make_shared<RigidBody>(2.0f, 0.0f, velocity.x, velocity.y));
 		manager.addComponent(ast, make_shared<CircleCollider>(20.0f, asteroidSpawn->asteroidsColliderLayer, asteroidSpawn->asteroidsCollidesWith, [&manager, ast, asteroidSpawn, transform, rotation, velocity](Entity other)
@@ -73,6 +74,7 @@ void spawnAsteroid(ECSManager& manager, shared_ptr<AsteroidSpawnerParams> astero
 	else // big ast
 	{
 		manager.addComponent(ast, asteroidLargeSprite);
+		manager.addComponent(ast, make_shared<Mesh>(string("assets/models/asteroid.obj"), 32.0f));
 		manager.addComponent(ast, make_shared<ScoreAwarder>(20));
 		manager.addComponent(ast, make_shared<RigidBody>(4.0f, 0.0f, velocity.x, velocity.y));
 		manager.addComponent(ast, make_shared<CircleCollider>(32.0f, asteroidSpawn->asteroidsColliderLayer, asteroidSpawn->asteroidsCollidesWith, [&manager, ast, asteroidSpawn, transform, rotation, velocity](Entity other)

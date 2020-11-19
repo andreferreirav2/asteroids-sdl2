@@ -76,9 +76,6 @@ private:
 	GLuint m_glProgramID = 0;
 	GLint m_glVertexPos3DLocation = -1;
 	GLint m_glMatrix = -1;
-	GLuint m_glVBO = 0;
-	GLuint m_glVBONormals = 0;
-	GLuint m_glIBO = 0;
 
 	std::shared_ptr<SDL_Window> m_window = nullptr;
 	SDL_GLContext m_glContext = nullptr;
@@ -88,6 +85,7 @@ private:
 	std::shared_ptr<TTF_Font> m_font = nullptr;
 	std::shared_ptr<Inputs> m_inputs = std::make_shared<Inputs>();
 	std::map<std::string, std::shared_ptr<LoadedTexture>> m_textureCache = {};
+	std::map<std::string, std::shared_ptr<LoadedObj>> m_objCache = {};
 	std::map<std::string, std::shared_ptr<Mix_Chunk>> m_soundFXCache = {};
 	std::map<std::string, std::shared_ptr<Mix_Music>> m_musicCache = {};
 

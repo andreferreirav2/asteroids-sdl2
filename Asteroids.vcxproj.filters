@@ -139,6 +139,7 @@
     <ClInclude Include="src\game\systems\game\SDL2DRenderer.h" />
     <ClInclude Include="src\game\systems\game\SDL3DRenderer.h" />
     <ClInclude Include="src\engine\sdl\LoadedObj.h" />
+    <ClInclude Include="src\game\components\Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\fragment.fx" />

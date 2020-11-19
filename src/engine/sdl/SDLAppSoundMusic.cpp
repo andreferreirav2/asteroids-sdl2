@@ -10,7 +10,7 @@ using std::shared_ptr;
 std::shared_ptr<Mix_Music> SDLApp::getMusic(std::string const& path)
 {
 	auto it = m_musicCache.find(path);
-	if (it != m_musicCache.end()) // if not yet loaded, load it now
+	if (it != m_musicCache.end() && it->second) // if not yet loaded, load it now
 	{
 		return it->second;
 	}
@@ -29,7 +29,7 @@ std::shared_ptr<Mix_Music> SDLApp::getMusic(std::string const& path)
 std::shared_ptr<Mix_Chunk> SDLApp::getSoundFX(std::string const& path)
 {
 	auto it = m_soundFXCache.find(path);
-	if (it != m_soundFXCache.end()) // if not yet loaded, load it now
+	if (it != m_soundFXCache.end() && it->second) // if not yet loaded, load it now
 	{
 		return it->second;
 	}

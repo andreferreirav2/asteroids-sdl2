@@ -4,8 +4,6 @@
 #include <string>
 #include <memory>
 
-struct SDL_Texture;
-
 struct SoundFXSDL : public Component
 {
 	SoundFXSDL(std::string path) : path(path) {};

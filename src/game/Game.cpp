@@ -49,6 +49,7 @@
 #include "components/Lives.h"
 #include "components/Player.h"
 #include "components/PlayArea.h"
+#include "components/Mesh.h"
 
 using namespace std;
 
@@ -85,6 +86,7 @@ int main(int argc, char* args[])
 	app.loadTexture(string("assets/sprites/atlas.png"));
 	app.getMusic(string("assets/audio/shoot.wav"));
 	app.loadFont(string("assets/fonts/Roboto-Regular.ttf"), 28);
+	app.loadObjFileGL(string("assets/models/monkey.obj"));
 
 	auto shipSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 12, 18 }), rect({ 0, 0, 64, 96 }));
 	auto shotSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 2, 3 }), rect({ 0, 160, 32, 48 }));
@@ -110,8 +112,9 @@ int main(int argc, char* args[])
 		auto scoreBoard = make_shared<Score>();
 		manager.addComponent(ship, shipTransform);
 		manager.addComponent(ship, shipRb);
-		manager.addComponent(ship, shipSprite);
 		manager.addComponent(ship, scoreBoard);
+		manager.addComponent(ship, shipSprite);
+		manager.addComponent(ship, make_shared<Mesh>(string("assets/models/monkey.obj")));
 		manager.addComponent(ship, make_shared<Respawn>(spawn, 90.0f));
 		manager.addComponent(ship, make_shared<Lives>(3));
 		manager.addComponent(ship, make_shared<Engine>(400.0f, 150.f));
@@ -148,6 +151,7 @@ int main(int argc, char* args[])
 				manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
 				manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 400 * cos(gun->rotation * DEG_2_RAG), -400 * sin(gun->rotation * DEG_2_RAG)));
 				manager.addComponent(shot, shotSprite);
+				manager.addComponent(shot, make_shared<Mesh>(string("assets/models/monkey.obj")));
 				manager.addComponent(shot, make_shared<Boundless>());
 				manager.addComponent(shot, make_shared<DestroyAfterTime>(1.0f));
 				manager.addComponent(shot, std::make_shared<CircleCollider>(4.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, ship, shot](Entity other)
@@ -169,6 +173,7 @@ int main(int argc, char* args[])
 				auto mineTransform = std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation);
 				manager.addComponent(mine, mineTransform);
 				manager.addComponent(mine, mineSprite);
+				manager.addComponent(mine, make_shared<Mesh>(string("assets/models/monkey.obj")));
 				manager.addComponent(mine, make_shared<Boundless>());
 				//manager.addComponent(mine, make_shared<DestroyAfterTime>(30.0f));
 				manager.addComponent(mine, std::make_shared<RigidBody>(1.0f, 0.3f, gunRb->velocity.x, gunRb->velocity.y));
@@ -181,6 +186,7 @@ int main(int argc, char* args[])
 						Entity explosion = manager.createEntity();
 						manager.addComponent(explosion, std::make_shared<Transform>(mineTransform->position.x, mineTransform->position.y, mineTransform->rotation, 20.0f, 20.0f));
 						manager.addComponent(explosion, explosionSprite);
+						manager.addComponent(explosion, make_shared<Mesh>(string("assets/models/monkey.obj")));
 						manager.addComponent(explosion, make_shared<BoundariesKill>());
 						manager.addComponent(explosion, make_shared<DestroyAfterTime>(0.15f));
 						manager.addComponent(explosion, std::make_shared<CircleCollider>(100.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, ship](Entity other)

@@ -77,6 +77,12 @@ void SDLApp::present()
 
 shared_ptr<LoadedTexture> SDLApp::loadTexture(string const& imagePath, bool transparent, colorR8G8B8 const& color)
 {
+	auto it = m_textureCache.find(imagePath);
+	if (it != m_textureCache.end() && it->second)
+	{
+		return it->second;
+	}
+
 	shared_ptr<SDL_Texture> texture = nullptr;
 	shared_ptr<SDL_Surface> loadedSurface = shared_ptr<SDL_Surface>(IMG_Load(imagePath.c_str()), SDLSurfaceDeleter());
 	if (loadedSurface == NULL)

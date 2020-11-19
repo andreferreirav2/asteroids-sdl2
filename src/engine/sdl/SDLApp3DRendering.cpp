@@ -150,36 +150,6 @@ void SDLApp::setClearColorGL(float r, float g, float b, float a)
 
 void SDLApp::bufferObjDataGL(shared_ptr<LoadedObj> obj)
 {
-	/*
-	//Vertex Buffer Obj data
-	GLfloat vertexData[] =
-	{
-		0.0f,  -0.3f, 0.1f, // middle high
-		-0.4f, -0.5f, 0.0f, //left
-		 0.0f, 0.7f, 0.0f, // tip
-		0.4f, -0.5f, 0.0f, // right
-		0.0f,  -0.3f, 0.1f, // middle low
-	};
-	//Index Buffer Obj data
-	GLuint indexData[] = {
-		0, 1, 2, // top left wing
-		0, 2, 3, // top right wing
-		4, 2, 1, // bottom left wing
-		4, 3, 2, // bottom right wing
-	};
-
-	//Create Vertex Buffer Obj
-	glGenBuffers(1, &m_glVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_glVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
-
-	//Create Index Buffer Obj
-	glGenBuffers(1, &m_glIBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_glIBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData, GL_STATIC_DRAW);
-	*/
-
-
 	glGenBuffers(1, &obj->vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, obj->vbo);
 	glBufferData(GL_ARRAY_BUFFER, obj->vertices.size() * sizeof(glm::vec3), obj->vertices.data(), GL_STATIC_DRAW);
@@ -222,7 +192,6 @@ void SDLApp::renderObjGL(shared_ptr<LoadedObj> obj, glm::vec3 translate, float r
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj->ibo);
 
 	// Draw
-	// TODO: replace 400s and 300s with world coordinates
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, translate);
 	model = glm::rotate(model, glm::radians(rotateAngle), rotation);
@@ -253,6 +222,12 @@ void SDLApp::presentGL()
 
 shared_ptr<LoadedObj> SDLApp::loadObjFileGL(string const& objPath)
 {
+	auto it = m_objCache.find(objPath);
+	if (it != m_objCache.end() && it->second)
+	{
+		return it->second;
+	}
+
 	ifstream in = ifstream(objPath.c_str(), ios::in);
 	if (!in)
 	{
@@ -316,5 +291,9 @@ shared_ptr<LoadedObj> SDLApp::loadObjFileGL(string const& objPath)
 			glm::vec3(loadedObj->vertices[ic]) - glm::vec3(loadedObj->vertices[ia])));
 		loadedObj->normals[ia] = loadedObj->normals[ib] = loadedObj->normals[ic] = normal;
 	}
+
+	bufferObjDataGL(loadedObj);
+
+	m_objCache.insert_or_assign(objPath, loadedObj);
 	return loadedObj;
 }

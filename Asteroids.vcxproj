@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\freetype2-VER-2-10-4\includes;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glm-0.9.9.7\glm;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_ttf-2.0.15\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_image-2.0.5\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_mixer-2.0.4\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2-2.0.12\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glew-2.1.0\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glfw-3.3.2.bin.WIN64\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\freetype2-VER-2-10-4\libs;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glfw-3.3.2.bin.WIN64\lib-vc2019;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glew-2.1.0\lib\Release\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_ttf-2.0.15\lib\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_mixer-2.0.4\lib\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_image-2.0.5\lib\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2-2.0.12\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Andre\Desktop\Cpp Projects\SDL\projects\Asteroids\libs\includes;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Andre\Desktop\Cpp Projects\SDL\projects\Asteroids\libs\libs_dlls;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glm-0.9.9.7\glm;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_ttf-2.0.15\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_image-2.0.5\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_mixer-2.0.4\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2-2.0.12\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glew-2.1.0\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glfw-3.3.2.bin.WIN64\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glfw-3.3.2.bin.WIN64\lib-vc2019;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glew-2.1.0\lib\Release\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_ttf-2.0.15\lib\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_mixer-2.0.4\lib\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_image-2.0.5\lib\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2-2.0.12\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\freetype2-VER-2-10-4\includes;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glm-0.9.9.7\glm;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_ttf-2.0.15\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_image-2.0.5\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_mixer-2.0.4\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2-2.0.12\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glew-2.1.0\include;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glfw-3.3.2.bin.WIN64\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\freetype2-VER-2-10-4\libs;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glfw-3.3.2.bin.WIN64\lib-vc2019;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\glew-2.1.0\lib\Release\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_ttf-2.0.15\lib\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_mixer-2.0.4\lib\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2_image-2.0.5\lib\x64;C:\Users\Andre\Desktop\Cpp Projects\SDL\libs\SDL2-2.0.12\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -122,7 +122,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib;glew32.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib;glew32.lib;opengl32.lib;glu32.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\engine\opengl_text\TextRenderer.cpp" />
     <ClCompile Include="src\engine\sdl\SDLApp3DRendering.cpp" />
     <ClCompile Include="src\game\systems\game\SDL3DRenderer.cpp" />
     <ClCompile Include="src\game\systems\combat\EnemySpawner.cpp" />
@@ -166,13 +167,13 @@
     <ClCompile Include="src\game\systems\combat\EnemyAIController.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\engine\opengl_text\TextRenderer.h" />
     <ClInclude Include="src\engine\sdl\LoadedObj.h" />
     <ClInclude Include="src\engine\Math.h" />
     <ClInclude Include="src\game\components\Mesh.h" />
     <ClInclude Include="src\game\components\PlayArea.h" />
     <ClInclude Include="src\game\components\Player.h" />
     <ClInclude Include="src\game\components\EnemySpawnerParams.h" />
-    <ClInclude Include="src\game\Game.h" />
     <ClInclude Include="src\game\GameParams.h" />
     <ClInclude Include="src\game\systems\game\SDL3DRenderer.h" />
     <ClInclude Include="src\game\systems\combat\EnemySpawner.h" />
@@ -220,6 +221,12 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\fragment.fx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\text.fragment.fx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\text.vertex.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="assets\shaders\vertex.fx">

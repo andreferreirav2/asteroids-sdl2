@@ -8,7 +8,7 @@
 #include <iostream>
 #include "../../components/Lives.h"
 
-std::string toString(int value, int zeros)
+std::string toStringWithLeadingZeros(int value, int zeros)
 {
 	std::stringstream ss;
 	ss << std::setw(zeros) << std::setfill(' ') << value;
@@ -47,7 +47,7 @@ void SDL2DRenderer::renderHUD(ECSManager& manager)
 		}
 		else
 		{
-			text = m_sdlApp.loadText(toString(score, 8));
+			text = m_sdlApp.loadText(toStringWithLeadingZeros(score, 8));
 			m_scoresTextTextureCache[score] = text;
 		}
 

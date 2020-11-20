@@ -168,6 +168,8 @@ bool SDLApp::initGL()
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
+	m_textRenderer = make_shared<TextRenderer>("assets/fonts/Roboto-Regular.ttf", "assets/shaders/text.vertex.fx", "assets/shaders/text.fragment.fx");
+
 	return true;
 }
 
@@ -248,6 +250,11 @@ void SDLApp::renderObjGL(shared_ptr<LoadedObj> obj, glm::vec3 translate, float r
 
 	//Unbind program
 	glUseProgram(NULL);
+}
+
+void SDLApp::renderRenderTextGL(std::string text, float x, float y, float scale, glm::vec3 color)
+{
+	m_textRenderer->renderText(text, x, y, scale, color);
 }
 
 void SDLApp::clearGL()

@@ -9,6 +9,7 @@ class SDL3DRenderer : public System
 {
 public:
 	SDL3DRenderer(SDLApp& sdlApp);
+	void renderHUD(ECSManager& manager);
 
 	// Inherited via System
 	virtual void onStart(ECSManager& manager) override;

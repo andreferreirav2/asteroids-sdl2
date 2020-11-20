@@ -17,6 +17,7 @@
 #include <set>
 #include <vector>
 #include <map>
+#include "../opengl_text/TextRenderer.h"
 
 class SDLApp
 {
@@ -63,6 +64,7 @@ public:
 	std::shared_ptr<LoadedObj> loadObjFileGL(std::string const& objPath);
 	void bufferObjDataGL(std::shared_ptr<LoadedObj> obj);
 	void renderObjGL(std::shared_ptr<LoadedObj> obj, glm::vec3 translate = glm::vec3(0, 0, 0), float rotateAngle = 0.0f, glm::vec3 rotation = glm::vec3(0, 0, 0), glm::vec3 scale = glm::vec3(1, 1, 1), glm::vec3 colorDiffuse = { 1, 1, 1 }, float emissiveness = 0.0f);
+	void renderRenderTextGL(std::string text, float x, float y, float scale, glm::vec3 color);
 	void presentGL();
 
 private:
@@ -80,6 +82,7 @@ private:
 	GLint m_glShaderMaterialEmissiveness = -1;
 	GLint m_glShaderMVP = -1;
 	GLint m_glShaderM3x3InvTransp = -1;
+	std::shared_ptr<TextRenderer> m_textRenderer = nullptr;
 
 	std::shared_ptr<SDL_Window> m_window = nullptr;
 	SDL_GLContext m_glContext = nullptr;

@@ -1,6 +1,6 @@
 #pragma once
 
-const int NUMBER_OF_PLAYERS = 1;
+const int NUMBER_OF_PLAYERS = 4;
 const int PRIMARY_WEAPON_COST = 20;
 const int PRIMARY_WEAPON_AMMO_SPEED = 400;
 const int SECONDARY_WEAPON_COST = 1000;

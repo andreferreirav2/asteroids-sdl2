@@ -94,7 +94,7 @@ void loadLevel(ECSManager& manager, vector<shared_ptr<System>>& systems)
 		Entity ship = manager.createEntity();
 		auto shipTransform = make_shared<Transform>(spawn.x, spawn.y, 90.f);
 		auto shipRb = make_shared<RigidBody>(1.0f, 1.2f);
-		auto scoreBoard = make_shared<Score>();
+		auto scoreBoard = make_shared<Score>(12345678);
 		manager.addComponent(ship, shipTransform);
 		manager.addComponent(ship, shipRb);
 		manager.addComponent(ship, scoreBoard);

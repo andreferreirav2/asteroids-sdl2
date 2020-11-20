@@ -26,7 +26,7 @@ class TextRenderer
 {
 public:
 	TextRenderer(std::string fontPath, std::string textVertexShaderPath, std::string textFragShaderPath);
-	void renderText(std::string text, float x, float y, float scale, glm::vec3 color);
+	glm::vec2 renderText(std::string text, float x, float y, float scale, glm::vec3 color, glm::vec2 screen);
 
 private:
 	void loadShader(std::string textVertexShaderPath, std::string textFragShaderPath);

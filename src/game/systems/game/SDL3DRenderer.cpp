@@ -47,7 +47,7 @@ void SDL3DRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs
 		auto transform = manager.getComponentOfType<Transform>(e);
 		auto obj = m_sdlApp.loadObjFileGL(mesh->path);
 		m_sdlApp.renderObjGL(obj,
-			{ transform->position.x - 400, -transform->position.y + 300, 0 },
+			{ transform->position.x - m_sdlApp.getScreenWidth() / 2, -transform->position.y + m_sdlApp.getScreenHeigth() / 2, 0 },
 			transform->rotation + mesh->rotation,
 			{ 0, 0, 1.0f },
 			{ mesh->scale, mesh->scale, mesh->scale },
@@ -72,7 +72,7 @@ void SDL3DRenderer::renderHUD(ECSManager& manager)
 		auto scoreBoard = manager.getComponentOfType<Score>(e);
 		int score = scoreBoard->score;
 
-		int w = 130; // calculate width of text
+		int w = 150; // calculate width of text
 		int h = 16; // calculate height of text
 		int x, y;
 		switch (player++)
@@ -100,6 +100,8 @@ void SDL3DRenderer::renderHUD(ECSManager& manager)
 			break;
 		}
 
+		auto pos = m_sdlApp.renderRenderTextGL(toString(score, 8), x, m_sdlApp.getScreenHeigth() - y - 28, 0.6f, { 1,1,1 });
+
 		auto mesh = manager.getComponentOfType<Mesh>(e);
 		auto lives = manager.getComponentOfType<Lives>(e);
 		if (mesh && lives)
@@ -108,8 +110,8 @@ void SDL3DRenderer::renderHUD(ECSManager& manager)
 			auto transform = manager.getComponentOfType<Transform>(e);
 			auto obj = m_sdlApp.loadObjFileGL(mesh->path);
 
-			float xPos = static_cast<float>(-400 + 120 + x);
-			float yPos = static_cast<float>(300 - y - 48);
+			float xPos = -static_cast<float>(m_sdlApp.getScreenWidth() / 2) + 120 + x;
+			float yPos = static_cast<float>(m_sdlApp.getScreenHeigth() / 2) - y - 48;
 			for (int i = 0; i < lives->left; i++)
 			{
 				m_sdlApp.renderObjGL(obj,
@@ -121,7 +123,5 @@ void SDL3DRenderer::renderHUD(ECSManager& manager)
 					mesh->emissiveness);
 			}
 		}
-
-		m_sdlApp.renderRenderTextGL(toString(score, 8), x, 600 - y - 28, 0.6f, { 1,1,1 });
 	}
 }

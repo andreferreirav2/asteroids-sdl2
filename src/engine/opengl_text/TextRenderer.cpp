@@ -99,12 +99,12 @@ TextRenderer::TextRenderer(std::string fontPath, std::string textVertexShaderPat
 	glBindVertexArray(0);
 }
 
-void TextRenderer::renderText(std::string text, float x, float y, float scale, glm::vec3 color)
+glm::vec2 TextRenderer::renderText(std::string text, float x, float y, float scale, glm::vec3 color, glm::vec2 screen)
 {
 	// activate corresponding render state	
 	glUseProgram(m_glProgramID);
 
-	glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(800), 0.0f, static_cast<float>(600)); // TODO remove from here
+	glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(screen.x), 0.0f, static_cast<float>(screen.y)); // TODO remove from here
 	glUniformMatrix4fv(glGetUniformLocation(m_glProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 	glUniform3f(glGetUniformLocation(m_glProgramID, "textColor"), color.x, color.y, color.z);
@@ -146,6 +146,8 @@ void TextRenderer::renderText(std::string text, float x, float y, float scale, g
 	}
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	return { x, y };
 }
 
 void TextRenderer::loadShader(std::string textVertexShaderPath, std::string textFragShaderPath)

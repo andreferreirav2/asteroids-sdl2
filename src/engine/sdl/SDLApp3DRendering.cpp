@@ -252,9 +252,9 @@ void SDLApp::renderObjGL(shared_ptr<LoadedObj> obj, glm::vec3 translate, float r
 	glUseProgram(NULL);
 }
 
-void SDLApp::renderRenderTextGL(std::string text, float x, float y, float scale, glm::vec3 color)
+glm::vec2 SDLApp::renderRenderTextGL(std::string text, float x, float y, float scale, glm::vec3 color)
 {
-	m_textRenderer->renderText(text, x, y, scale, color);
+	return m_textRenderer->renderText(text, x, y, scale, color, {m_screenWidth, m_screenHeight});
 }
 
 void SDLApp::clearGL()

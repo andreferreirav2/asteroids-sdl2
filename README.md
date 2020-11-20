@@ -74,7 +74,6 @@ The following steps were heavily inspired on [Lazy Foo's tutorials](https://lazy
 	* Faster more aggressive?
 * Weapon progression system
 	* Level up?
-* Create Heat seaking missile
 * Replace all 2d sprites with OpenGL rendering
 	* Particles?
 * Menus / Game Over Screen + Highscore

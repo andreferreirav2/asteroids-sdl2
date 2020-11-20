@@ -10,6 +10,7 @@ class SDL2DRenderer : public System
 public:
 	SDL2DRenderer(SDLApp& sdlApp);
 	void setTexture(std::shared_ptr<SpriteSDL> sprite);
+	void renderHUD(ECSManager& manager);
 
 	// Inherited via System
 	virtual void onStart(ECSManager& manager) override;

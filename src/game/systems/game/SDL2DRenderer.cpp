@@ -29,60 +29,8 @@ void SDL2DRenderer::setTexture(std::shared_ptr<SpriteSDL> sprite)
 	}
 }
 
-void SDL2DRenderer::onStart(ECSManager& manager)
+void SDL2DRenderer::renderHUD(ECSManager& manager)
 {
-	for (auto& sprite : manager.getAllComponentsOfType<SpriteSDL>())
-	{
-		setTexture(sprite);
-	}
-}
-
-void SDL2DRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
-{
-	if (m_sdlApp.isOpenGL())
-	{
-		return;
-	}
-
-	m_sdlApp.clear({ 0x00, 0x00, 0x00, 0xff });
-
-	/*
-	auto sky = m_sdlApp.getTexture("assets/sprites/sky.jpeg");
-	m_sdlApp.drawTextureFullscreen(sky->texture);
-
-	m_sdlApp.drawRect(
-		{ static_cast<int>(m_sdlApp.getScreenWidth() / 4), static_cast<int>(m_sdlApp.getScreenHeigth() / 4),
-		  static_cast<unsigned int>(m_sdlApp.getScreenWidth() / 2), static_cast<unsigned int>(m_sdlApp.getScreenHeigth() / 2) },
-		{ 0xFF, 0x00, 0x00, 0xFF },
-		true);
-
-	m_sdlApp.drawRect(
-		{ static_cast<int>(m_sdlApp.getScreenWidth() / 6), static_cast<int>(m_sdlApp.getScreenHeigth() / 6),
-		  static_cast<unsigned int>(m_sdlApp.getScreenWidth() * 2 / 3), static_cast<unsigned int>(m_sdlApp.getScreenHeigth() * 2 / 3) },
-		{ 0x00, 0xFF, 0x00, 0xFF },
-		false);
-
-	m_sdlApp.drawLine(
-		{ 0, m_sdlApp.getScreenHeigth() },
-		{ m_sdlApp.getScreenWidth(), 0 },
-		{ 0x00, 0x00, 0xFF, 0xFF });
-
-	for (unsigned int i = 0; i < m_sdlApp.getScreenHeigth(); i += 4)
-	{
-		m_sdlApp.drawDot(
-			{ m_sdlApp.getScreenWidth() / 2, i },
-			{ 0xFF, 0xFF, 0x00, 0xFF });
-	}
-	*/
-
-	for (auto& e : manager.getAllEntitiesWithComponentType<SpriteSDL, Transform>())
-	{
-		auto sprite = manager.getComponentOfType<SpriteSDL>(e);
-		auto transform = manager.getComponentOfType<Transform>(e);
-
-		drawSpriteSDL(sprite, transform->position, transform->rotation, transform->scale);
-	}
-
 	// Score
 	int player = 0;
 	std::set<int> currentScores;
@@ -165,6 +113,35 @@ void SDL2DRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs
 			}
 		}
 	}
+}
+
+void SDL2DRenderer::onStart(ECSManager& manager)
+{
+	for (auto& sprite : manager.getAllComponentsOfType<SpriteSDL>())
+	{
+		setTexture(sprite);
+	}
+}
+
+
+void SDL2DRenderer::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
+{
+	if (m_sdlApp.isOpenGL())
+	{
+		return;
+	}
+
+	m_sdlApp.clear({ 0x00, 0x00, 0x00, 0xff });
+
+	for (auto& e : manager.getAllEntitiesWithComponentType<SpriteSDL, Transform>())
+	{
+		auto sprite = manager.getComponentOfType<SpriteSDL>(e);
+		auto transform = manager.getComponentOfType<Transform>(e);
+
+		drawSpriteSDL(sprite, transform->position, transform->rotation, transform->scale);
+	}
+
+	renderHUD(manager);
 
 	m_sdlApp.present();
 }

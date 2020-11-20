@@ -119,7 +119,7 @@ int main(int argc, char* args[])
 		manager.addComponent(ship, shipRb);
 		manager.addComponent(ship, scoreBoard);
 		manager.addComponent(ship, shipSprite);
-		manager.addComponent(ship, make_shared<Mesh>(string("assets/models/ship.obj"), 7.0f, 0.0f, float3{ 0.4f, 0.4f, 1.0f }, 0.6));
+		manager.addComponent(ship, make_shared<Mesh>(string("assets/models/ship.obj"), 10.0f, 0.0f, float3{ 0.4f, 0.4f, 1.0f }, 0.6));
 		manager.addComponent(ship, make_shared<Respawn>(spawn, 90.0f));
 		manager.addComponent(ship, make_shared<Lives>(3));
 		manager.addComponent(ship, make_shared<Engine>(400.0f, 150.f));

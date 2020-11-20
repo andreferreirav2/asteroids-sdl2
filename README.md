@@ -80,7 +80,6 @@ The following steps were heavily inspired on [Lazy Foo's tutorials](https://lazy
 * Replace all 2d sprites with OpenGL rendering
 	* Missile/Mine
 	* Particles?
-* Add light/shading to 3d models
 * Menus / Game Over Screen + Highscore
 * Improve ECS performance
 	* pre-computed entity lists by ComponentType queries

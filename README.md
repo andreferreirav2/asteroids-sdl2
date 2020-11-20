@@ -74,11 +74,8 @@ The following steps were heavily inspired on [Lazy Foo's tutorials](https://lazy
 	* Faster more aggressive?
 * Weapon progression system
 	* Level up?
-	* Different weapon pickups?
-* Secondary weapon ammo limit / pickups / indicator
 * Create Heat seaking missile
 * Replace all 2d sprites with OpenGL rendering
-	* Missile/Mine
 	* Particles?
 * Menus / Game Over Screen + Highscore
 * Improve ECS performance

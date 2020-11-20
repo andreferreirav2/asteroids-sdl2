@@ -3,16 +3,14 @@
 
 struct EnemySpawnerParams : public Component
 {
-	EnemySpawnerParams(float minInterval,
-		float maxInterval,
+	EnemySpawnerParams(int perMinute,
 		int marginFromEdge,
 		int enemyColliderLayer,
 		int enemyCollidesWith,
 		int enemyWeaponColliderLayer,
 		int enemyWeaponCollidesWith)
 		:
-		minInterval(minInterval),
-		maxInterval(maxInterval),
+		perMinute(perMinute),
 		marginFromEdge(marginFromEdge),
 		enemyColliderLayer(enemyColliderLayer),
 		enemyCollidesWith(enemyCollidesWith),
@@ -22,9 +20,7 @@ struct EnemySpawnerParams : public Component
 	{
 	}
 
-	float minInterval;
-	float maxInterval;
-
+	int perMinute;
 	int marginFromEdge;
 
 	int enemyColliderLayer;

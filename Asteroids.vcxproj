@@ -172,6 +172,7 @@
     <ClInclude Include="src\game\components\PlayArea.h" />
     <ClInclude Include="src\game\components\Player.h" />
     <ClInclude Include="src\game\components\EnemySpawnerParams.h" />
+    <ClInclude Include="src\game\GameParams.h" />
     <ClInclude Include="src\game\systems\game\SDL3DRenderer.h" />
     <ClInclude Include="src\game\systems\combat\EnemySpawner.h" />
     <ClInclude Include="src\game\components\AsteroidSpawnerParams.h" />

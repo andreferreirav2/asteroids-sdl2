@@ -13,6 +13,7 @@
 #include "../../components/BoundariesKill.h"
 #include "../../components/PlayArea.h"
 #include "../../components/Mesh.h"
+#include "../../GameParams.h"
 
 using namespace std;
 
@@ -88,17 +89,19 @@ void spawnAsteroid(ECSManager& manager, shared_ptr<AsteroidSpawnerParams> astero
 
 void AsteroidSpawner::onUpdate(ECSManager& manager, shared_ptr<Inputs> inputs)
 {
-	float dt = manager.getAllComponentsOfType<Clock>().begin()->get()->deltaTime; // What if there is no clock?
+	auto clock = manager.getAllComponentsOfType<Clock>().begin()->get(); // What if there is no clock?
+	float dt = clock->deltaTime;
 	rect playArea = manager.getAllComponentsOfType<PlayArea>().begin()->get()->area; // What if there is no play area?
 
 	for (Entity e : manager.getAllEntitiesWithComponentType<AsteroidSpawnerParams>())
 	{
 		auto asteroidSpawn = manager.getComponentOfType<AsteroidSpawnerParams>(e);
 		asteroidSpawn->timeToNextSpawn -= dt;
+		asteroidSpawn->perMinute = ASTEROID_SPAWN_PER_MINUTE_BASE + ASTEROID_SPAWN_PER_MINUTE_INCREASE * clock->currentTicks / 60000;
 
 		if (asteroidSpawn->timeToNextSpawn <= 0)
 		{
-			asteroidSpawn->timeToNextSpawn = randBetween(asteroidSpawn->minInterval, asteroidSpawn->maxInterval);
+			asteroidSpawn->timeToNextSpawn = 60.0f / asteroidSpawn->perMinute;
 
 			float totalRatios = asteroidSpawn->smallRatio + asteroidSpawn->mediumRatio + asteroidSpawn->bigRatio;
 			float i = randBetween(0, totalRatios);

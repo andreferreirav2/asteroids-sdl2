@@ -17,6 +17,7 @@
 #include "../../components/ShipAIControls.h"
 #include "../../components/PlayArea.h"
 #include "../../components/Mesh.h"
+#include "../../GameParams.h"
 
 using namespace std;
 
@@ -31,16 +32,18 @@ void EnemySpawner::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 	static auto enemySprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 20, 12 }), rect({ 80, 160, 128, 60 }));
 
 	rect playArea = manager.getAllComponentsOfType<PlayArea>().begin()->get()->area; // What if there is no play area?
-	float dt = manager.getAllComponentsOfType<Clock>().begin()->get()->deltaTime; // What if there is no clock?
+	auto clock = manager.getAllComponentsOfType<Clock>().begin()->get(); // What if there is no clock?
+	float dt = clock->deltaTime;
+
 	for (Entity e : manager.getAllEntitiesWithComponentType<EnemySpawnerParams>())
 	{
 		auto enemySpawn = manager.getComponentOfType<EnemySpawnerParams>(e);
 		enemySpawn->timeToNextSpawn -= dt;
+		enemySpawn->perMinute = ENEMY_SPAWN_PER_MINUTE_BASE + ENEMY_SPAWN_PER_MINUTE_INCREASE * clock->currentTicks / 60000;
 
 		if (enemySpawn->timeToNextSpawn <= 0)
 		{
-			enemySpawn->timeToNextSpawn = randBetween(enemySpawn->minInterval, enemySpawn->maxInterval);
-
+			enemySpawn->timeToNextSpawn = 60.0f / enemySpawn->perMinute;
 
 			float2 position;
 			float wall = randBetween(0, 4);

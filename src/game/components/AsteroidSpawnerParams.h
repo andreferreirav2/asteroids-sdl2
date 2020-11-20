@@ -3,8 +3,7 @@
 
 struct AsteroidSpawnerParams : public Component
 {
-	AsteroidSpawnerParams(float minInterval,
-		float maxInterval,
+	AsteroidSpawnerParams(int perMinute,
 		int marginFromEdge,
 		float smallRatio,
 		float mediumRatio,
@@ -12,8 +11,7 @@ struct AsteroidSpawnerParams : public Component
 		int asteroidsColliderLayer,
 		int asteroidsCollidesWith)
 		:
-		minInterval(minInterval),
-		maxInterval(maxInterval),
+		perMinute(perMinute),
 		marginFromEdge(marginFromEdge),
 		smallRatio(smallRatio),
 		mediumRatio(mediumRatio),
@@ -24,8 +22,7 @@ struct AsteroidSpawnerParams : public Component
 	{
 	}
 
-	float minInterval;
-	float maxInterval;
+	int perMinute;
 
 	int marginFromEdge;
 

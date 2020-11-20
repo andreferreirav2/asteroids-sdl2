@@ -1,3 +1,4 @@
+#include "GameParams.h"
 #include "../engine/sdl/SDLApp.h"
 #include "../engine/ecs/ECSManager.h"
 #include "../engine/input/Inputs.h"
@@ -102,10 +103,10 @@ int main(int argc, char* args[])
 	Entity game = manager.createEntity();
 	manager.addComponent(game, make_shared<PlayArea>(rect({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT })));
 	manager.addComponent(game, make_shared<Clock>(1.0f, 1000));
-	manager.addComponent(game, make_shared<AsteroidSpawnerParams>(1.0f, 2.0f, 50, 0.1f, 0.5f, 0.4f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH));
-	manager.addComponent(game, make_shared<EnemySpawnerParams>(30.0f, 40.0f, 0, ENEMY_COLLIDER_LAYER, ENEMY_COLLIDES_WITH, ENEMY_WEAPON_COLLIDER_LAYER, ENEMY_WEAPON_COLLIDES_WITH));
+	manager.addComponent(game, make_shared<AsteroidSpawnerParams>(ASTEROID_SPAWN_PER_MINUTE_BASE, 50, 0.1f, 0.5f, 0.4f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH));
+	manager.addComponent(game, make_shared<EnemySpawnerParams>(ENEMY_SPAWN_PER_MINUTE_BASE, 0, ENEMY_COLLIDER_LAYER, ENEMY_COLLIDES_WITH, ENEMY_WEAPON_COLLIDER_LAYER, ENEMY_WEAPON_COLLIDES_WITH));
 
-	int players = 1;
+	int players = NUMBER_OF_PLAYERS;
 	for (int i = 0; i < players; i++)
 	{
 		float2 spawn = { SCREEN_WIDTH / 2 + (-100 * (players - 1) + 200 * i), SCREEN_HEIGHT / 2 };
@@ -150,10 +151,16 @@ int main(int argc, char* args[])
 			}));
 		manager.addComponent(ship, make_shared<Weapon>(0.3f, [&manager, shotSprite, ship](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
 			{
+				auto scoreBoard = manager.getComponentOfType<Score>(ship);
+				if (scoreBoard)
+				{
+					scoreBoard->score = max(0, scoreBoard->score - PRIMARY_WEAPON_COST);
+				}
+
 				Entity shot = manager.createEntity();
 				auto shotRb = std::make_shared<RigidBody>(1.0f, 0.0f);
 				manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
-				manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 400 * cos(gun->rotation * DEG_2_RAG), -400 * sin(gun->rotation * DEG_2_RAG)));
+				manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, PRIMARY_WEAPON_AMMO_SPEED * cos(gun->rotation * DEG_2_RAG), -PRIMARY_WEAPON_AMMO_SPEED * sin(gun->rotation * DEG_2_RAG)));
 				manager.addComponent(shot, shotSprite);
 				manager.addComponent(shot, make_shared<Mesh>(string("assets/models/bullet.obj"), 2.0f, 0.0f, float3{ 1.0f, 1.0f, 1.0f }, 0.9));
 				manager.addComponent(shot, make_shared<Boundless>());
@@ -173,6 +180,14 @@ int main(int argc, char* args[])
 			}));
 		manager.addComponent(ship, make_shared<SecondaryWeapon>(1.0f, 0, [&manager, mineSprite, explosionSprite, ship](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
 			{
+				auto scoreBoard = manager.getComponentOfType<Score>(ship);
+				if (!(scoreBoard && (scoreBoard->score >= SECONDARY_WEAPON_COST)))
+				{
+					return;
+				}
+
+				scoreBoard->score = max(0, scoreBoard->score - SECONDARY_WEAPON_COST);
+
 				Entity mine = manager.createEntity();
 				auto mineTransform = std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation);
 				manager.addComponent(mine, mineTransform);
@@ -190,10 +205,10 @@ int main(int argc, char* args[])
 						Entity explosion = manager.createEntity();
 						manager.addComponent(explosion, std::make_shared<Transform>(mineTransform->position.x, mineTransform->position.y, mineTransform->rotation, 20.0f, 20.0f));
 						manager.addComponent(explosion, explosionSprite);
-						manager.addComponent(explosion, make_shared<Mesh>(string("assets/models/monkey.obj"), 100.0f));
+						manager.addComponent(explosion, make_shared<Mesh>(string("assets/models/monkey.obj"), SECONDARY_WEAPON_AMMO_RANGE));
 						manager.addComponent(explosion, make_shared<BoundariesKill>());
 						manager.addComponent(explosion, make_shared<DestroyAfterTime>(0.15f));
-						manager.addComponent(explosion, std::make_shared<CircleCollider>(100.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, ship](Entity other)
+						manager.addComponent(explosion, std::make_shared<CircleCollider>(SECONDARY_WEAPON_AMMO_RANGE, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, ship](Entity other)
 							{
 								auto scoreBoard = manager.getComponentOfType<Score>(ship);
 								auto scoreAwarder = manager.getComponentOfType<ScoreAwarder>(other);

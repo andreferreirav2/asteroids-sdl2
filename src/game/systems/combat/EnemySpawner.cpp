@@ -73,10 +73,10 @@ void EnemySpawner::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> inputs)
 			manager.addComponent(enemyShip, std::make_shared<Boundless>());
 			manager.addComponent(enemyShip, std::make_shared<ShipAIControls>());
 			manager.addComponent(enemyShip, enemySprite);
-			manager.addComponent(enemyShip, make_shared<Mesh>(string("assets/models/monkey.obj"), 7.0f, -90.0f));
+			manager.addComponent(enemyShip, make_shared<Mesh>(string("assets/models/enemyship.obj"), 13.0f));
 			manager.addComponent(enemyShip, make_shared<Engine>(300.0f, 70.f));
 			manager.addComponent(enemyShip, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
-			manager.addComponent(enemyShip, make_shared<CircleCollider>(7.0f, enemySpawn->enemyColliderLayer, enemySpawn->enemyCollidesWith));
+			manager.addComponent(enemyShip, make_shared<CircleCollider>(13.0f, enemySpawn->enemyColliderLayer, enemySpawn->enemyCollidesWith));
 			manager.addComponent(enemyShip, make_shared<Weapon>(1.0f, [&manager, enemyShip, enemySpawn](shared_ptr<Transform> gun, shared_ptr<RigidBody> gunRb)
 				{
 					Entity shot = manager.createEntity();

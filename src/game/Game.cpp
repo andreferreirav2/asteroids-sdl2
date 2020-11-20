@@ -90,6 +90,7 @@ int main(int argc, char* args[])
 	app.loadObjFileGL(string("assets/models/asteroid.obj"));
 	app.loadObjFileGL(string("assets/models/bullet.obj"));
 	app.loadObjFileGL(string("assets/models/ship.obj"));
+	app.loadObjFileGL(string("assets/models/enemyship.obj"));
 
 	auto shipSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 12, 18 }), rect({ 0, 0, 64, 96 }));
 	auto shotSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 2, 3 }), rect({ 0, 160, 32, 48 }));
@@ -117,7 +118,7 @@ int main(int argc, char* args[])
 		manager.addComponent(ship, shipRb);
 		manager.addComponent(ship, scoreBoard);
 		manager.addComponent(ship, shipSprite);
-		manager.addComponent(ship, make_shared<Mesh>(string("assets/models/ship.obj"), 10.0f));
+		manager.addComponent(ship, make_shared<Mesh>(string("assets/models/ship.obj"), 7.0f));
 		manager.addComponent(ship, make_shared<Respawn>(spawn, 90.0f));
 		manager.addComponent(ship, make_shared<Lives>(3));
 		manager.addComponent(ship, make_shared<Engine>(400.0f, 150.f));

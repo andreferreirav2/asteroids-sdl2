@@ -75,6 +75,7 @@ private:
 	std::string m_fragmentShaderPath;
 	GLuint m_glProgramID = 0;
 	GLint m_glVertexPos3DLocation = -1;
+	GLint m_glVertexPos3DNormal = -1;
 	GLint m_glMatrix = -1;
 
 	std::shared_ptr<SDL_Window> m_window = nullptr;

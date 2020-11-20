@@ -121,16 +121,24 @@ bool SDLApp::initGL()
 	m_glVertexPos3DLocation = glGetAttribLocation(m_glProgramID, "vertexPosModelSpace");
 	if (m_glVertexPos3DLocation == -1)
 	{
-		cerr << "vertexPosModelSpace is not a valid glsl program variable!" << endl;
-		return false;
+		cerr << "vertexPosModelSpace is not a valid glsl variable or it's not being used!" << endl;
+		//return false;
+	}
+
+	//Get vertex attribute normal
+	m_glVertexPos3DNormal = glGetAttribLocation(m_glProgramID, "vertexNormal");
+	if (m_glVertexPos3DNormal == -1)
+	{
+		cerr << "vertexNormal is not a valid glsl variable or it's not being used!" << endl;
+		//return false;
 	}
 
 	//Get vertex attribute location
 	m_glMatrix = glGetUniformLocation(m_glProgramID, "MVP");
 	if (m_glMatrix == -1)
 	{
-		cerr << "MVP is not a valid glsl program variable!" << endl;
-		return false;
+		cerr << "MVP is not a valid glsl variable or it's not being used!" << endl;
+		//return false;
 	}
 
 	glDetachShader(m_glProgramID, vertexShader);
@@ -154,9 +162,9 @@ void SDLApp::bufferObjDataGL(shared_ptr<LoadedObj> obj)
 	glBindBuffer(GL_ARRAY_BUFFER, obj->vbo);
 	glBufferData(GL_ARRAY_BUFFER, obj->vertices.size() * sizeof(glm::vec3), obj->vertices.data(), GL_STATIC_DRAW);
 
-	//glGenBuffers(1, &m_glVBONormals);
-	//glBindBuffer(GL_ARRAY_BUFFER, m_glVBONormals);
-	//glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(normals[0]), normals.data(), GL_STATIC_DRAW);
+	glGenBuffers(1, &obj->vboNormals);
+	glBindBuffer(GL_ARRAY_BUFFER, obj->vboNormals);
+	glBufferData(GL_ARRAY_BUFFER, obj->normals.size() * sizeof(glm::vec3), obj->normals.data(), GL_STATIC_DRAW);
 
 	glGenBuffers(1, &obj->ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj->ibo);
@@ -183,13 +191,15 @@ void SDLApp::renderObjGL(shared_ptr<LoadedObj> obj, glm::vec3 translate, float r
 	//Bind program
 	glUseProgram(m_glProgramID);
 
-	//Enable vertex position
 	glEnableVertexAttribArray(m_glVertexPos3DLocation);
-
-	//Set vertex / index data
 	glBindBuffer(GL_ARRAY_BUFFER, obj->vbo);
 	glVertexAttribPointer(m_glVertexPos3DLocation, 3, GL_FLOAT, GL_FALSE, NULL, NULL);
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj->ibo);
+
+	glEnableVertexAttribArray(m_glVertexPos3DNormal);
+	glBindBuffer(GL_ARRAY_BUFFER, obj->vboNormals);
+	glVertexAttribPointer(m_glVertexPos3DNormal, 3, GL_FLOAT, GL_FALSE, NULL, NULL);
 
 	// Draw
 	glm::mat4 model = glm::mat4(1.0f);
@@ -202,7 +212,8 @@ void SDLApp::renderObjGL(shared_ptr<LoadedObj> obj, glm::vec3 translate, float r
 	glUniformMatrix4fv(m_glMatrix, 1, GL_FALSE, &mvp[0][0]);
 	glDrawElements(GL_TRIANGLES, obj->faceElements.size(), GL_UNSIGNED_SHORT, 0);
 
-	//Disable vertex position
+	//Disable attributes
+	glDisableVertexAttribArray(m_glVertexPos3DNormal);
 	glDisableVertexAttribArray(m_glVertexPos3DLocation);
 
 	//Unbind program

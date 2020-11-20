@@ -51,6 +51,7 @@
 #include "components/Player.h"
 #include "components/PlayArea.h"
 #include "components/Mesh.h"
+#include "components/Game.h"
 
 using namespace std;
 
@@ -70,7 +71,7 @@ int ENEMY_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;
 int ENEMY_WEAPON_COLLIDES_WITH = PLAYER_COLLIDER_LAYER;// | ASTEROIDS_COLLIDER_LAYER;
 int ASTEROIDS_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;// | ENEMY_WEAPON_COLLIDER_LAYER;
 
-void loadLevel(ECSManager& manager, vector<shared_ptr<System>>& systems)
+void loadLevel(SDLApp& app, ECSManager& manager, vector<shared_ptr<System>>& systems)
 {
 	manager.clearAll();
 
@@ -83,6 +84,7 @@ void loadLevel(ECSManager& manager, vector<shared_ptr<System>>& systems)
 	Entity game = manager.createEntity();
 	manager.addComponent(game, make_shared<PlayArea>(rect({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT })));
 	manager.addComponent(game, make_shared<Clock>(1.0f, 1000));
+	manager.addComponent(game, make_shared<Game>(true));
 	manager.addComponent(game, make_shared<AsteroidSpawnerParams>(ASTEROID_SPAWN_PER_MINUTE_BASE, 50, 0.1f, 0.5f, 0.4f, ASTEROIDS_COLLIDER_LAYER, ASTEROIDS_COLLIDES_WITH));
 	manager.addComponent(game, make_shared<EnemySpawnerParams>(ENEMY_SPAWN_PER_MINUTE_BASE, 0, ENEMY_COLLIDER_LAYER, ENEMY_COLLIDES_WITH, ENEMY_WEAPON_COLLIDER_LAYER, ENEMY_WEAPON_COLLIDES_WITH));
 
@@ -124,7 +126,8 @@ void loadLevel(ECSManager& manager, vector<shared_ptr<System>>& systems)
 				if (lives && --lives->left < 0)
 				{
 					cerr << "Game over! lives: " << lives->left << endl;
-					loadLevel(manager, systems);
+
+					manager.getAllComponentsOfType<Game>().begin()->get()->running = false;
 				}
 
 				manager.destroyEntity(other);
@@ -212,6 +215,50 @@ void loadLevel(ECSManager& manager, vector<shared_ptr<System>>& systems)
 }
 
 
+void renderCenteredText(SDLApp& app, std::string text, int x, int y, float scale = 1)
+{
+	std::shared_ptr<LoadedTexture> texture = app.loadText(text);
+	unsigned int sizeX = texture->dimentions.x * scale;
+	unsigned int sizeY = texture->dimentions.y * scale;
+	app.drawTexture(
+		texture->texture,
+		{ 0, 0, 0, 0 },
+		{ static_cast<int>(app.getScreenWidth() / 2 - sizeX / 2 + x), static_cast<int>(app.getScreenHeigth() / 2 - sizeY / 2 - y), sizeX, sizeY },
+		0,
+		SDL_FLIP_NONE);
+}
+
+void loadMenu(SDLApp& app, ECSManager& manager, vector<shared_ptr<System>>& systems)
+{
+	app.clear({ 0x00, 0x00, 0x00, 0xff });
+
+
+
+
+	auto scores = manager.getAllComponentsOfType<Score>();
+	if (scores.size() == 1) // 1 player and already created = game over
+	{
+
+		renderCenteredText(app, "GAME OVER", 0, 100);
+		renderCenteredText(app, "GAME OVER", 0, 100);
+		manager.clearAll();
+	}
+	else
+	{
+		renderCenteredText(app, "ASTEROIDS", 0, 100);
+	}
+
+	renderCenteredText(app, "PRESS SPACE TO START", 0, 0);
+	renderCenteredText(app, "Num2 for 2D / Num3 for 3D", 0, -100, 0.7);
+	renderCenteredText(app, "Left / Right arrows to steer", 0, -120, 0.7);
+	renderCenteredText(app, "Up arrow to accelerate", 0, -140, 0.7);
+	renderCenteredText(app, "Space to shoot main weapon", 0, -160, 0.7);
+	renderCenteredText(app, "Down arrow to shoot secondary weapon", 0, -180, 0.7);
+
+	app.present();
+}
+
+
 int main(int argc, char* args[])
 {
 
@@ -256,8 +303,9 @@ int main(int argc, char* args[])
 		make_shared<SoundFxPlayer>(app),
 	};
 
-	loadLevel(manager, systems);
+	loadMenu(app, manager, systems);
 
+	bool gameRunning = false;
 	while (true)
 	{
 		auto inputs = app.parseInputs(); // parse inputs from SDL
@@ -265,20 +313,34 @@ int main(int argc, char* args[])
 		{
 			break;
 		}
-		else if (inputs->isPressed(Key::KEY_2))
-		{
-			app.setOpenGL(false);
-		}
-		else if (inputs->isPressed(Key::KEY_3))
-		{
-			app.setOpenGL(true);
-		}
 
-		for (auto const& system : systems)
+		if (gameRunning)
 		{
-			system->onUpdate(manager, inputs);
+			if (inputs->isPressed(Key::KEY_2))
+			{
+				app.setOpenGL(false);
+			}
+			else if (inputs->isPressed(Key::KEY_3))
+			{
+				app.setOpenGL(true);
+			}
+
+			for (auto const& system : systems)
+			{
+				system->onUpdate(manager, inputs);
+			}
+
+			gameRunning = manager.getAllComponentsOfType<Game>().begin()->get()->running;
+			if (!gameRunning)
+			{
+				loadMenu(app, manager, systems); // Reload level
+			}
+		}
+		else if (inputs->isPressed(Key::KEY_SPACE))
+		{
+			gameRunning = true;
+			loadLevel(app, manager, systems);
 		}
 	}
-	//cin.ignore();
 	return 0;
 }

@@ -70,8 +70,6 @@ The following steps were heavily inspired on [Lazy Foo's tutorials](https://lazy
 * Create onCollide system + onDestroy system
 	* Don't call manager.deleteEntity directly, instead put it on a queue and delete them all at the end of the frame
 	* Will allow all collision callbacks to run before anything is deleted
-* Enemy progression system
-	* Faster more aggressive?
 * Weapon progression system
 	* Level up?
 * Replace all 2d sprites with OpenGL rendering

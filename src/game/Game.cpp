@@ -70,35 +70,15 @@ int ENEMY_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;
 int ENEMY_WEAPON_COLLIDES_WITH = PLAYER_COLLIDER_LAYER;// | ASTEROIDS_COLLIDER_LAYER;
 int ASTEROIDS_COLLIDES_WITH = PLAYER_COLLIDER_LAYER | PLAYER_WEAPON_COLLIDER_LAYER;// | ENEMY_WEAPON_COLLIDER_LAYER;
 
-int main(int argc, char* args[])
+void loadLevel(ECSManager& manager, vector<shared_ptr<System>>& systems)
 {
-
-	SDLApp app = SDLApp(SCREEN_WIDTH, SCREEN_HEIGHT, OPENGL, "assets/shaders/vertex.fx", "assets/shaders/fragment.fx");
-	if (!app.init())
-	{
-		printf("Error starting SDLApp!");
-		return 1;
-	}
-
-	// Seed random with time
-	srand(time(NULL));
-
-	// Pre load assets
-	app.loadTexture(string("assets/sprites/atlas.png"));
-	app.getMusic(string("assets/audio/shoot.wav"));
-	app.loadFont(string("assets/fonts/Roboto-Regular.ttf"), 28);
-	app.loadObjFileGL(string("assets/models/monkey.obj"));
-	app.loadObjFileGL(string("assets/models/asteroid.obj"));
-	app.loadObjFileGL(string("assets/models/bullet.obj"));
-	app.loadObjFileGL(string("assets/models/ship.obj"));
-	app.loadObjFileGL(string("assets/models/enemyship.obj"));
+	manager.clearAll();
 
 	auto shipSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 12, 18 }), rect({ 0, 0, 64, 96 }));
 	auto shotSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), -90.0f, false, false, uint2({ 2, 3 }), rect({ 0, 160, 32, 48 }));
 	auto mineSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0, false, false, uint2({ 12, 12 }), rect({ 32, 160, 48, 48 }));
 	auto explosionSprite = make_shared<SpriteSDL>(string("assets/sprites/atlas.png"), 0, false, false, uint2({ 12, 12 }), rect({ 0, 288, 224, 224 }));
 
-	ECSManager manager;
 
 	Entity game = manager.createEntity();
 	manager.addComponent(game, make_shared<PlayArea>(rect({ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT })));
@@ -127,7 +107,7 @@ int main(int argc, char* args[])
 		manager.addComponent(ship, make_shared<Boundless>());
 		manager.addComponent(ship, make_shared<Player>());
 		manager.addComponent(ship, make_shared<SoundFXSDL>(string("assets/audio/shoot.wav")));
-		manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH, [&manager, ship](Entity other)
+		manager.addComponent(ship, make_shared<CircleCollider>(7.0f, PLAYER_COLLIDER_LAYER, PLAYER_COLLIDES_WITH, [&manager, &systems, ship](Entity other)
 			{
 				auto respawn = manager.getComponentOfType<Respawn>(ship);
 				if (respawn)
@@ -144,7 +124,7 @@ int main(int argc, char* args[])
 				if (lives && --lives->left < 0)
 				{
 					cerr << "Game over! lives: " << lives->left << endl;
-					// TODO: gameover
+					loadLevel(manager, systems);
 				}
 
 				manager.destroyEntity(other);
@@ -224,6 +204,40 @@ int main(int argc, char* args[])
 			}));
 	}
 
+	for (auto const& system : systems)
+	{
+		system->onStart(manager);
+	}
+
+}
+
+
+int main(int argc, char* args[])
+{
+
+	SDLApp app = SDLApp(SCREEN_WIDTH, SCREEN_HEIGHT, OPENGL, "assets/shaders/vertex.fx", "assets/shaders/fragment.fx");
+	if (!app.init())
+	{
+		printf("Error starting SDLApp!");
+		return 1;
+	}
+
+	// Seed random with time
+	srand(time(NULL));
+
+	// Pre load assets
+	app.loadTexture(string("assets/sprites/atlas.png"));
+	app.getMusic(string("assets/audio/shoot.wav"));
+	app.loadFont(string("assets/fonts/Roboto-Regular.ttf"), 28);
+	app.loadObjFileGL(string("assets/models/monkey.obj"));
+	app.loadObjFileGL(string("assets/models/asteroid.obj"));
+	app.loadObjFileGL(string("assets/models/bullet.obj"));
+	app.loadObjFileGL(string("assets/models/ship.obj"));
+	app.loadObjFileGL(string("assets/models/enemyship.obj"));
+
+
+	ECSManager manager;
+
 	auto systems = vector<shared_ptr<System>>{
 		make_shared<TimePassing>(),
 		make_shared<ShipKeyboardController>(),
@@ -242,13 +256,8 @@ int main(int argc, char* args[])
 		make_shared<SoundFxPlayer>(app),
 	};
 
-	for (auto const& system : systems)
-	{
-		system->onStart(manager);
-	}
+	loadLevel(manager, systems);
 
-	int frames = 0;
-	//while (true && manager.getComponentOfType<Clock>(game)->currentTicks < 5000)
 	while (true)
 	{
 		auto inputs = app.parseInputs(); // parse inputs from SDL
@@ -269,10 +278,7 @@ int main(int argc, char* args[])
 		{
 			system->onUpdate(manager, inputs);
 		}
-
-		++frames;
 	}
-	cerr << frames << endl;
 	//cin.ignore();
 	return 0;
 }

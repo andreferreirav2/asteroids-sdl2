@@ -13,6 +13,14 @@ typedef unsigned __int32 EntityComponentTypeHash;
 class ECSManager
 {
 public:
+
+	void clearAll()
+	{
+		m_entityToComponentTypes.clear();
+		m_componentTypesToEntity.clear();
+		m_entityComponentTypeHashToComponent.clear();
+	}
+
 	//Entity management
 	Entity createEntity()
 	{

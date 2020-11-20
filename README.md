@@ -79,13 +79,13 @@ The following steps were heavily inspired on [Lazy Foo's tutorials](https://lazy
 	* Level up?
 * Replace all 2d sprites with OpenGL rendering
 	* Particles?
-* Menus / Game Over Screen + Highscore
 * Improve ECS performance
 	* pre-computed entity lists by ComponentType queries
 	* components in sequential vector/array instead of shared_ptr's
 * Move callbacks to inside systems, to remove logic from entity creation
 * Move inputs to it's own component
-* Make world dimensions not tied to screen resolution
+* Make world dimensions not tied to screen 
+* Refactor main menu code
 
 ## Resources
 

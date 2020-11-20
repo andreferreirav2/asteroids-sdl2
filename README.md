@@ -4,6 +4,9 @@ Asteroids clone using SDL2 with an ECS architecture
 
 ## Play
 
+* `2` to play in 2D
+* `3` to play in 3D
+
 * `LEFT` and `RIGHT` to rotate the ship sideways
 * `UP` to accelerate
 * `SPACE` to fire main weapon (gun)

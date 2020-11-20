@@ -62,7 +62,7 @@ public:
 	void clearGL();
 	std::shared_ptr<LoadedObj> loadObjFileGL(std::string const& objPath);
 	void bufferObjDataGL(std::shared_ptr<LoadedObj> obj);
-	void renderObjGL(std::shared_ptr<LoadedObj> obj, glm::vec3 translate = glm::vec3(0, 0, 0), float rotateAngle = 0.0f, glm::vec3 rotation = glm::vec3(0, 0, 0), glm::vec3 scale = glm::vec3(1, 1, 1));
+	void renderObjGL(std::shared_ptr<LoadedObj> obj, glm::vec3 translate = glm::vec3(0, 0, 0), float rotateAngle = 0.0f, glm::vec3 rotation = glm::vec3(0, 0, 0), glm::vec3 scale = glm::vec3(1, 1, 1), glm::vec3 colorDiffuse = { 1, 1, 1 }, float emissiveness = 0.0f);
 	void presentGL();
 
 private:
@@ -74,9 +74,12 @@ private:
 	std::string m_vertexShaderPath;
 	std::string m_fragmentShaderPath;
 	GLuint m_glProgramID = 0;
-	GLint m_glVertexPos3DLocation = -1;
-	GLint m_glVertexPos3DNormal = -1;
-	GLint m_glMatrix = -1;
+	GLint m_glShaderVertexPos = -1;
+	GLint m_glShaderVertexNormal = -1;
+	GLint m_glShaderMaterialDiffuse = -1;
+	GLint m_glShaderMaterialEmissiveness = -1;
+	GLint m_glShaderMVP = -1;
+	GLint m_glShaderM3x3InvTransp = -1;
 
 	std::shared_ptr<SDL_Window> m_window = nullptr;
 	SDL_GLContext m_glContext = nullptr;

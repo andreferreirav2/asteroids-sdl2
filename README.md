@@ -66,8 +66,7 @@ The following steps were heavily inspired on [Lazy Foo's tutorials](https://lazy
 
 
 ## TODO:
-* Create enemy ship
-	* enemy sound effect "danger music"
+* enemy sound effect "danger music"
 * Create onCollide system + onDestroy system
 	* Don't call manager.deleteEntity directly, instead put it on a queue and delete them all at the end of the frame
 	* Will allow all collision callbacks to run before anything is deleted
@@ -75,16 +74,13 @@ The following steps were heavily inspired on [Lazy Foo's tutorials](https://lazy
 	* Faster more aggressive?
 * Weapon progression system
 	* Level up?
-	* Different weapon pickups? 
+	* Different weapon pickups?
 * Secondary weapon ammo limit / pickups / indicator
 * Create Heat seaking missile
 * Replace all 2d sprites with OpenGL rendering
-	* Ship
-	* Asteroids
-	* Enemy ship
-	* Bullet
 	* Missile/Mine
 	* Particles?
+* Add light/shading to 3d models
 * Menus / Game Over Screen + Highscore
 * Improve ECS performance
 	* pre-computed entity lists by ComponentType queries
@@ -97,6 +93,9 @@ The following steps were heavily inspired on [Lazy Foo's tutorials](https://lazy
 
 * https://lazyfoo.net/tutorials/SDL/index.php
 * https://lazyfoo.net/tutorials/OpenGL/index.php
+* https://en.wikibooks.org/wiki/OpenGL_Programming
+* http://www.opengl-tutorial.org/
+* https://www.khronos.org/opengl/wiki/GLSL_:_common_mistakes
 * https://blog.winter.dev/2020/designing-a-physics-engine/
 * https://www.youtube.com/c/TheChernoProject/videos
 * ECS Architecture

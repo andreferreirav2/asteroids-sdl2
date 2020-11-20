@@ -3,6 +3,7 @@
 #include "../Types.h"
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -25,6 +26,9 @@ void SDLApp::setOpenGL(bool opengl)
 bool SDLApp::initGL()
 {
 	GLenum error = GL_NO_ERROR;
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
 	// Define shaders
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -117,27 +121,45 @@ bool SDLApp::initGL()
 		return false;
 	}
 
-	//Get vertex attribute location
-	m_glVertexPos3DLocation = glGetAttribLocation(m_glProgramID, "vertexPosModelSpace");
-	if (m_glVertexPos3DLocation == -1)
+	m_glShaderVertexPos = glGetAttribLocation(m_glProgramID, "vertexPos");
+	if (m_glShaderVertexPos == -1)
 	{
-		cerr << "vertexPosModelSpace is not a valid glsl variable or it's not being used!" << endl;
+		cerr << "vertexPos is not a valid glsl variable or it's not being used!" << endl;
 		//return false;
 	}
 
-	//Get vertex attribute normal
-	m_glVertexPos3DNormal = glGetAttribLocation(m_glProgramID, "vertexNormal");
-	if (m_glVertexPos3DNormal == -1)
+	m_glShaderVertexNormal = glGetAttribLocation(m_glProgramID, "vertexNormal");
+	if (m_glShaderVertexNormal == -1)
 	{
 		cerr << "vertexNormal is not a valid glsl variable or it's not being used!" << endl;
 		//return false;
 	}
 
-	//Get vertex attribute location
-	m_glMatrix = glGetUniformLocation(m_glProgramID, "MVP");
-	if (m_glMatrix == -1)
+	m_glShaderMaterialDiffuse = glGetUniformLocation(m_glProgramID, "materialDiffuse");
+	if (m_glShaderMaterialDiffuse == -1)
 	{
-		cerr << "MVP is not a valid glsl variable or it's not being used!" << endl;
+		cerr << "materialDiffuse is not a valid glsl variable or it's not being used!" << endl;
+		//return false;
+	}
+
+	m_glShaderMaterialEmissiveness = glGetUniformLocation(m_glProgramID, "materialEmissiveness");
+	if (m_glShaderMaterialEmissiveness == -1)
+	{
+		cerr << "materialEmissiveness is not a valid glsl variable or it's not being used!" << endl;
+		//return false;
+	}
+
+	m_glShaderMVP = glGetUniformLocation(m_glProgramID, "mvp");
+	if (m_glShaderMVP == -1)
+	{
+		cerr << "mvp is not a valid glsl variable or it's not being used!" << endl;
+		//return false;
+	}
+
+	m_glShaderM3x3InvTransp = glGetUniformLocation(m_glProgramID, "m3x3InvTransp");
+	if (m_glShaderM3x3InvTransp == -1)
+	{
+		cerr << "m3x3InvTransp is not a valid glsl variable or it's not being used!" << endl;
 		//return false;
 	}
 
@@ -186,22 +208,26 @@ glm::mat4 camera()
 	return proj * view;
 }
 
-void SDLApp::renderObjGL(shared_ptr<LoadedObj> obj, glm::vec3 translate, float rotateAngle, glm::vec3 rotation, glm::vec3 scale)
+void SDLApp::renderObjGL(shared_ptr<LoadedObj> obj, glm::vec3 translate, float rotateAngle,
+	glm::vec3 rotation, glm::vec3 scale, glm::vec3 colorDiffuse, float emissiveness)
 {
 	//Bind program
 	glUseProgram(m_glProgramID);
 
-	glEnableVertexAttribArray(m_glVertexPos3DLocation);
+	glEnableVertexAttribArray(m_glShaderVertexPos);
 	glBindBuffer(GL_ARRAY_BUFFER, obj->vbo);
-	glVertexAttribPointer(m_glVertexPos3DLocation, 3, GL_FLOAT, GL_FALSE, NULL, NULL);
+	glVertexAttribPointer(m_glShaderVertexPos, 3, GL_FLOAT, GL_FALSE, NULL, NULL);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj->ibo);
 
-	glEnableVertexAttribArray(m_glVertexPos3DNormal);
+	glEnableVertexAttribArray(m_glShaderVertexNormal);
 	glBindBuffer(GL_ARRAY_BUFFER, obj->vboNormals);
-	glVertexAttribPointer(m_glVertexPos3DNormal, 3, GL_FLOAT, GL_FALSE, NULL, NULL);
+	glVertexAttribPointer(m_glShaderVertexNormal, 3, GL_FLOAT, GL_FALSE, NULL, NULL);
 
 	// Draw
+	glUniform3fv(m_glShaderMaterialDiffuse, 1, glm::value_ptr(colorDiffuse));
+	glUniform1f(m_glShaderMaterialEmissiveness, emissiveness);
+
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, translate);
 	model = glm::rotate(model, glm::radians(rotateAngle), rotation);
@@ -209,12 +235,16 @@ void SDLApp::renderObjGL(shared_ptr<LoadedObj> obj, glm::vec3 translate, float r
 
 	glm::mat4 mvp = camera() * model;
 
-	glUniformMatrix4fv(m_glMatrix, 1, GL_FALSE, &mvp[0][0]);
+	glUniformMatrix4fv(m_glShaderMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+
+	glm::mat3 m3x3InvTransp = glm::transpose(glm::inverse(glm::mat3(model)));
+	glUniformMatrix3fv(m_glShaderM3x3InvTransp, 1, GL_FALSE, glm::value_ptr(m3x3InvTransp));
+
 	glDrawElements(GL_TRIANGLES, obj->faceElements.size(), GL_UNSIGNED_SHORT, 0);
 
 	//Disable attributes
-	glDisableVertexAttribArray(m_glVertexPos3DNormal);
-	glDisableVertexAttribArray(m_glVertexPos3DLocation);
+	glDisableVertexAttribArray(m_glShaderVertexNormal);
+	glDisableVertexAttribArray(m_glShaderVertexPos);
 
 	//Unbind program
 	glUseProgram(NULL);

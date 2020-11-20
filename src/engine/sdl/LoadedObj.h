@@ -9,7 +9,7 @@
 class LoadedObj
 {
 public:
-	LoadedObj(std::string key) : key(key) {};
+	LoadedObj(std::string key, glm::vec3 colorDiffuse = { 1.0f, 1.0f, 1.0f }) : key(key) {};
 
 	std::string key;
 

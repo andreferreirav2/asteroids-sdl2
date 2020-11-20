@@ -118,7 +118,7 @@ int main(int argc, char* args[])
 		manager.addComponent(ship, shipRb);
 		manager.addComponent(ship, scoreBoard);
 		manager.addComponent(ship, shipSprite);
-		manager.addComponent(ship, make_shared<Mesh>(string("assets/models/ship.obj"), 7.0f));
+		manager.addComponent(ship, make_shared<Mesh>(string("assets/models/ship.obj"), 7.0f, 0.0f, float3{ 0.4f, 0.4f, 1.0f }, 0.6));
 		manager.addComponent(ship, make_shared<Respawn>(spawn, 90.0f));
 		manager.addComponent(ship, make_shared<Lives>(3));
 		manager.addComponent(ship, make_shared<Engine>(400.0f, 150.f));
@@ -155,7 +155,7 @@ int main(int argc, char* args[])
 				manager.addComponent(shot, std::make_shared<Transform>(gun->position.x, gun->position.y, gun->rotation));
 				manager.addComponent(shot, std::make_shared<RigidBody>(1.0f, 0.0f, 400 * cos(gun->rotation * DEG_2_RAG), -400 * sin(gun->rotation * DEG_2_RAG)));
 				manager.addComponent(shot, shotSprite);
-				manager.addComponent(shot, make_shared<Mesh>(string("assets/models/bullet.obj"), 2.0f));
+				manager.addComponent(shot, make_shared<Mesh>(string("assets/models/bullet.obj"), 2.0f, 0.0f, float3{ 1.0f, 1.0f, 1.0f }, 0.9));
 				manager.addComponent(shot, make_shared<Boundless>());
 				manager.addComponent(shot, make_shared<DestroyAfterTime>(1.0f));
 				manager.addComponent(shot, std::make_shared<CircleCollider>(4.0f, PLAYER_WEAPON_COLLIDER_LAYER, PLAYER_WEAPON_COLLIDES_WITH, [&manager, ship, shot](Entity other)

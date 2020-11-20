@@ -2,6 +2,8 @@
 
 Asteroids clone using SDL2 with an ECS architecture
 
+[Download the game here](https://github.com/andreferreirav2/asteroids-sdl2/raw/master/asteroids_x64_build.zip)
+
 ## Play
 
 * `2` to play in 2D
@@ -94,6 +96,9 @@ The following steps were heavily inspired on [Lazy Foo's tutorials](https://lazy
 * https://www.khronos.org/opengl/wiki/GLSL_:_common_mistakes
 * https://blog.winter.dev/2020/designing-a-physics-engine/
 * https://www.youtube.com/c/TheChernoProject/videos
+* https://github.com/JoeyDeVries/LearnOpenGL
+* https://www.freetype.org/
+* http://ogldev.atspace.co.uk/index.html
 * ECS Architecture
 	* http://paulgestwicki.blogspot.com/2012/03/components-and-systems-of-morgans-raid.html?m=1
 	* http://entity-systems.wikidot.com/

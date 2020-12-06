@@ -27,7 +27,7 @@ void ShipGameController::onUpdate(ECSManager& manager, std::shared_ptr<Inputs> i
 				if (engine && transform)
 				{
 					transform->rotation = atan2(-pow(inputs->leftAxis.y, 3), pow(inputs->leftAxis.x, 3)) * (180.0 / 3.1415f);
-					engine->thrustValue = std::min(pow(magnitude, 3), 1.0f);
+					engine->thrustValue = std::min(pow(magnitude, 3.0f), 1.0f);
 				}
 			}
 		}
